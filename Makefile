@@ -6,7 +6,7 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2023/10/18 11:39:36 by mguerga          ###   ########.fr        #
+#    Updated: 2023/10/18 14:10:35 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ NAME = minirt.out
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -g3
 
-SRC_MINIRT = rt_main.c
+SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c
 
 SOURCES = $(addprefix src/, $(SRC_MINIRT))
 
