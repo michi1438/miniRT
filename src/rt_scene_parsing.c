@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/10/18 16:25:56 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/10/23 20:45:47 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,35 @@ int	scene_parsing(int ac, char **av)
 int	in_scene_parsing(int fd)
 {
 	char	*str;
-	char	*temp;
+//	char	*temp;
+	t_list	*e_list;	
 
 	str = get_next_line(fd);
 	while (str != NULL)
 	{
 		//ft_putstr_fd(str, 1);
-				
-		temp = str;
+		//temp = str;
+		if (add_element(&e_list, str) != 0)
+		{
+//			free(temp);
+			return (1);
+		}
 		str = get_next_line(fd);
-		free (temp);
+//		free (temp);
 	}
+//	ft_printf("%d\n", (t_elem *)(e_list->content)->type);
 	return (0);
+}
+
+int	add_element(t_list	**e_list, char *str)
+{
+	//fill struct for each element of the scene, if element doesn't fit return error and free the previous nodes...	
+	(void)str;
+	t_elem	*elem;
+	elem = malloc(sizeof(t_elem));
+	elem->type = U;
+	//elem = init_elem(str);
+	ft_lstadd_front(e_list, ft_lstnew(elem));
+	ft_printf("%d\n", elem->type);
+	return (0);	
 }
