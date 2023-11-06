@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/10/23 20:45:47 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/06 09:49:43 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	in_scene_parsing(int fd)
 	char	*str;
 //	char	*temp;
 	t_list	*e_list;	
+	t_elem	*elem;
 
 	str = get_next_line(fd);
 	while (str != NULL)
@@ -49,8 +50,40 @@ int	in_scene_parsing(int fd)
 		str = get_next_line(fd);
 //		free (temp);
 	}
-//	ft_printf("%d\n", (t_elem *)(e_list->content)->type);
+	elem = e_list->content;
+	ft_printf("elem->type = %c\n", elem->type);
+	e_list = e_list->next;
+	elem = e_list->content;
+	ft_printf("elem->type = %c\n", elem->type);
+	put_to_screen(&e_list);
 	return (0);
+}
+
+void	init_elem(t_elem *elem, char *str)
+{
+	char	**splited;
+	//int		i;
+
+	//i = 0;
+	splited = ft_split(str, ' ');
+	//if (is_format(splited[i] != 0))
+	//	exit (1);
+	elem->type = splited[0][0];
+	if (elem->type == 'A')
+		fill_ambiant(elem, splited);
+/*	else if (elem->type == 'C')
+		fill_camera(elem, splited);
+	else if (elem->type == 'L')
+		fill_light(elem, splited);
+	else if (elem->type == 's')
+		fill_sphere(elem, splited);
+	else if (elem->type == 'p')
+		fill_plane(elem, splited);
+	else if (elem->type == 'c')
+		fill_cylinder(elem, splited);
+//	while (splited[i] != NULL)
+//		ft_printf("%s\n", splited[i++]);
+*/
 }
 
 int	add_element(t_list	**e_list, char *str)
@@ -59,9 +92,10 @@ int	add_element(t_list	**e_list, char *str)
 	(void)str;
 	t_elem	*elem;
 	elem = malloc(sizeof(t_elem));
-	elem->type = U;
-	//elem = init_elem(str);
+	elem->type = 'U';
+	init_elem(elem, str);
 	ft_lstadd_front(e_list, ft_lstnew(elem));
-	ft_printf("%d\n", elem->type);
+	//ft_printf("%p\n", elem);
+	//check more stuff...
 	return (0);	
 }

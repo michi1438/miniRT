@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/10/23 20:40:27 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/06 10:04:16 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,50 @@
 # include <stdio.h>
 # include "../minilibx-linux/mlx.h"
 # include "../libft/src_libft.h"
+# include <math.h>
 
 typedef struct	s_elem
 {
-	int	type;
-	int	RGB[3];
-	int	xyz[3];
-	int	norm_xyz[3];
-	int	FOV;
-	int light_ratio;
+	char	type;
+	int		RGB[3];
+	int		xyz[3];
+	int		norm_xyz[3];
+	int		FOV;
+	int		light_ratio;
 }	t_elem;
 
-enum	e_type
+typedef struct s_scData
 {
-	U = 11, // For undefined
-	A,
-	C,
-	L,
-	SP,
-	PL,
-	CY,
-};
+	void	*img;
+	void	*mlx;
+	void	*win;
+	char	*addr;
+	int		bits_pp;
+	int		line_len;
+	int		endian;
+}	t_scData;
+
+// FILL_ELEM.c
+void	fill_cylinder(t_elem *elem, char **splited);
+void	fill_ambiant(t_elem *elem, char **splited);
+void	fill_camera(t_elem *elem, char **splited);
+void	fill_light(t_elem *elem, char **splited);
+void	fill_sphere(t_elem *elem, char **splited);
+void	fill_plane(t_elem *elem, char **splited);
+
+// DISPLAY.C
+int		kb_mlx(int keycd, t_scData *scrn);
+int		put_to_screen(t_list **e_list);
+void	mlx_pp(t_scData *img, int x, int y, int color);
 
 // SCENE_PARSING.C
-int	scene_parsing(int ac, char **av);
-int	in_scene_parsing(int fd);
-int	add_element(t_list	**e_list, char *str);
+int		scene_parsing(int ac, char **av);
+int		in_scene_parsing(int fd);
+void	init_elem(t_elem *elem, char *str);
+int		add_element(t_list	**e_list, char *str);
+
+// UTILS.C (maybe put this in libft)
+float	ft_atof(char *str);
 
 // ERR_HANDLING.C
 int	print_err(char *str);

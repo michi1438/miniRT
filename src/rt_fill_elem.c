@@ -1,20 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_main.c                                          :+:      :+:    :+:   */
+/*   rt_fill_elem.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
+/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/18 11:29:13 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/02 10:16:43 by mguerga          ###   ########.fr       */
+/*   Created: 2023/11/02 13:25:07 by mguerga           #+#    #+#             */
+/*   Updated: 2023/11/02 13:35:19 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt_head.h"
 
-int	main(int ac, char **av)
+void	fill_ambiant(t_elem *elem, char **splited)
 {
-	if (scene_parsing(ac, av) == 1)
-		return (1);
-	return (0);
+	elem->light_ratio = ft_atof(splited[1]);
 }
