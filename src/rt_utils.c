@@ -6,21 +6,20 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/06 12:04:48 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/07 15:34:26 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt_head.h"
 #include <float.h>
 
-size_t mantislen(char *str, int neg)
+size_t	mantislen(char *str, int neg)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i] != '\0' && str[i] != '.')
 		i++;
-	printf("i = %d \n", i);
 	if (neg == -1)
 		i += neg;
 	return (i);
@@ -28,10 +27,10 @@ size_t mantislen(char *str, int neg)
 
 float	ft_atof(char *str)
 {
-	float res = 0;
-	int i;
-	int neg;
-	int len;
+	float	res = 0;
+	int		i;
+	int		neg;
+	int		len;
 
 	neg = 1;
 	i = 0;
@@ -47,12 +46,12 @@ float	ft_atof(char *str)
 		return (res * neg);
 	len = 0;
 	while (str[i] != '\0' && str[i] != '.')
-		res += (str[i++] - '0') * pow(10, --len); 
+		res += (str[i++] - '0') * pow(10, --len);
 //	XXX TEST for precision...
 	printf("This is a test for the ft_atof()'s precision...\n");
-	printf("printf(\"%%.30f\\n\", (float)res * neg);  --> ");
+	printf("printf(\"%%.30f\\n\", (float)res * neg);	--> ");
 	printf("%.30f\n", (float)res * neg);
-	printf("printf(\"%%.30f\\n\", 0.255255255);       --> ");
-	printf("%.30f\n", 0.255255255);
+	printf("printf(\"%%.30f\\n\", 0.2);			--> ");
+	printf("%.30f\n\n", 0.2);
 	return (res * neg);
 }

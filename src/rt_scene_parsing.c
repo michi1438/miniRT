@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/06 09:49:43 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/07 15:28:28 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ int	scene_parsing(int ac, char **av)
 int	in_scene_parsing(int fd)
 {
 	char	*str;
-//	char	*temp;
 	t_list	*e_list;	
 	t_elem	*elem;
+//	char	*temp;
 
 	str = get_next_line(fd);
 	while (str != NULL)
@@ -51,13 +51,30 @@ int	in_scene_parsing(int fd)
 //		free (temp);
 	}
 	elem = e_list->content;
-	ft_printf("elem->type = %c\n", elem->type);
+	print_elem(elem);
 	e_list = e_list->next;
 	elem = e_list->content;
-	ft_printf("elem->type = %c\n", elem->type);
+	print_elem(elem);
 	put_to_screen(&e_list);
 	return (0);
 }
+
+void	set_uvalue(t_elem *elem)
+{
+	int	i;
+
+	i = -1;
+	elem->type = 'U';
+	elem->fov = -2;
+	elem->light_ratio = -2;
+	while (++i < 3)
+	{
+		elem->rgb[i] = -2;
+		elem->xyz[i] = 0;
+		elem->norm_xyz[i] = -2;
+	}
+}
+
 
 void	init_elem(t_elem *elem, char *str)
 {
@@ -66,14 +83,13 @@ void	init_elem(t_elem *elem, char *str)
 
 	//i = 0;
 	splited = ft_split(str, ' ');
-	//if (is_format(splited[i] != 0))
-	//	exit (1);
+	set_uvalue(elem);
 	elem->type = splited[0][0];
 	if (elem->type == 'A')
 		fill_ambiant(elem, splited);
-/*	else if (elem->type == 'C')
+	else if (elem->type == 'C')
 		fill_camera(elem, splited);
-	else if (elem->type == 'L')
+/*	else if (elem->type == 'L')
 		fill_light(elem, splited);
 	else if (elem->type == 's')
 		fill_sphere(elem, splited);
@@ -89,10 +105,8 @@ void	init_elem(t_elem *elem, char *str)
 int	add_element(t_list	**e_list, char *str)
 {
 	//fill struct for each element of the scene, if element doesn't fit return error and free the previous nodes...	
-	(void)str;
 	t_elem	*elem;
 	elem = malloc(sizeof(t_elem));
-	elem->type = 'U';
 	init_elem(elem, str);
 	ft_lstadd_front(e_list, ft_lstnew(elem));
 	//ft_printf("%p\n", elem);

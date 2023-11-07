@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/06 10:04:16 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/07 15:27:44 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,19 @@
 # define RT_HEAD_H
 
 # include <stdio.h>
-# include "../minilibx-linux/mlx.h"
+//# include "../minilibx-linux/mlx.h"
+# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
 
-typedef struct	s_elem
+typedef struct s_elem
 {
 	char	type;
-	int		RGB[3];
-	int		xyz[3];
-	int		norm_xyz[3];
-	int		FOV;
-	int		light_ratio;
+	int		rgb[3];
+	float	xyz[3];
+	float	norm_xyz[3];
+	int		fov;
+	float	light_ratio;
 }	t_elem;
 
 typedef struct s_scData
@@ -62,6 +63,9 @@ int		add_element(t_list	**e_list, char *str);
 float	ft_atof(char *str);
 
 // ERR_HANDLING.C
-int	print_err(char *str);
+int		print_err(char *str);
+
+// TESTING.C
+void	print_elem(t_elem *elem);
 
 #endif // RT_HEAD_H

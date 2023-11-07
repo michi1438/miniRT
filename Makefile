@@ -6,7 +6,7 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2023/11/06 09:52:41 by mguerga          ###   ########.fr        #
+#    Updated: 2023/11/07 15:28:55 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ CC = gcc
 CFLAGS = -Werror -Wall -Wextra -g3
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
-			 rt_fill_elem.c rt_utils.c
+			 rt_fill_elem.c rt_utils.c rt_testin.c
 
 SOURCES = $(addprefix src/, $(SRC_MINIRT))
 
