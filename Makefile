@@ -6,7 +6,7 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2023/11/07 15:28:55 by mguerga          ###   ########.fr        #
+#    Updated: 2023/11/08 11:23:17 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,10 @@ NAME = minirt.out
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra -g3
+CFLAGS = -Werror -Wall -Wextra #-g3 -fsanitize=address
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
-			 rt_fill_elem.c rt_utils.c rt_testin.c
+			 rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c
 
 SOURCES = $(addprefix src/, $(SRC_MINIRT))
 

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/07 15:28:28 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/08 11:22:51 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,26 +35,28 @@ int	in_scene_parsing(int fd)
 	char	*str;
 	t_list	*e_list;	
 	t_elem	*elem;
-//	char	*temp;
+	char	*temp;
 
 	str = get_next_line(fd);
+	ft_lstadd_front(&e_list, ft_lstnew(NULL));
 	while (str != NULL)
 	{
-		//ft_putstr_fd(str, 1);
-		//temp = str;
+		temp = str;
 		if (add_element(&e_list, str) != 0)
 		{
-//			free(temp);
+			free(temp);
 			return (1);
 		}
 		str = get_next_line(fd);
-//		free (temp);
+		free (temp);
 	}
-	elem = e_list->content;
-	print_elem(elem);
-	e_list = e_list->next;
-	elem = e_list->content;
-	print_elem(elem);
+	while (e_list->content != NULL)
+	{
+		elem = e_list->content;
+		print_elem(elem);
+		e_list = e_list->next;
+	}
+//	ft_lstclear(&e_list, free);
 	put_to_screen(&e_list);
 	return (0);
 }
@@ -67,6 +69,8 @@ void	set_uvalue(t_elem *elem)
 	elem->type = 'U';
 	elem->fov = -2;
 	elem->light_ratio = -2;
+	elem->diameter = 0;
+	elem->height = 0;
 	while (++i < 3)
 	{
 		elem->rgb[i] = -2;
@@ -75,13 +79,11 @@ void	set_uvalue(t_elem *elem)
 	}
 }
 
-
 void	init_elem(t_elem *elem, char *str)
 {
 	char	**splited;
-	//int		i;
+	int		i;
 
-	//i = 0;
 	splited = ft_split(str, ' ');
 	set_uvalue(elem);
 	elem->type = splited[0][0];
@@ -89,7 +91,7 @@ void	init_elem(t_elem *elem, char *str)
 		fill_ambiant(elem, splited);
 	else if (elem->type == 'C')
 		fill_camera(elem, splited);
-/*	else if (elem->type == 'L')
+	else if (elem->type == 'L')
 		fill_light(elem, splited);
 	else if (elem->type == 's')
 		fill_sphere(elem, splited);
@@ -97,19 +99,23 @@ void	init_elem(t_elem *elem, char *str)
 		fill_plane(elem, splited);
 	else if (elem->type == 'c')
 		fill_cylinder(elem, splited);
-//	while (splited[i] != NULL)
-//		ft_printf("%s\n", splited[i++]);
-*/
+	i = 0;
+	while (splited[i] != NULL)
+		free(splited[i++]);
 }
 
 int	add_element(t_list	**e_list, char *str)
 {
-	//fill struct for each element of the scene, if element doesn't fit return error and free the previous nodes...	
 	t_elem	*elem;
+
 	elem = malloc(sizeof(t_elem));
+	if (elem == NULL)
+		return (-1);
 	init_elem(elem, str);
 	ft_lstadd_front(e_list, ft_lstnew(elem));
-	//ft_printf("%p\n", elem);
+	printf("e_list = %p\n", *e_list);
+	if (*e_list == NULL)
+		return (-1);
 	//check more stuff...
-	return (0);	
+	return (0);
 }
