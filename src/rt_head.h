@@ -6,16 +6,19 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/08 11:28:07 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/15 12:05:34 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
+# define S_WIDTH (1920)
+# define S_HEIGHT (1080)
+
 # include <stdio.h>
-//# include "../minilibx-linux/mlx.h"
-# include "../minilibx_opengl_20191021/mlx.h"
+# include "../minilibx-linux/mlx.h"
+//# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
 
@@ -42,6 +45,11 @@ typedef struct s_scData
 	int		endian;
 	t_list	**e_list_displayed;	
 }	t_scData;
+
+// SCENE.C
+void	first_rays(t_scData *scrn);
+void	set_scene(t_scData *scrn, t_list **e_list);
+void	normalize(float *xyz);
 
 // FILL_LIGHTSNCAMERA.c
 void	fill_err(char type);
