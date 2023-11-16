@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/15 12:05:34 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/16 13:07:44 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,16 @@ typedef struct s_scData
 }	t_scData;
 
 // SCENE.C
-void	first_rays(t_scData *scrn);
 void	set_scene(t_scData *scrn, t_list **e_list);
+void	first_rays(t_scData *scrn, t_list **e_list);
+void	normalize(float *xyz);
+t_elem	*findcam(t_list **e_list);
+int		intersect(float *normal_dir, t_elem *cam_specs);
+int		solve_discriminent(float a, float b, float c);
+
+// VEC_MATH.C
+float	dotprod(float *vec1, float *vec2);
+void	vec_substract(float *res_vec, float *vec1, float *vec2);
 void	normalize(float *xyz);
 
 // FILL_LIGHTSNCAMERA.c
@@ -71,6 +79,7 @@ void	mlx_pp(t_scData *img, int x, int y, int color);
 // SCENE_PARSING.C
 int		scene_parsing(int ac, char **av);
 int		in_scene_parsing(int fd);
+void	musthave_elem(t_list *e_list);
 void	init_elem(t_elem *elem, char *str);
 int		add_element(t_list	**e_list, char *str);
 

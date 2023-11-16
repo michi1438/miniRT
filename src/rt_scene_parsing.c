@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/12 10:52:03 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/16 13:14:23 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,29 @@ int	in_scene_parsing(int fd)
 		free (temp);
 	}
 //	ft_lstclear(&e_list, free);
+	musthave_elem(e_list);
 	put_to_screen(&e_list);
 	return (0);
+}
+
+void	musthave_elem(t_list *e_list)
+{
+	t_elem	*elem;
+	int		c;
+
+	c = 0;
+	while (e_list->content != NULL)
+	{
+		elem = e_list->content;
+		if (elem->type == 'C')
+			c = 1;
+		e_list = e_list->next;
+	}
+	if (c != 1)
+	{
+		print_err("The .rt file does'nt contain a camera !\n");	
+		exit (1);
+	}
 }
 
 void	set_uvalue(t_elem *elem)
@@ -107,7 +128,7 @@ int	add_element(t_list	**e_list, char *str)
 		return (-1);
 	init_elem(elem, str);
 	ft_lstadd_front(e_list, ft_lstnew(elem));
-	printf("e_list = %p\n", *e_list);
+//	printf("e_list = %p\n", *e_list);
 	if (*e_list == NULL)
 		return (-1);
 	//check more stuff...
