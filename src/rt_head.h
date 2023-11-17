@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/16 13:07:44 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/16 20:00:15 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,9 @@ typedef struct s_elem
 	int		rgb[3];
 	float	xyz[3];
 	float	norm_xyz[3];
-	int		fov;
-	float	diameter;
+	float	fov;
+	float	sratio;
+	float	radius;
 	float	height;
 	float	light_ratio;
 }	t_elem;
@@ -51,7 +52,9 @@ void	set_scene(t_scData *scrn, t_list **e_list);
 void	first_rays(t_scData *scrn, t_list **e_list);
 void	normalize(float *xyz);
 t_elem	*findcam(t_list **e_list);
-int		intersect(float *normal_dir, t_elem *cam_specs);
+
+// INTERSECTING.C
+int		intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
 int		solve_discriminent(float a, float b, float c);
 
 // VEC_MATH.C

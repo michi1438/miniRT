@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/08 10:53:18 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/16 19:48:34 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	fill_sphere(t_elem *elem, char **split)
 	if (split[1] == NULL || split[2] == NULL || split[3] == NULL)
 		fill_err(elem->type);
 	xyz_split = ft_split(split[1], ',');
-	elem->diameter = ft_atof(split[2]);
+	elem->radius = ft_atof(split[2]) / 2;
 	rgb_split = ft_split(split[3], ',');
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && rgb_split[i] != NULL)
@@ -76,7 +76,7 @@ void	fill_cylinder(t_elem *elem, char **split)
 		fill_err(elem->type);
 	xyz_split = ft_split(split[1], ',');
 	norm_xyz_split = ft_split(split[2], ',');
-	elem->diameter = ft_atof(split[3]);
+	elem->radius = ft_atof(split[3]) / 2;
 	elem->height = ft_atof(split[4]);
 	rgb_split = ft_split(split[5], ',');
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/16 13:14:23 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/16 19:50:19 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ void	set_uvalue(t_elem *elem)
 	elem->type = 'U';
 	elem->fov = -2;
 	elem->light_ratio = -2;
-	elem->diameter = 0;
+	elem->sratio = (float)S_WIDTH / S_HEIGHT;
+	elem-> radius = 0;
 	elem->height = 0;
 	while (++i < 3)
 	{
