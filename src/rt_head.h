@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/16 20:00:15 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/21 12:16:59 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ typedef struct s_scData
 	int		endian;
 	t_list	**e_list_displayed;	
 }	t_scData;
+
+// MATRICES.C
+void	rt_matrix(float *ret, t_elem *cam_specs);
 
 // SCENE.C
 void	set_scene(t_scData *scrn, t_list **e_list);
