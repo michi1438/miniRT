@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/21 12:20:29 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/27 16:24:12 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	fill_camera(t_elem *elem, char **splited)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
 	norm_xyz_split = ft_split(splited[2], ',');
-	elem->fov = tan((M_PI * ft_atoi(splited[3]) / 180) / 2);
+	elem->fov = tan(ft_atof(splited[3]) / 2 * M_PI / 180);
 //	printf("elem->fov = %f\n", elem->fov);
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && norm_xyz_split[i] != NULL)

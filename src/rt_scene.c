@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/21 12:07:18 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/28 20:38:36 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 		xy[0] = -1;
 		while (++xy[0] < S_WIDTH)
 		{
-			pscreen[0] = ((2 * ((xy[0] + 0.5) / S_WIDTH)) - 1) * cam_specs->sratio * cam_specs->fov;
+			pscreen[0] = ((2 * (xy[0] + 0.5) / S_WIDTH) - 1) * cam_specs->fov * cam_specs->sratio ;
 			pscreen[1] = (1 - (2 * ((xy[1] + 0.5) / S_HEIGHT))) * cam_specs->fov;
 			pscreen[2] = -1;
-			rt_matrix(pscreen, cam_specs);
+			//rt_matrix(pscreen, cam_specs);
+			normalize(pscreen);
 			//rt_matrix(origin, cam_specs);
 			//emplement c2w matrix rotation and translation...
-			normalize(pscreen);
 			//printf("(%.5f,%.5f,%.5f) ", pscreen[0], pscreen[1], pscreen[2]);
 			//add the position of the camera and its orientation...
 			list = *e_list;
@@ -52,7 +52,7 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 				{
 					thc = intersect(pscreen, cam_specs, objects);
 					if (thc > 0)
-						mlx_pp(scrn, xy[0], xy[1], 0x000000FF * thc / objects->radius); // XXX this is not the right way to apply color...
+						mlx_pp(scrn, xy[0], xy[1], 0x000000FF * thc / 40); // XXX this is not the right way to apply color...
 				}
 				list = list->next;	
 			}
