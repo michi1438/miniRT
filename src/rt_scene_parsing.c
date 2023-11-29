@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/16 19:50:19 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/29 13:40:30 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ int	in_scene_parsing(int fd)
 {
 	char	*str;
 	t_list	*e_list;	
-//	t_elem	*elem;
 	char	*temp;
 
 	str = get_next_line(fd);
@@ -50,7 +49,6 @@ int	in_scene_parsing(int fd)
 		str = get_next_line(fd);
 		free (temp);
 	}
-//	ft_lstclear(&e_list, free);
 	musthave_elem(e_list);
 	put_to_screen(&e_list);
 	return (0);
