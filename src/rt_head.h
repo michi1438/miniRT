@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/29 11:05:24 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/29 15:05:34 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # define S_HEIGHT (1080)
 
 # include <stdio.h>
-//# include "../minilibx-linux/mlx.h"
-# include "../minilibx_opengl_20191021/mlx.h"
+# include "../minilibx-linux/mlx.h"
+//# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
 
