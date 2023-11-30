@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/29 13:46:58 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/11/30 17:06:59 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,10 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 	float	pscreen[3];
 	int		xy[2];
 	float	thc;
-	float	viewport_xy[2][3];
 	t_elem	*cam_specs;
 	t_elem	*objects;
 	t_list	*list;	
 
-	viewport_xy[0][0] = 2 * 
 	cam_specs = findcam(e_list);
 	xy[1] = -1;
 	while (++xy[1] < S_HEIGHT)
@@ -52,7 +50,7 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 				{
 					thc = intersect(pscreen, cam_specs, objects);
 					if (thc > 0)
-						mlx_pp(scrn, xy[0], xy[1], 0x000000FF * thc / 40); // XXX this is not the right way to apply color...
+						mlx_pp(scrn, xy[0], xy[1], 0x000000FF);
 				}
 				list = list->next;
 			}
