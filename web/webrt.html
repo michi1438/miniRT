@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>webrt</title>
+</head>
+<body>
+
+
+
+
+
+
+
+	<canvas style="border: solid" id="canvas" width="400" height="400"></canvas>
+	<p id="coords">Coordinates: (-1 ; -1)</p>
+
+<script>
+	function same_sign(a, b) {
+		return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
+	}
+
+	const Direction = {
+		Forward: 0,
+		Backward: 1,
+		Left: 2,
+		Right: 3,
+		Up: 4,
+		Down: 5
+	}
+
+	class V3 {
+	  constructor(x, y, z) {
+	    this.x = x;
+	    this.y = y;
+	    this.z = z;
+	  }
+
+	  toString() {
+			return ('[' + this.x.toFixed(3) + ', ' + this.y.toFixed(3) + ', ' + this.z.toFixed(3) + ']')
+		}
+	}
+
+	class Plane {
+	  constructor(p1, p2, p3) {
+	    this.p1 = p1;
+	    this.p2 = p2;
+	    this.p3 = p3;
+	  }
+	}
+
+	class Line {
+		constructor(p1, p2) {
+			this.p1 = p1;
+			this.p2 = p2;
+		}
+	}
+
+	class Matrix3d {
+		constructor(v1, v2, v3) {
+			this.v1 = v1;
+			this.v2 = v2;
+			this.v3 = v3;
+		}
+
+		toString() {
+			return ('[' + this.v1 + ', ' + this.v2 + ', ' + this.v3 + ']')
+		}
+	}
+
+	/* rotate point p, by a vector v, around a point r */
+	function rotate_point(p, v, r) {
+		let rot_matrix_x = new Matrix3d(
+			v3(1, 0, 0),
+			v3(0, Math.cos(v.x), Math.sin(v.x)),
+			v3(0, -Math.sin(v.x), Math.cos(v.x))
+			);
+
+		let rot_matrix_y = new Matrix3d(
+			v3(Math.cos(v.y), 0, -Math.sin(v.y)),
+			v3(0, 1, 0),
+			v3(Math.sin(v.y), 0, Math.cos(v.y))
+			);
+
+		let rot_matrix_z = new Matrix3d(
+			v3(Math.cos(v.z), Math.sin(v.z), 0),
+			v3(-Math.sin(v.z), Math.cos(v.z), 0),
+			v3(0, 0, 1)
+			);
+
+		/* combined rotation matrix */
+		let rot_matrix = matrix_mult(rot_matrix_x, matrix_mult(rot_matrix_y, rot_matrix_z));
+
+		/* translation of point p so r becomes the origin */
+		let p_translate = v3_sub(p, r);
+
+		let p_rotated1 = matrix_mult_vec(rot_matrix, p_translate);
+
+		return (v3_add(p_rotated1, r));
+	}
+
+	/* projects a point on the camera plane */
+	/* returns null if the line between eye and point doesn't intersect plane or is behind screen */
+	var count = 4;
+	function project_point(point, camera) {
+		console.log('projecting point P' + count);
+		count --;
+		console.log(point);
+
+		/* check for y axis */
+		let ab = camera.getAB();
+		let ref_point = v3_add(camera.getCenter(), camera.getNorm());
+		let ref_cross = v3_cross(ab, ref_point);
+		let test_cross = v3_cross(ab, v3_sub(point, camera.A));
+		if (!same_sign(ref_cross.y, test_cross.y)) {
+			return (null);
+		}
+
+		let eye_middle_ac = v3_sub(camera.eye, v3_add(camera.A, v3_scale(camera.getAC(), 0.5)));
+		ref_point = v3_add(eye_middle_ac, camera.getAB());
+		ref_cross = v3_cross(eye_middle_ac, ref_point);
+		test_cross = v3_cross(eye_middle_ac, v3_sub(point, camera.eye));
+		if (!same_sign(ref_cross.y, test_cross.y)) {
+			return (null);
+		}
+
+		/* TODO: */
+		/* check for Eye - middle BD */
+		/* check for x axis */
+
+		let line = new Line(camera.eye, point);
+		let canvas = camera.getCanvasPlane();
+		console.log('result:');
+		console.log(intersect(line, canvas));
+		let intersection = intersect(line, canvas);
+		if (intersection == null) {
+			return (null);
+		}
+		
+		return (intersection);
+	}
+
+	/* Converting degrees to radians */
+	function degree_to_radian(angle) {
+		return (angle * Math.PI / 180);
+	}
+
+	/*
+	and the screen is eye_canv_dist distant from (0, 0, 0)
+	A-------------------------B
+	|						  |
+	|						  |
+	|         (eye)           |
+	|						  |
+	|						  |
+	C-------------------------o
+	*/
+	class Camera {
+		constructor(eye_canv_dist, screen_width, screen_height) {
+			this.canvas_width = screen_width;
+			this.canvas_height = screen_height;
+			this.eye = v3();
+			this.A = v3(-screen_width / 2, screen_height / 2, -eye_canv_dist);
+			this.B = v3(screen_width / 2, screen_height / 2, -eye_canv_dist);
+			this.C = v3(-screen_width / 2, -screen_height / 2, -eye_canv_dist);
+		}
+
+		getAC() {
+			return (v3_sub(this.C, this.A));
+		}
+
+		getAB() {
+			return (v3_sub(this.B, this.A));
+		}
+
+		/* fourth bottom right corner */
+		getD() {
+			return (v3_add(this.B, this.getAC()));
+		}
+
+		getCanvasPlane() {
+			return (new Plane(this.A, this.B, this.C));
+		}
+
+		getCenter() {
+			let ab = this.getAB();
+			let half_ab = v3_scale(ab, 0.5);
+			let top_middle = v3_add(this.A, half_ab);
+			let ac = this.getAC();
+			let half_ac = v3_scale(ac, 0.5);
+			//let left_middle = v3_add(this.A, half_ac);
+			return (v3_add(top_middle, half_ac));
+		}
+
+		getNorm() {
+			return (v3_norm(v3_sub(this.getCenter(), this.eye)));
+		}
+
+		rotate(direction, amount) {
+			switch (direction) {
+				case Direction.Right:
+					this.A = rotate_point(this.A, v3(0, -amount), this.eye);
+					this.B = rotate_point(this.B, v3(0, -amount), this.eye);
+					this.C = rotate_point(this.C, v3(0, -amount), this.eye);
+					break;
+				case Direction.Left:
+					this.A = rotate_point(this.A, v3(0, amount), this.eye);
+					this.B = rotate_point(this.B, v3(0, amount), this.eye);
+					this.C = rotate_point(this.C, v3(0, amount), this.eye);
+					break;
+				case Direction.Up:
+					this.A = rotate_point(this.A, v3(amount), this.eye);
+					this.B = rotate_point(this.B, v3(amount), this.eye);
+					this.C = rotate_point(this.C, v3(amount), this.eye);
+					break;
+				case Direction.Down:
+					this.A = rotate_point(this.A, v3(-amount), this.eye);
+					this.B = rotate_point(this.B, v3(-amount), this.eye);
+					this.C = rotate_point(this.C, v3(-amount), this.eye);
+					break;
+				default:
+					console.log(`Invalid direction: ${dir}.`);
+					return ;
+			}
+		}
+
+		move(direction, amount) {
+			let move_vect;
+			
+			switch (direction) {
+				case Direction.Forward:
+					move_vect = v3_scale(this.getNorm(), amount);
+					break;
+				case Direction.Backward:
+					move_vect = v3_scale(this.getNorm(), -amount);
+					break;
+				case Direction.Right:
+					move_vect = v3_scale(v3_norm(this.getAB()), amount);
+					break;
+				case Direction.Left:
+					move_vect = v3_scale(v3_norm(this.getAB()), -amount);
+					break;
+				case Direction.Up:
+					move_vect = v3_scale(v3_norm(this.getAC()), -amount);
+					break;
+				case Direction.Down:
+					move_vect = v3_scale(v3_norm(this.getAC()), amount);
+					break;
+				default:
+					console.log(`Invalid direction: ${dir}.`);
+					return ;
+			}
+			this.eye = v3_add(move_vect, this.eye);
+			this.A = v3_add(move_vect, this.A);
+			this.B = v3_add(move_vect, this.B);
+			this.C = v3_add(move_vect, this.C);
+		}
+
+		/* expresses a 3d point relatively to point A */
+		get_point_canvas_rel(p) {
+			/*let x_vect = v3_scale(v3_norm(getAB()), screen_width);
+			let y_vect = v3_scale(v3_norm(getAC()), screen_height);*/
+
+
+			let ap = v3_sub(p, this.A);
+			let x_ratio = camera.canvas_width / Math.abs(camera.getAB().x);
+			let y_ratio = camera.canvas_height / Math.abs(camera.getAC().y);
+			let res = v3(ap.x * x_ratio, ap.y * y_ratio);
+			return (res);
+		}
+	}
+
+	function map_point_to_physical(camera, point, physical_width, physical_height) {
+		if (point == null) {
+			return (null);
+		}
+		let x_ratio = physical_width / camera.canvas_width;
+		let y_ratio = physical_height / camera.canvas_height;
+
+		let rel = camera.get_point_canvas_rel(point);
+
+		//let canvas_x_ratio = point.x / camera.getAB().x;
+		return (v3(rel.x * x_ratio, rel.y * y_ratio * -1));
+	}
+
+	function v3(x = 0, y = 0, z = 0) {
+		return new V3(x, y, z);
+	}
+
+	function v3_add(a, b) {
+		return (v3(a.x + b.x, a.y + b.y, a.z + b.z));
+	}
+
+	function v3_sub(a, b) {
+		return (v3(a.x - b.x, a.y - b.y, a.z - b.z));
+	}
+
+	function v3_scale(a, scale) {
+		return (v3(a.x * scale, a.y * scale, a.z * scale));
+	}
+
+	function v3_invert(a) {
+		return (v3_scale(a, -1))
+	}
+
+	function v3_len(a) {
+		return (Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
+	}
+
+	function v3_norm(v) {
+		return (v3_scale(v, 1/v3_len(v)));
+	}
+
+	function v3_cross(a, b) {
+		//return (v3(a.y * b.z - a.z * b.y, a.x * b.z - a.z * b.x, a.x * b.y - a.y * b.x));
+
+		return (
+			v3(
+				a.y * b.z - a.z * b.y,
+				a.z * b.x - a.x * b.z,
+				a.x * b.y - a.y * b.x
+				)
+			);
+	}
+
+	function v3_dot(a, b) {
+	    return (a.x * b.x + a.y * b.y + a.z * b.z);
+	}
+
+	/* Multiplying a 3D matrix with a 3D vector */
+	function matrix_mult_vec(matrix, vec) {
+		let v1 = v3_scale(matrix.v1, vec.x);
+		let v2 = v3_scale(matrix.v2, vec.y);
+		let v3 = v3_scale(matrix.v3, vec.z);
+		return (v3_add(v1, v3_add(v2, v3)));
+	}
+
+	/* Multiplying two 3D matrices */
+	function matrix_mult(m1, m2) {
+		let v1 = v3(
+				m1.v1.x * m2.v1.x + m1.v2.x * m2.v1.y + m1.v3.x * m2.v1.z,
+				m1.v1.y * m2.v1.x + m1.v2.y * m2.v1.y + m1.v3.y * m2.v1.z,
+				m1.v1.z * m2.v1.x + m1.v2.z * m2.v1.y + m1.v3.z * m2.v1.z);
+
+		let v2 = v3(
+				m1.v1.x * m2.v2.x + m1.v2.x * m2.v2.y + m1.v3.x * m2.v2.z,
+				m1.v1.y * m2.v2.x + m1.v2.y * m2.v2.y + m1.v3.y * m2.v2.z,
+				m1.v1.z * m2.v2.x + m1.v2.z * m2.v2.y + m1.v3.z * m2.v2.z);
+
+		let v3_ = v3(
+				m1.v1.x * m2.v3.x + m1.v2.x * m2.v3.y + m1.v3.x * m2.v3.z,
+				m1.v1.y * m2.v3.x + m1.v2.y * m2.v3.y + m1.v3.y * m2.v3.z,
+				m1.v1.z * m2.v3.x + m1.v2.z * m2.v3.y + m1.v3.z * m2.v3.z);
+		return (new Matrix3d(v1, v2, v3_));
+	}
+
+	class Item {
+	  constructor(pos, scale, rot, vertex_func, draw_mapping_func, raytrace_func) {
+	    this.pos = pos;
+	    this.scale = scale;
+	    this.rot = rot;
+	    this.vertex_func = vertex_func;
+	    this.draw_mapping_func = draw_mapping_func;
+	    this.raytrace_func = raytrace_func;
+	    this.vertices = vertex_func(pos, scale);
+	    rotate_item(this, this.rot);
+	  }
+	}
+
+	function intersect(line, plane) {
+		let n = v3_norm(v3_cross(v3_sub(plane.p3, plane.p1), v3_sub(plane.p2, plane.p1))); /* vector normal to the plane */
+		let d = -(n.x * plane.p1.x + n.y * plane.p1.y + n.z * plane.p1.z); /* distance from the plane to the origin */ /* it's negative because we want to represent the plane equation as n.x*x + n.y*y + n.z*z + d = 0 */
+		let lv = v3_sub(line.p2, line.p1);
+
+		/* plugging in the line eq into the plane eq */
+		let divisor = n.x * lv.x + n.y * lv.y + n.z * lv.z;
+		if (divisor == 0) {
+			return (null);
+		}
+		let dividend = -(n.x * line.p1.x + n.y * line.p1.y + n.z * line.p1.z + d);
+		if (dividend == 0) {
+			return (null);
+		}
+		let t = dividend / divisor;
+		return (v3_add(line.p1, v3_scale(lv, t)));
+	}
+</script>
+
+<script>
+	// axis convention: left hand. (inverted y axis on geogebra, left thumb pointing towards user)
+
+	var htmlcanvas = document.getElementById('canvas');
+	var ctx = htmlcanvas.getContext('2d');
+	const TOLERANCE = 0.000001;//1e-6; // how parallel a line is to the plane means parallel$
+	const origin = v3();
+	var canvas_dist = 1;
+	var canvas_size = v3(2, 2);
+	var camera = new Camera(canvas_dist, canvas_size.x, canvas_size.y);
+	/*camera.A = v3(-1.4049368778981515, 1, 0.16171694135681938);
+	camera.B = v3(-0.16171694135681938, 1, -1.4049368778981515);
+	camera.C = v3(-1.4049368778981515, -1, 0.16171694135681938);*/
+
+	var items = [];
+
+	function draw_line(x1, y1, x2, y2, color = 'black', width = 2) {
+		ctx.strokeStyle = color;
+		ctx.lineWidth = width;
+		ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		ctx.stroke();
+	}
+
+	function fill_canvas(color = 'white') {
+		ctx.fillStyle = color;
+		ctx.beginPath();
+		ctx.rect(0, 0, htmlcanvas.width,  htmlcanvas.height);
+		ctx.fill();
+		ctx.closePath();
+	}
+
+	function draw_circle(x, y, radius, color = 'black', width = 1) {
+		ctx.beginPath();
+		ctx.lineWidth = width;
+		ctx.strokeStyle = color;
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	function draw_vect(v, color = 'black', width = 1, radius = 5) {
+		if (v == null) {
+			return ;
+		}
+		draw_circle(v.x, v.y, radius, color, width);
+	}
+
+	function connect_points(p1, p2) {
+		//console.log('connecting points:');
+		//console.log(p1);
+		//console.log(p2);
+		if (p1 == null || p2 == null) {
+			return ;
+		}
+		draw_vect(p1, 'lightgrey', 0.3);//, '#' + point_connector_color.toString(16));
+		draw_vect(p2, 'lightgrey', 0.3);//'#' + point_connector_color.toString(16));
+		draw_line(p1.x, p1.y, p2.x, p2.y, 'lightgrey');
+	}
+
+	function add_item(item) {
+		items.push(item);
+	}
+
+	function draw() {
+		console.log('drawing...');
+		fill_canvas();
+		for (let i = 0; i < items.length; i++) {
+			outline_item(items[i]);
+			
+		}
+
+		/* debug overlay */
+		function translate_vec(v) {
+			return (v3(v.x, v.z));
+		}
+		draw_vect(v3_scale(v3_add(translate_vec(v3()), v3(10, 10)), 20), 'aqua');
+		//canvas_dist = 100;
+		
+		let a = v3_scale(v3_add(translate_vec(camera.A), v3(10, 10)), 20);
+		let b = v3_scale(v3_add(translate_vec(camera.B), v3(10, 10)), 20);
+		let c = v3_scale(v3_add(translate_vec(camera.C), v3(10, 10)), 20);
+		let d = v3_scale(v3_add(translate_vec(camera.getD()), v3(10, 10)), 20);
+		let eye = v3_scale(v3_add(translate_vec(camera.eye), v3(10, 10)), 20);
+		draw_vect(a, 'blue');
+		draw_vect(b, 'green');
+		draw_vect(c, 'orange');
+		draw_vect(d, 'pink');
+		draw_vect(eye, 'red');
+
+		draw_line(a.x, a.y, b.x, b.y, 'grey', 0.5);
+		draw_line(b.x, b.y, d.x, d.y, 'grey', 0.5);
+		draw_line(d.x, d.y, c.x, c.y, 'grey', 0.5);
+		draw_line(c.x, c.y, a.x, a.y, 'grey', 0.5);
+
+		draw_line(a.x, a.y, eye.x, eye.y, 'grey', 0.5);
+		draw_line(b.x, b.y, eye.x, eye.y, 'grey', 0.5);
+		draw_line(d.x, d.y, eye.x, eye.y, 'grey', 0.5);
+		draw_line(c.x, c.y, eye.x, eye.y, 'grey', 0.5);
+
+		
+		for (let i = 0; i < items.length; i++) {
+			for (let j = 0; j < items[i].vertices.length; j ++) {
+				//if (items[i].vertices[j] == null) {
+				//	continue ;
+				//}
+				let pt = v3_scale(v3_add(translate_vec(items[i].vertices[j]), v3(10, 10)), 20);
+				//let zero = v3_scale(v3_add(translate_vec(v3()), v3(10, 10)), 20);
+				let orig = v3_scale(v3_add(translate_vec(camera.eye), v3(10, 10)), 20);
+				draw_vect(pt, 'blueviolet');
+				draw_line(pt.x, pt.y, orig.x, orig.y, 'grey', 0.5);
+			}
+		}
+		
+		console.log('-------');
+		let ab = camera.getAB();
+		let ref_point = v3_add(camera.getCenter(), camera.getNorm());
+		let ref_cross = v3_cross(ab, ref_point);
+		let test_cross = v3_cross(ab, items[0].vertices[0]);
+		console.log(ref_point);
+		console.log(ref_cross);
+		console.log(test_cross);
+		console.log('-------');
+	}
+
+	/* returns a list of sphere vertices */
+	/* scale.x: radius ; scale.y: amount of vertices around axis y ; scale.z: amount of vertices around axis z */
+	function sphere_vertices(pos, scale) {
+		let vertices = [];
+		
+		/*vertices.push(
+			v3_add(
+				pos,
+				v3(0, scale.x / 2)
+			);*/
+
+		let top_point = v3_add(pos, v3(0, scale.x / 2));
+		for (let i = 1; i <= scale.y; i ++) {
+			for (let j = 1; j <= scale.z; j ++) {
+				vertices.push(rotate_point(rotate_point(top_point, v3(0, 0, j * Math.PI / (scale.z + 1)), pos), v3(0, i * Math.PI / (scale.y /2), 0), pos));	
+			}
+		}
+		vertices.push(top_point);
+		let bottom_point = v3_add(pos, v3(0, -scale.x / 2));
+		vertices.push(bottom_point);
+		return (vertices);
+	}
+
+	/* returns a list of pyramid vertices */
+	function pyramid_vertices(pos, scale) {
+		let vertices = [];
+		
+		/*
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(X),
+					v3_add(
+						v3(0, Y),
+						v3(0, 0, Z)
+						)
+					)
+				)
+			);
+			*/
+
+		vertices.push( //1
+			v3_add(
+				pos,
+				v3(0, scale.y / 2)
+				)
+			);
+
+		vertices.push( //2
+			v3_add(
+				pos,
+				v3_add(
+					v3(-scale.x / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(0, 0, -scale.z / 2)
+						)
+					)
+				)
+			);
+
+		vertices.push( //3
+			v3_add(
+				pos,
+				v3_add(
+					v3(scale.x / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(0, 0, -scale.z / 2)
+						)
+					)
+				)
+			);
+
+		vertices.push( //4
+			v3_add(
+				pos,
+				v3_add(
+					v3(scale.x / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(0, 0, scale.z / 2)
+						)
+					)
+				)
+			);
+
+		vertices.push( //5
+			v3_add(
+				pos,
+				v3_add(
+					v3(-scale.x / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(0, 0, scale.z / 2)
+						)
+					)
+				)
+			);
+
+		return (vertices);
+	}
+
+	/* returns list of cube vertices */
+	function cube_vertices(pos, scale) {
+		let vertices = [];
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, scale.z / 2),
+					v3_add(
+						v3(0, scale.y / 2),
+						v3(-scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, -scale.z / 2),
+					v3_add(
+						v3(0, scale.y / 2),
+						v3(-scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, -scale.z / 2),
+					v3_add(
+						v3(0, scale.y / 2),
+						v3(scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, scale.z / 2),
+					v3_add(
+						v3(0, scale.y / 2),
+						v3(scale.x / 2)
+						)
+					)
+				)
+			);
+		/* down vertices */
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, scale.z / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(-scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, -scale.z / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(-scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, -scale.z / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(scale.x / 2)
+						)
+					)
+				)
+			);
+		vertices.push(
+			v3_add(
+				pos,
+				v3_add(
+					v3(0, 0, scale.z / 2),
+					v3_add(
+						v3(0, -scale.y / 2),
+						v3(scale.x / 2)
+						)
+					)
+				)
+			);
+		return (vertices);
+	}
+
+	function draw_cube_mappings(mappings, item) {
+		connect_points(mappings[0], mappings[1]);
+		connect_points(mappings[1], mappings[2]);
+		connect_points(mappings[2], mappings[3]);
+		connect_points(mappings[3], mappings[0]);
+
+		connect_points(mappings[0], mappings[4]);
+		connect_points(mappings[1], mappings[5]);
+		connect_points(mappings[2], mappings[6]);
+		connect_points(mappings[3], mappings[7]);
+
+		connect_points(mappings[4], mappings[5]);
+		connect_points(mappings[5], mappings[6]);
+		connect_points(mappings[6], mappings[7]);
+		connect_points(mappings[7], mappings[4]);
+	}
+
+	function draw_pyramid_mappings(mappings, item) {
+		connect_points(mappings[0], mappings[1]);
+		connect_points(mappings[0], mappings[2]);
+		connect_points(mappings[0], mappings[3]);
+		connect_points(mappings[0], mappings[4]);
+
+		connect_points(mappings[1], mappings[2]);
+		connect_points(mappings[2], mappings[3]);
+		connect_points(mappings[3], mappings[4]);
+		connect_points(mappings[4], mappings[1]);
+	}
+
+	function draw_sphere_mappings(mappings, item) {
+		/*for (var i = 0; i < mappings.length - 1; i++) {
+			connect_points(mappings[i], mappings[i + 1]);
+		}*/
+		let top_point = mappings[mappings.length - 2];
+		let bottom_point = mappings[mappings.length - 1];
+		for (let i = 0; i < item.scale.y; i++) {
+			connect_points(top_point, mappings[i * item.scale.z]);
+			connect_points(bottom_point, mappings[i * item.scale.z + item.scale.z - 1]);
+			for (var j = 0; j < item.scale.z - 1; j++) {
+				connect_points(mappings[i * item.scale.z + j], mappings[i * item.scale.z + j + 1]);
+			}
+		}
+	}
+
+
+	function move_item(item, pos) {
+		item.pos = v3_add(item.pos, pos);
+		for (let i = 0; i < item.vertices.length; i++) {
+			item.vertices[i] = v3_add(item.vertices[i], pos);
+		}
+	}
+
+	function rotate_item(item, rot) {
+		for (let i = 0; i < item.vertices.length; i++) {
+			item.vertices[i] = rotate_point(item.vertices[i], rot, item.pos);
+		}
+		item.rot = v3_add(item.rot, rot);
+	}
+
+	function scale_item(item, scale) {
+		let rot_backup = v3(item.rot.x, item.rot.y, item.rot.z);
+		rotate_item(item, v3_invert(item.rot));
+		item.scale = v3(scale.x, scale.y, scale.z);
+		item.vertices = item.vertex_func(item.pos, item.scale);
+		rotate_item(item, rot_backup);
+	}
+
+	function outline_item(item) {
+		let mappings = [];
+		for (var i = 0; i < item.vertices.length; i++) {
+			//console.log(i + 1);
+			//mappings.push(map_canvas_to_physical(project_point(item.vertices[i])));
+
+			mappings.push(map_point_to_physical(camera, project_point(item.vertices[i], camera), htmlcanvas.width, htmlcanvas.height));
+		}
+		item.draw_mapping_func(mappings, item);
+	}
+
+	//let cube = new Item(v3(0, 0, -2), v3(1, 1, 1), v3(), cube_vertices, draw_cube_mappings);
+	//add_item(cube);
+	
+	let cube = new Item(v3(-1, 0, -5), v3(1, 1, 1), v3(), cube_vertices, draw_cube_mappings);
+	//add_item(cube);
+
+	let cube2 = new Item(v3(1, 0, -5), v3(1, 1, 1), v3(), cube_vertices, draw_cube_mappings);
+	//add_item(cube2);
+
+	let pyramid = new Item(v3(1, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), pyramid_vertices, draw_pyramid_mappings);
+	add_item(pyramid);
+
+	let sphere = new Item(v3(-3, 0, -5), v3(1, 6, 6), v3(), sphere_vertices, draw_sphere_mappings);
+	//add_item(sphere);
+	
+
+	var iter = 0;
+	function animate() {
+		if (rotate_items_toggle) {
+			for (let i = 0; i < items.length; i++) {
+				//scale_item(items[i], v3(0.2 + Math.sin(iter), 0.2 + Math.sin(iter), 0.2 + Math.sin(iter)));
+		  		rotate_item(items[i], v3(0.02, 0.04, 0.08));
+		  		iter += 0.05;
+		  		iter = iter % Math.PI;
+			}
+		}
+		draw();
+	}
+
+
+	var shift_pressed = false;
+	document.addEventListener('keydown', (event) => {
+		if (event.key == 'Shift') {
+			shift_pressed = true;
+		}
+	});
+	document.addEventListener('keyup', (event) => {
+		if (event.key == 'Shift') {
+			shift_pressed = false;
+		}
+	});
+
+	
+	document.addEventListener('keydown', (event) => {
+		if (event.key == '1') {
+			draw();
+		} else if (event.key == 'w') {
+			camera.move(Direction.Forward, 0.1);
+			draw();
+		} else if (event.key == 's') {
+			camera.move(Direction.Backward, 0.1);
+			draw();
+		} else if (event.key == 'a') {
+			camera.move(Direction.Left, 0.1);
+			draw();
+		} else if (event.key == 'd') {
+			camera.move(Direction.Right, 0.1);
+			draw();
+		} else if (event.key == 'ArrowRight') {
+			camera.rotate(Direction.Right, 0.1);
+			draw();
+		} else if (event.key == 'ArrowLeft') {
+			camera.rotate(Direction.Left, 0.1);
+			draw();
+		} else if (event.key == 'ArrowUp') {
+			camera.rotate(Direction.Up, 0.1);
+			draw();
+		} else if (event.key == 'ArrowDown') {
+			camera.rotate(Direction.Down, 0.1);
+			draw();
+		} else {
+			console.log(event);
+		}
+	});
+
+	document.addEventListener('DOMContentLoaded', (event) => {
+	  	draw();
+	  	//animation_interval = setInterval(animate, 25);
+	});
+
+	htmlcanvas.addEventListener("mousemove", (event) => {
+		let x = event.offsetX;
+		let y = event.offsetY;
+		let coor = "Coordinates: (" + x + " ; " + y + ")";
+		document.getElementById("coords").innerHTML = coor;
+	});
+</script>
+
+</body></html>
