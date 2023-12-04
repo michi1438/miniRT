@@ -107,22 +107,36 @@
 		count --;
 		console.log(point);
 
+		/* FRUSTUM CULLING */
 		/* check for y axis */
 		let ab = camera.getAB();
 		let ref_point = v3_add(camera.getCenter(), camera.getNorm());
 		let ref_cross = v3_cross(ab, ref_point);
 		let test_cross = v3_cross(ab, v3_sub(point, camera.A));
 		if (!same_sign(ref_cross.y, test_cross.y)) {
-			return (null);
+			//return (null);
 		}
+		console.log('??????????????');
+		console.log(`point: ${point}`);
+		console.log(`ab: ${ab}, center: ${camera.getCenter()}, norm: ${camera.getNorm()}, cross: ${ref_cross}`);
+		console.log(`v3_sub(point, camera.A): ${v3_sub(point, camera.A)}, test_cross: ${test_cross}`);
+		console.log('??????????????');
 
-		let eye_middle_ac = v3_sub(camera.eye, v3_add(camera.A, v3_scale(camera.getAC(), 0.5)));
+		/*let eye_middle_ac = v3_sub(camera.eye, v3_add(camera.A, v3_scale(camera.getAC(), 0.5)));
 		ref_point = v3_add(eye_middle_ac, camera.getAB());
 		ref_cross = v3_cross(eye_middle_ac, ref_point);
 		test_cross = v3_cross(eye_middle_ac, v3_sub(point, camera.eye));
 		if (!same_sign(ref_cross.y, test_cross.y)) {
 			return (null);
 		}
+
+		let eye_middle_bd = v3_sub(camera.eye, v3_add(camera.B, v3_scale(camera.getAC(), 0.5)));
+		ref_point = v3_add(eye_middle_bd, v3_invert(camera.getAB()));
+		ref_cross = v3_cross(eye_middle_bd, ref_point);
+		test_cross = v3_cross(eye_middle_bd, v3_sub(point, camera.eye));
+		if (!same_sign(ref_cross.y, test_cross.y)) {
+			return (null);
+		}*/
 
 		/* TODO: */
 		/* check for Eye - middle BD */
@@ -262,7 +276,7 @@
 			let y_vect = v3_scale(v3_norm(getAC()), screen_height);*/
 
 
-			let ap = v3_sub(p, this.A);
+			let ap = v3_abs(v3_sub(p, this.A));
 			let x_ratio = camera.canvas_width / Math.abs(camera.getAB().x);
 			let y_ratio = camera.canvas_height / Math.abs(camera.getAC().y);
 			let res = v3(ap.x * x_ratio, ap.y * y_ratio);
@@ -273,6 +287,9 @@
 	function map_point_to_physical(camera, point, physical_width, physical_height) {
 		if (point == null) {
 			return (null);
+		}
+		if (point.x == 6.070376473328223) {
+			console.log('LALALALALALA');
 		}
 		let x_ratio = physical_width / camera.canvas_width;
 		let y_ratio = physical_height / camera.canvas_height;
@@ -301,6 +318,10 @@
 
 	function v3_invert(a) {
 		return (v3_scale(a, -1))
+	}
+
+	function v3_abs(a) {
+		return (v3(Math.abs(a.x), Math.abs(a.y), Math.abs(a.z)));
 	}
 
 	function v3_len(a) {
@@ -396,9 +417,12 @@
 	var canvas_dist = 1;
 	var canvas_size = v3(2, 2);
 	var camera = new Camera(canvas_dist, canvas_size.x, canvas_size.y);
-	/*camera.A = v3(-1.4049368778981515, 1, 0.16171694135681938);
-	camera.B = v3(-0.16171694135681938, 1, -1.4049368778981515);
-	camera.C = v3(-1.4049368778981515, -1, 0.16171694135681938);*/
+
+
+	camera.A = v3(6.123958580496993, 1.4816940220588317, -1.6054972595099892);
+	camera.B = v3(6.071201285349139,  1.3819623198616062,  -3.602312287344451);
+	camera.C = v3( 6.075187559442211, -0.515157480914275, -1.5044751699487897);
+	camera.eye = v3(7.0725489710061655,0.4077233294835535,-2.5785148454369);
 
 	var items = [];
 
@@ -476,6 +500,11 @@
 		draw_vect(c, 'orange');
 		draw_vect(d, 'pink');
 		draw_vect(eye, 'red');
+
+
+
+		let ref_point_ = v3_scale(v3_add(translate_vec(v3_add(camera.getCenter(), camera.getNorm())), v3(10, 10)), 20);
+		draw_vect(ref_point_, 'lightblue');
 
 		draw_line(a.x, a.y, b.x, b.y, 'grey', 0.5);
 		draw_line(b.x, b.y, d.x, d.y, 'grey', 0.5);
