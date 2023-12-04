@@ -6,12 +6,6 @@
 </head>
 <body>
 
-
-
-
-
-
-
 	<canvas style="border: solid" id="canvas" width="400" height="400"></canvas>
 	<p id="coords">Coordinates: (-1 ; -1)</p>
 
@@ -157,6 +151,16 @@
 	/* Converting degrees to radians */
 	function degree_to_radian(angle) {
 		return (angle * Math.PI / 180);
+	}
+
+	function expressPointInBasis(A, B, C, point) {
+	    // Calculate coefficients
+	    const denominator = (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y);
+
+	    const x = ((point.x - A.x) * (C.y - A.y) - (C.x - A.x) * (point.y - A.y)) / denominator;
+	    const y = ((B.x - A.x) * (point.y - A.y) - (point.x - A.x) * (B.y - A.y)) / denominator;
+
+	    return { x, y };
 	}
 
 	/*
