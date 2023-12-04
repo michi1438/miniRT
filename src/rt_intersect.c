@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:28:03 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/29 11:59:51 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/04 16:08:18 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj)
 int	solve_discriminent(float a, float b, float c, float *intersect_dist)
 {
 	float discrim;
-	float q;
 	float temp;
    
 	discrim = b * b - 4 * a * c;
@@ -64,10 +63,9 @@ int	solve_discriminent(float a, float b, float c, float *intersect_dist)
 	}
 	else
 	{
-		if (b > 0)
-			q = -0.5 * (b + sqrt(discrim));
-		else
-			q = -0.5 * (b - sqrt(discrim));
+		float q = (b > 0) ?
+					-0.5 * (b + sqrt(discrim)):
+					-0.5 * (b - sqrt(discrim));
 		intersect_dist[0] = q / a;
 		intersect_dist[1] = b / q;
 	}

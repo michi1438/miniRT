@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/27 16:24:12 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/04 15:22:29 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,16 @@ void	fill_camera(t_elem *elem, char **splited)
 	while (++i < 3 && xyz_split[i] != NULL && norm_xyz_split[i] != NULL)
 	{
 		elem->xyz[i] = ft_atof(xyz_split[i]);
-		elem->norm_xyz[i] = (ft_atof(norm_xyz_split[i]) + 1) / 2 * M_PI;
+		elem->norm_xyz[i] = ft_atof(norm_xyz_split[i]) / 2 * M_PI;
+//		printf("elem->norm[i] = %f\n", elem->norm_xyz[i]);
 	}
 	i = -1;
 	while (++i < 3)
 	{
 		free(xyz_split[i]);
 		free(norm_xyz_split[i]);
-		//if (elem->norm_xyz[i] < -1 || elem->norm_xyz[i] > 1)
-		//	fill_err(elem->type);
+		if (fabs(elem->norm_xyz[i]) > 0.51 * M_PI)
+			fill_err(elem->type);
 	}
 }
 
