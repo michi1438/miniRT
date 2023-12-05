@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/05 13:07:26 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/05 13:55:58 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # define S_HEIGHT (1080)
 
 # include <stdio.h>
+# include <float.h>
 //# include "../minilibx-linux/mlx.h"
 # include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
@@ -91,6 +92,7 @@ int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
+int		mix_color(int *rgb);
 
 // ERR_HANDLING.C
 int		print_err(char *str);

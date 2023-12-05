@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/04 17:44:09 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/05 13:59:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 {
 	float	pscreen[3];
 	int		xy[2];
-	float	thc;
+	float	inter_dist[2];
 	t_elem	*cam_specs;
 	t_elem	*objects;
 	t_list	*list;	
@@ -40,14 +40,19 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 			rt_matrix(pscreen, cam_specs);
 			//printf("(%.5f,%.5f,%.5f) ", pscreen[0], pscreen[1], pscreen[2]);
 			list = *e_list;
+			inter_dist[1] = FLT_MAX;
+			inter_dist[0] = 0;
 			while (list->content != NULL)
 			{
 				objects = list->content;
 				if (objects->type == 's')
 				{
-					thc = intersect(pscreen, cam_specs, objects);
-					if (thc > 0)
-						mlx_pp(scrn, xy[0], xy[1], 0x000000FF * thc / objects->radius);
+					inter_dist[0] = intersect(pscreen, cam_specs, objects);
+					if (inter_dist[0] >= 0 && inter_dist[0] <= inter_dist[1])
+					{
+						mlx_pp(scrn, xy[0], xy[1], mix_color(objects->rgb));
+						inter_dist[1] = inter_dist[0];
+					}
 				}
 				list = list->next;
 			}
@@ -69,4 +74,15 @@ t_elem	*findcam(t_list **e_list)
 		list = list->next;
 	}
 	return (NULL);
+}
+
+int	mix_color(int *rgb)
+{
+	int	res;
+
+	res = 0;
+	res += rgb[0] * 0x00010000;
+	res += rgb[1] * 0x00000100;
+	res += rgb[2] * 0x00000001;
+	return (res);
 }

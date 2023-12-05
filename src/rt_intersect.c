@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:28:03 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/04 16:08:18 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/05 13:21:27 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj)
 		if (intersec_dist[0] < 0)
 			intersec_dist[0] = intersec_dist[1];
 		if (intersec_dist[0] >= 0)
-			return (thc);
+			return (intersec_dist[0]);
 	}
 	return (-1);
 }
