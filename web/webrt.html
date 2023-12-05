@@ -41,6 +41,10 @@
 	    this.p2 = p2;
 	    this.p3 = p3;
 	  }
+
+	  getNormal() {
+	  	return(v3_norm(v3_cross(v3_sub(this.p2, this.p1), v3_sub(this.p3, this.p1))));
+	  }
 	}
 
 	class Line {
@@ -60,6 +64,18 @@
 		toString() {
 			return ('[' + this.v1 + ', ' + this.v2 + ', ' + this.v3 + ']')
 		}
+	}
+
+	function same_side_of_line(line, A, B) {
+		let cross1 = v3_cross(v3_sub(line.p2, line.p1), v3_sub(A, line.p1));
+		let cross2 = v3_cross(v3_sub(line.p2, line.p1), v3_sub(B, line.p1));
+		return (v3_dot(cross1, cross2) >= 0);
+	}
+
+	function same_side_of_plane(plane, A, B) {
+		let dot1 = v3_dot(plane.getNormal(), v3_sub(A, plane.p1));
+		let dot2 = v3_dot(plane.getNormal(), v3_sub(B, plane.p1));
+		return (same_sign(dot1, dot2));
 	}
 
 	/* rotate point p, by a vector v, around a point r */
@@ -102,39 +118,20 @@
 		console.log(point);
 
 		/* FRUSTUM CULLING */
-		/* check for y axis */
-		let ab = camera.getAB();
-		let ref_point = v3_add(camera.getCenter(), camera.getNorm());
-		let ref_cross = v3_cross(ab, ref_point);
-		let test_cross = v3_cross(ab, v3_sub(point, camera.A));
-		if (!same_sign(ref_cross.y, test_cross.y)) {
-			//return (null);
-		}
-		console.log('??????????????');
-		console.log(`point: ${point}`);
-		console.log(`ab: ${ab}, center: ${camera.getCenter()}, norm: ${camera.getNorm()}, cross: ${ref_cross}`);
-		console.log(`v3_sub(point, camera.A): ${v3_sub(point, camera.A)}, test_cross: ${test_cross}`);
-		console.log('??????????????');
-
-		/*let eye_middle_ac = v3_sub(camera.eye, v3_add(camera.A, v3_scale(camera.getAC(), 0.5)));
-		ref_point = v3_add(eye_middle_ac, camera.getAB());
-		ref_cross = v3_cross(eye_middle_ac, ref_point);
-		test_cross = v3_cross(eye_middle_ac, v3_sub(point, camera.eye));
-		if (!same_sign(ref_cross.y, test_cross.y)) {
+		/* check for y axis */		
+		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.C), camera.B, point)) {
 			return (null);
 		}
-
-		let eye_middle_bd = v3_sub(camera.eye, v3_add(camera.B, v3_scale(camera.getAC(), 0.5)));
-		ref_point = v3_add(eye_middle_bd, v3_invert(camera.getAB()));
-		ref_cross = v3_cross(eye_middle_bd, ref_point);
-		test_cross = v3_cross(eye_middle_bd, v3_sub(point, camera.eye));
-		if (!same_sign(ref_cross.y, test_cross.y)) {
+		if (!same_side_of_plane(new Plane(camera.eye, camera.B, camera.getD()), camera.A, point)) {
 			return (null);
-		}*/
-
-		/* TODO: */
-		/* check for Eye - middle BD */
+		}
 		/* check for x axis */
+		if (!same_side_of_plane(new Plane(camera.eye, camera.C, camera.getD()), camera.A, point)) {
+			return (null);
+		}
+		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.B), camera.C, point)) {
+			return (null);
+		}
 
 		let line = new Line(camera.eye, point);
 		let canvas = camera.getCanvasPlane();
@@ -275,16 +272,21 @@
 		}
 
 		/* expresses a 3d point relatively to point A */
+		/* x: 2.52 ; y: 0.99 */
 		get_point_canvas_rel(p) {
-			/*let x_vect = v3_scale(v3_norm(getAB()), screen_width);
-			let y_vect = v3_scale(v3_norm(getAC()), screen_height);*/
-
-
-			let ap = v3_abs(v3_sub(p, this.A));
-			let x_ratio = camera.canvas_width / Math.abs(camera.getAB().x);
-			let y_ratio = camera.canvas_height / Math.abs(camera.getAC().y);
-			let res = v3(ap.x * x_ratio, ap.y * y_ratio);
-			return (res);
+			let AB_proj = project_point_onto_line(new Line(this.A, this.B), p);
+			let AC_proj = project_point_onto_line(new Line(this.A, this.C), p);
+			let A_AB_proj = v3_sub(AB_proj, this.A);
+			let A_AC_proj = v3_sub(AC_proj, this.A);
+			let x_mult = 1;
+			let y_mult = 1;
+			if (!same_side_of_line(new Line(this.A, this.B), this.C, p)) {
+				y_mult = -1;
+			}
+			if (!same_side_of_line(new Line(this.A, this.C), this.B, p)) {
+				x_mult = -1;
+			}
+			return (v3(v3_len(A_AB_proj) * x_mult, v3_len(A_AC_proj) * y_mult));
 		}
 	}
 
@@ -301,7 +303,7 @@
 		let rel = camera.get_point_canvas_rel(point);
 
 		//let canvas_x_ratio = point.x / camera.getAB().x;
-		return (v3(rel.x * x_ratio, rel.y * y_ratio * -1));
+		return (v3(rel.x * x_ratio, rel.y * y_ratio /* * -1*/));
 	}
 
 	function v3(x = 0, y = 0, z = 0) {
@@ -336,6 +338,10 @@
 		return (v3_scale(v, 1/v3_len(v)));
 	}
 
+	function v3_norm_squared(v) {
+		return (v.x * v.x + v.y * v.y + v.z * v.z);
+	}
+
 	function v3_cross(a, b) {
 		//return (v3(a.y * b.z - a.z * b.y, a.x * b.z - a.z * b.x, a.x * b.y - a.y * b.x));
 
@@ -350,6 +356,21 @@
 
 	function v3_dot(a, b) {
 	    return (a.x * b.x + a.y * b.y + a.z * b.z);
+	}
+
+	/* https://stackoverflow.com/a/12499474 */
+	function project_point_onto_line(line, point) {
+		let A = line.p1;
+		let B = line.p2;
+		let C = point;
+		var x1 = A.x, y1 = A.y, z1 = A.z;
+	    var x2 = B.x, y2 = B.y, z2 = B.z;
+	    var x3 = C.x, y3 = C.y, z3 = C.z;
+	    var px = x2 - x1, py = y2 - y1, pz = z2 - z1;
+	    var dAB = px * px + py * py + pz * pz;
+	    var u = ((x3 - x1) * px + (y3 - y1) * py + (z3 - z1) * pz) / dAB;
+    	var x = x1 + u * px, y = y1 + u * py, z = z1 + u * pz;
+    	return (v3(x, y, z));
 	}
 
 	/* Multiplying a 3D matrix with a 3D vector */
@@ -423,10 +444,15 @@
 	var camera = new Camera(canvas_dist, canvas_size.x, canvas_size.y);
 
 
-	camera.A = v3(6.123958580496993, 1.4816940220588317, -1.6054972595099892);
+	/*camera.A = v3(6.123958580496993, 1.4816940220588317, -1.6054972595099892);
 	camera.B = v3(6.071201285349139,  1.3819623198616062,  -3.602312287344451);
 	camera.C = v3( 6.075187559442211, -0.515157480914275, -1.5044751699487897);
-	camera.eye = v3(7.0725489710061655,0.4077233294835535,-2.5785148454369);
+	camera.eye = v3(7.0725489710061655,0.4077233294835535,-2.5785148454369);*/
+
+	/*camera.A = v3(0.30116867893975824, 1, -1.2817732906760417);
+	camera.B = v3(1.3817732906760416, 1, 0.4011686789397584);
+	camera.C = v3(0.30116867893975824, -1, -1.2817732906760417);
+	camera.eye = v3(0, 0, 0.1);*/
 
 	var items = [];
 
@@ -824,8 +850,9 @@
 		for (var i = 0; i < item.vertices.length; i++) {
 			//console.log(i + 1);
 			//mappings.push(map_canvas_to_physical(project_point(item.vertices[i])));
-
-			mappings.push(map_point_to_physical(camera, project_point(item.vertices[i], camera), htmlcanvas.width, htmlcanvas.height));
+			let mapping = map_point_to_physical(camera, project_point(item.vertices[i], camera), htmlcanvas.width, htmlcanvas.height);
+			console.log(`pushing mapping: ${mapping}`);
+			mappings.push(mapping);
 		}
 		item.draw_mapping_func(mappings, item);
 	}
