@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/05 13:55:58 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/06 11:14:00 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	normalize(float *xyz);
 t_elem	*findcam(t_list **e_list);
 
 // INTERSECTING.C
-int		intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
+float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
 int		solve_discriminent(float a, float b, float c, float *intersect_dist);
 
 // VEC_MATH.C

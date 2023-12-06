@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/05 13:59:32 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/06 10:43:50 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,13 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 			//printf("(%.5f,%.5f,%.5f) ", pscreen[0], pscreen[1], pscreen[2]);
 			list = *e_list;
 			inter_dist[1] = FLT_MAX;
-			inter_dist[0] = 0;
 			while (list->content != NULL)
 			{
 				objects = list->content;
 				if (objects->type == 's')
 				{
 					inter_dist[0] = intersect(pscreen, cam_specs, objects);
-					if (inter_dist[0] >= 0 && inter_dist[0] <= inter_dist[1])
+					if (inter_dist[0] > 0 && inter_dist[0] < inter_dist[1])
 					{
 						mlx_pp(scrn, xy[0], xy[1], mix_color(objects->rgb));
 						inter_dist[1] = inter_dist[0];
