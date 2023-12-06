@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/06 15:48:10 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/06 17:00:45 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,18 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 	}
 }
 
-void	get_norm(float p_norm[3], float pscreen[3], t_elem *objects, float dis)
+void	get_norm(float vec_norm[3], float pscreen[3], t_elem *objects, float dis)
 {
-	pscreen[0] *= dis;
-	pscreen[1] *= dis;
-	pscreen[2] *= dis;
-	vec_substract(p_norm, pscreen, objects->xyz);
-	normalize(p_norm);
-	p_norm[0] = (p_norm[0] + 1) / 2;
-	p_norm[1] = (p_norm[1] + 1) / 2;
-	p_norm[2] = (p_norm[2] + 1) / 2;
+
+	vec_norm[0] = pscreen[0] * dis;
+	vec_norm[1] = pscreen[1] * dis;
+	vec_norm[2] = pscreen[2] * dis;
 	//printf("(%.2f,%.2f,%.2f)", p_norm[0], p_norm[1], p_norm[2]);
+	vec_substract(vec_norm, vec_norm, objects->xyz);
+	normalize(vec_norm);
+	vec_norm[0] = (vec_norm[0] + 1) / 2;
+	vec_norm[1] = (vec_norm[1] + 1) / 2;
+	vec_norm[2] = (vec_norm[2] + 1) / 2;
 }
 
 t_elem	*findcam(t_list **e_list)
@@ -100,8 +101,8 @@ int	mix_color(int *rgb, float p_norm[3])
 	int	res;
 
 	res = 0;
-	res += rgb[0] * (0x00010000 * p_norm[0]);
-	res += rgb[1] * (0x00000100 * p_norm[1]);
-	res += rgb[2] * (0x00000001 * p_norm[2]);
+	res += rgb[2] * 0x00000001 * p_norm[2];
+	res += rgb[1] * 0x00000100 * p_norm[1];
+	res += rgb[0] * 0x00010000 * p_norm[0];
 	return (res);
 }
