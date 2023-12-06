@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/06 11:14:00 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/06 15:34:17 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	rt_matrix(float *ret, t_elem *cam_specs);
 
 // SCENE.C
 void	set_scene(t_scData *scrn, t_list **e_list);
+void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list);
+void	get_norm(float P_norm[3], float pscreen[3], t_elem *objects, float dis);
 void	first_rays(t_scData *scrn, t_list **e_list);
 void	normalize(float *xyz);
 t_elem	*findcam(t_list **e_list);
@@ -92,7 +94,7 @@ int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(int *rgb);
+int		mix_color(int *rgb, float p_norm[3]);
 
 // ERR_HANDLING.C
 int		print_err(char *str);
