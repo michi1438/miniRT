@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/29 14:41:14 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	normalize(float *xyz)
 {
 	float	vec_len;
 
-	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + 1);
+	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2));
 	xyz[0] = xyz[0] / vec_len;
 	xyz[1] = xyz[1] / vec_len;
 	xyz[2] = xyz[2] / vec_len;

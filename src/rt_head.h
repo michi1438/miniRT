@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/05 13:55:58 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/07 08:59:15 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 
 # include <stdio.h>
 # include <float.h>
-//# include "../minilibx-linux/mlx.h"
-# include "../minilibx_opengl_20191021/mlx.h"
+# include "../minilibx-linux/mlx.h"
+//# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
 
@@ -53,12 +53,14 @@ void	rt_matrix(float *ret, t_elem *cam_specs);
 
 // SCENE.C
 void	set_scene(t_scData *scrn, t_list **e_list);
+void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list);
+void	get_norm(float P_norm[3], float pscreen[3], t_elem *objects, float dis);
 void	first_rays(t_scData *scrn, t_list **e_list);
 void	normalize(float *xyz);
 t_elem	*findcam(t_list **e_list);
 
 // INTERSECTING.C
-int		intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
+float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
 int		solve_discriminent(float a, float b, float c, float *intersect_dist);
 
 // VEC_MATH.C
@@ -92,7 +94,7 @@ int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(int *rgb);
+int		mix_color(int *rgb, float p_norm[3]);
 
 // ERR_HANDLING.C
 int		print_err(char *str);
