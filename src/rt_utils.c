@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/07 15:34:26 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/11 12:10:44 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,21 @@ float	ft_atof(char *str)
 	len = 0;
 	while (str[i] != '\0' && str[i] != '.')
 		res += (str[i++] - '0') * pow(10, --len);
-//	XXX TEST for precision...
+/*	XXX TEST for precision...
 	printf("This is a test for the ft_atof()'s precision...\n");
 	printf("printf(\"%%.30f\\n\", (float)res * neg);	--> ");
 	printf("%.30f\n", (float)res * neg);
 	printf("printf(\"%%.30f\\n\", 0.2);			--> ");
 	printf("%.30f\n\n", 0.2);
+*/
 	return (res * neg);
+}
+
+int	mix_color(int *rgb, float p_norm[3], t_elem *amb)
+{
+	int	res;
+
+	(void)amb;
+	res = ((int)(rgb[0] * p_norm[2]) << 16 | (int)(rgb[1] * p_norm[2]) << 8 | (int)(rgb[2]));
+	return (res);
 }

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/07 08:59:15 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/11 11:44:37 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define RT_HEAD_H
 
 # define S_WIDTH (1920)
-# define S_HEIGHT (1080)
+# define S_HEIGHT (1800)
 
 # include <stdio.h>
 # include <float.h>
@@ -54,10 +54,13 @@ void	rt_matrix(float *ret, t_elem *cam_specs);
 // SCENE.C
 void	set_scene(t_scData *scrn, t_list **e_list);
 void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list);
-void	get_norm(float P_norm[3], float pscreen[3], t_elem *objects, float dis);
+void	inter_norm(float P_norm[3], float pscreen[3], t_elem *objects, float dis);
 void	first_rays(t_scData *scrn, t_list **e_list);
 void	normalize(float *xyz);
+
+// FETCH_ELEM.C
 t_elem	*findcam(t_list **e_list);
+t_elem	*findamb(t_list **e_list);
 
 // INTERSECTING.C
 float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
@@ -94,7 +97,7 @@ int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(int *rgb, float p_norm[3]);
+int		mix_color(int *rgb, float p_norm[3], t_elem *amb);
 
 // ERR_HANDLING.C
 int		print_err(char *str);

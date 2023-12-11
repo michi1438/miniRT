@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/06 17:00:45 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/11 11:20:49 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,9 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 	float	p_norm[3];
 	t_list	*list;	
 	t_elem	*objects;
+	t_elem	*amb;
 
+	amb = findamb(e_list);
 	list = *e_list;
 	inter_dist[1] = FLT_MAX;
 	while (list->content != NULL)
@@ -57,8 +59,8 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 			inter_dist[0] = intersect(pscreen, cam_specs, objects);
 			if (inter_dist[0] > 0 && inter_dist[0] < inter_dist[1])
 			{
-				get_norm(p_norm, pscreen, objects, inter_dist[0]);
-				mlx_pp(scrn, xy[0], xy[1], mix_color(objects->rgb, p_norm));
+				inter_norm(p_norm, pscreen, objects, inter_dist[0]);
+				mlx_pp(scrn, xy[0], xy[1], mix_color(objects->rgb, p_norm, amb));
 				inter_dist[1] = inter_dist[0];
 			}
 		}
@@ -66,7 +68,7 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 	}
 }
 
-void	get_norm(float vec_norm[3], float pscreen[3], t_elem *objects, float dis)
+void	inter_norm(float vec_norm[3], float pscreen[3], t_elem *objects, float dis)
 {
 
 	vec_norm[0] = pscreen[0] * dis;
@@ -78,31 +80,4 @@ void	get_norm(float vec_norm[3], float pscreen[3], t_elem *objects, float dis)
 	vec_norm[0] = (vec_norm[0] + 1) / 2;
 	vec_norm[1] = (vec_norm[1] + 1) / 2;
 	vec_norm[2] = (vec_norm[2] + 1) / 2;
-}
-
-t_elem	*findcam(t_list **e_list)
-{
-	t_elem	*cam;
-	t_list	*list;	
-
-	list = *e_list;
-	while (list != NULL)
-	{
-		cam = (list)->content;
-		if (cam->type == 'C')
-			return (cam);
-		list = list->next;
-	}
-	return (NULL);
-}
-
-int	mix_color(int *rgb, float p_norm[3])
-{
-	int	res;
-
-	res = 0;
-	res += rgb[2] * 0x00000001 * p_norm[2];
-	res += rgb[1] * 0x00000100 * p_norm[1];
-	res += rgb[0] * 0x00010000 * p_norm[0];
-	return (res);
 }
