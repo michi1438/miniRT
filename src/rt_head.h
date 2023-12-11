@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/06 16:29:12 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/07 08:59:15 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 
 # include <stdio.h>
 # include <float.h>
-//# include "../minilibx-linux/mlx.h"
-# include "../minilibx_opengl_20191021/mlx.h"
+# include "../minilibx-linux/mlx.h"
+//# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
 
