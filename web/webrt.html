@@ -1046,7 +1046,7 @@
 	//add_item(sphere2);
 	//add_item(sphere3);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(0, 0, -5), v3(1, 2, 10), v3(0, 1), GREEN, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(0, 0, -5), v3(1, 2, 10), v3(), GREEN, cylinder_vertices, draw_cylinder_mappings);
 	add_item(cylinder);
 
 	var shift_pressed = false;
@@ -1465,8 +1465,8 @@
     }
     function intersect_ray_cylinder(ray, cylinder) {
     	let res = [];
-    	let C = v3_add(cylinder.pos, v3_scale(v3_norm(cylinder.rot), cylinder.scale.y / 2)); // top of the cylinder
-    	let V = v3_invert(v3_norm(cylinder.rot)); // axis of the cylinder going from the point C to the bottom
+    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])); // axis of the cylinder going from the point C to the 
+    	let C = v3_add(cylinder.pos, v3_scale(V, -cylinder.scale.y / 2)); // top of the cylinder
     	let r = cylinder.scale.x / 2;
     	let L = v3_add(C, v3_scale(V, cylinder.scale.y)); // end cap of the cylinder
 
@@ -1485,10 +1485,27 @@
     	let discriminant = b * b - 4 * a * c;
     	if (discriminant < 0) {
     		return ([]);
-    	} else if (discriminant == 0) {
-    		return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a))]);
+    	} else if (Math.abs(discriminant) <= TOLERANCE) {
+    		let res1 = v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a));
+    		let res1_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res1);
+    		if (v3_len(v3_sub(cylinder.pos, res1_proj_on_center_axis)) <= cylinder.scale.y / 2) {
+    			return([res1]);
+    		}
     	} else {
-    		return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a)), v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a))]);
+    		let final_res = [];
+    		let res1 = v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a));
+    		let res1_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res1);
+    		if (v3_len(v3_sub(cylinder.pos, res1_proj_on_center_axis)) <= cylinder.scale.y / 2) {
+    			final_res.push(res1);
+    		}
+
+    		let res2 = v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a));
+    		let res2_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res2);
+    		if (v3_len(v3_sub(cylinder.pos, res2_proj_on_center_axis)) <= cylinder.scale.y / 2) {
+    			final_res.push(res2);
+    		}
+    		return (final_res);
+    		//return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a)), v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a))]);
     	}
     }
     function ray_intersection(ray, object) {
