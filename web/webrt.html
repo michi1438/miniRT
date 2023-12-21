@@ -18,8 +18,30 @@
 	<br>
 	<input type="number" id="rt_precision" name="quantity" min="0.0001" max="10" value="0.01">
 
+<script>
+	/* colors */
+	function add_colors(c1, c2) {
+		let res = v3_add(c1, c2);
+		res.x = Math.min(Math.max(res.x, 0), 255);
+		res.y = Math.min(Math.max(res.y, 0), 255);
+		res.z = Math.min(Math.max(res.z, 0), 255);
+		return (res);
+	}
+
+	function modify_color_intensity(color, scalar) {
+		let res = v3_scale(color, scalar);
+		res.x = Math.min(Math.max(res.x, 0), 255);
+		res.y = Math.min(Math.max(res.y, 0), 255);
+		res.z = Math.min(Math.max(res.z, 0), 255);
+		return (res);
+	}
+	
+</script>
 
 <script>
+	function debug(arg) {
+		console.log(`${arg}`);
+	}
 	function same_sign(a, b) {
 		return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
 	}
@@ -617,6 +639,7 @@
 		  		//items[i].color = smoothColorTransition(color_iter, 600);
 			}
 			draw();
+			raytrace();
 		}
 	}
 
@@ -1033,7 +1056,7 @@
 	let pyramid = new Item(ObjectType.Pyramid, v3(1, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, pyramid_vertices, draw_pyramid_mappings);
 	//add_item(pyramid);
 
-	let sphere = new Item(ObjectType.Sphere, v3(-3, 0, -5), v3(1, 8, 4), v3(), RED, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), RED, sphere_vertices, draw_sphere_mappings);
 	
 
 	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -5), v3(1, 8, 4), v3(), GREEN, sphere_vertices, draw_sphere_mappings);
@@ -1042,11 +1065,11 @@
 	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, sphere_vertices, draw_sphere_mappings);
 	
 
-	//add_item(sphere);
+	add_item(sphere);
 	//add_item(sphere2);
 	//add_item(sphere3);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(0, 0, -5), v3(1, 2, 10), v3(), GREEN, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(0, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, cylinder_vertices, draw_cylinder_mappings);
 	add_item(cylinder);
 
 	var shift_pressed = false;
@@ -1463,50 +1486,113 @@
     	}
     	return (res);
     }
-    function intersect_ray_cylinder(ray, cylinder) {
-    	let res = [];
-    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])); // axis of the cylinder going from the point C to the 
-    	let C = v3_add(cylinder.pos, v3_scale(V, -cylinder.scale.y / 2)); // top of the cylinder
-    	let r = cylinder.scale.x / 2;
-    	let L = v3_add(C, v3_scale(V, cylinder.scale.y)); // end cap of the cylinder
 
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1));
-    	let X = v3_sub(ray.p1, C);
+    /* https://iquilezles.org/articles/intersectors/ */
+    /* dark magic */
+    function intersect_ray_cylinder(ray, cylinder) {
+    	let D = v3_norm(v3_sub(ray.p2, ray.p1)); // direction vector of the ray
+    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+    	let cylinder_length = cylinder.scale.y;
+    	let a = v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2));
+    	let b = v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2));
+    	let ra = cylinder.scale.x / 2;
+
+    	let ba = v3_sub(b, a);
+    	let ro = ray.p1;
+    	let rd = D;
+	    let oc = v3_sub(ro, a);
+	    let baba = v3_dot(ba,ba);
+	    let bard = v3_dot(ba,rd);
+	    let baoc = v3_dot(ba,oc);
+	    let k2 = baba - bard*bard;
+	    let k1 = baba*v3_dot(oc,rd) - baoc*bard;
+	    let k0 = baba*v3_dot(oc,oc) - baoc*baoc - ra*ra*baba;
+	    let h = k1*k1 - k2*k0;
+	    if( h<0 ) return ([]);//no intersection
+	    h = Math.sqrt(h);
+	    let t = (-k1-h)/k2;
+	    // body
+	    let y = baoc + t*bard;
+	    if( y>0.0 && y<baba ) {
+	    	return ([v3_add(v3_scale(V, t), ray.p1)]);
+		}
+	    // caps
+	    t = ( ((y<0.0) ? 0.0 : baba) - baoc)/bard;
+	    if( Math.abs(k1+k2*t)<h )
+	    {
+	    	return ([v3_add(v3_scale(V, t), ray.p1)]);
+	    }
+	    return ([]);//no intersection
+    }
+
+    /* Ref: Intersect SegmentCylinder page 197 (Real time collision detection by Christer Ericson) */
+    /* http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf */
+    /* Unused, there seems to be a precision??? problem with it or something. the cylinder appears closer than it is */
+    function intersect_ray_cylinder_(ray, cylinder) {
+    	let res = [];
+    	let D = v3_norm(v3_sub(ray.p2, ray.p1)); // direction vector of the ray
+    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])); // axis of the cylinder going from the point C to the 
 
     	/*
-			a   = D|D - (D|V)^2
-			b/2 = D|X - (D|V)*(X|V)
-			c   = X|X - (X|V)^2 - r*r
+			a = (d × n) · (d × n)
+			b = (d × m) · (d × n)
+			c = (d × m) · (d × m) − r^2 (d · d)
     	*/
-    	let a = v3_dot(D, D) - Math.pow(v3_dot(D, V), 2);
-    	let b = 2 * (v3_dot(D, X) - v3_dot(D, V) * v3_dot(X, V));
-    	let c = v3_dot(X, X) - Math.pow(v3_dot(X, V), 2) - r * r;
+    	/* t = (-b +- sqrt(b^2 - a * c)) / a */
 
-    	let discriminant = b * b - 4 * a * c;
-    	if (discriminant < 0) {
+    	/*
+    	               P
+    	             __x__
+                     |    |
+		A x ---x-----|----|-----> ray
+		       B     |    |
+		             |_x__|cylinder
+		               Q
+
+
+    	*/
+
+    	let A = ray.p1;
+    	let B = ray.p2;
+    	let cylinder_length = cylinder.scale.y ;
+    	let cylinder_radius = cylinder.scale.x / 2;
+    	let P = v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2));
+    	let Q = v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2));
+    	let d = v3_sub(Q, P);
+    	let m = v3_sub(A, P);
+    	let n = v3_sub(B, A);
+
+
+    	let a = v3_dot(v3_cross(d, n), v3_cross(d, n));
+    	let b = v3_dot(v3_cross(d, m), v3_cross(d, n));
+    	let c = v3_dot(v3_cross(d, m), v3_cross(d, m)) - cylinder_radius * cylinder_radius * v3_dot(d, d);
+
+    	if (b * b - a * c <= TOLERANCE) {
     		return ([]);
-    	} else if (Math.abs(discriminant) <= TOLERANCE) {
-    		let res1 = v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a));
-    		let res1_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res1);
-    		if (v3_len(v3_sub(cylinder.pos, res1_proj_on_center_axis)) <= cylinder.scale.y / 2) {
-    			return([res1]);
-    		}
-    	} else {
-    		let final_res = [];
-    		let res1 = v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a));
-    		let res1_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res1);
-    		if (v3_len(v3_sub(cylinder.pos, res1_proj_on_center_axis)) <= cylinder.scale.y / 2) {
-    			final_res.push(res1);
-    		}
-
-    		let res2 = v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a));
-    		let res2_proj_on_center_axis = project_point_onto_line(new Line(cylinder.pos, C), res2);
-    		if (v3_len(v3_sub(cylinder.pos, res2_proj_on_center_axis)) <= cylinder.scale.y / 2) {
-    			final_res.push(res2);
-    		}
-    		return (final_res);
-    		//return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a)), v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a))]);
     	}
+
+    	let plane1 = new Plane(cylinder.vertices[0], cylinder.vertices[1], cylinder.vertices[2]);
+    	let plane2 = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
+
+    	let t1 = (-b + Math.sqrt(b * b - a * c)) / a;
+    	let t2 = (-b - Math.sqrt(b * b - a * c)) / a;
+    	//if (t1 < 0) return ([]);
+    	//if (t2 < 0) return ([]);
+    	let res1 = v3_add(ray.p1, v3_scale(D, t1));
+    	let proj = project_point_onto_line(new Line(P, Q), res1);
+    	//if (v3_len(v3_sub(cylinder.pos, proj)) <= cylinder_length / 2) {
+    		if (same_side_of_plane(plane1, cylinder.pos, res1) && same_side_of_plane(plane2, cylinder.pos, res1)) {
+    			res.push(res1);
+    		}
+    	//}
+    	let res2 = v3_add(ray.p1, v3_scale(D, t2));
+    	proj = project_point_onto_line(new Line(P, Q), res2);
+    	//if (v3_len(v3_sub(cylinder.pos, proj)) <= cylinder_length / 2) {
+    		if (same_side_of_plane(plane1, cylinder.pos, res2) && same_side_of_plane(plane2, cylinder.pos, res2)) {
+    			res.push(res2);	
+    		}
+    	//}
+    	return (res);
     }
     function ray_intersection(ray, object) {
     	if (object.type == ObjectType.Plane) {
@@ -1525,17 +1611,23 @@
 
 
     function set_cam_pos() {
-    	camera.A = v3(2.156, 0.990, -4.029);
-    	camera.B = v3(2.117, 0.990, -6.029);
-    	camera.C = v3(2.176, -1.010, -4.030);
-    	camera.eye = v3(3.146, -0.000, -5.049);
+    	camera.A = v3(-1.000, 1.000, -3.600);
+    	camera.B = v3(1.000, 1.000, -3.600);
+    	camera.C = v3(-1.000, -1.000, -3.600);
+    	camera.eye = v3(0.000, 0.000, -2.600);
     	draw();
 	}
     var lights = [];
     var debugg = null;
+    function intersect_first() {
+		console.log(intersect_ray_cylinder(new Line (camera.eye, debugg[0][0]), cylinder));
+	}
     function raytrace() {
+    	if (parseFloat(document.getElementById('rt_precision').value < TOLERANCE)) {
+    		return ;
+    	}
     	debugg = [];
-    	let first_drawn = true;
+    	let first_drawn = false;
     	console.log("raytracing...");
     	let rays = gen_rays(camera, parseFloat(document.getElementById('rt_precision').value));
 
@@ -1573,6 +1665,7 @@
     				color = 'red';
     				width = 2;
     				first_drawn = true;
+    				console.log(``);
     				console.log(`drawing first point, unmapped: ${intersections[closest_index][0]}, mapped: ${le_point}`);
     			}
     			draw_circle(le_point.x, le_point.y, 1, color, width);
