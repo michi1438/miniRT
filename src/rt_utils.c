@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/14 10:00:38 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/26 18:22:14 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,14 @@ int	mix_color(int *rgb, float p_norm[3], t_elem *amb)
 	int	res;
 	int nrgb[3];
 	int i;
-	
+
 	i = -1;
 	while (++i < 3)
-		nrgb[i] = ((rgb[i] + amb->rgb[i]) / 2) * amb->rgb[i] / 255; //might not be the right mix...
-	res = ((int)(nrgb[0] * p_norm[2] * amb->light_ratio) << 16 | (int)(nrgb[1] * p_norm[2] * amb->light_ratio) << 8 | (int)(nrgb[2] * p_norm[2] * amb->light_ratio));
+	{
+		nrgb[i] = ((rgb[i] + amb->rgb[i]) / 2);
+		if (nrgb[i] > 255)
+			nrgb[i] = 255;
+	}
+	res = ((int)(nrgb[0] * p_norm[2]) << 16 | (int)(nrgb[1] * p_norm[2]) << 8 | (int)(nrgb[2] * p_norm[2]));
 	return (res);
 }
