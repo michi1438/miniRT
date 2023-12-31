@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/14 10:03:50 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/31 11:58:44 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,9 @@ void	first_rays(t_scData *scrn, t_list **e_list)
 void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list)
 {
 	float	inter_dist[2];
-	float	p_norm[3];
 	t_list	*list;	
 	t_elem	*objects;
-	t_elem	*amb;
 
-	amb = findamb(e_list);
 	list = *e_list;
 	inter_dist[1] = FLT_MAX;
 	while (list->content != NULL)
@@ -59,8 +56,7 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 			inter_dist[0] = intersect(pscreen, cam_specs, objects);
 			if (inter_dist[0] > 0 && inter_dist[0] < inter_dist[1])
 			{
-				inter_norm(p_norm, pscreen, objects, inter_dist[0]);
-				mlx_pp(scrn, xy[0], xy[1], mix_color(objects->rgb, p_norm, amb));
+				mlx_pp(scrn, xy[0], xy[1], mix_color(objects, e_list, pscreen, inter_dist[0]));
 				inter_dist[1] = inter_dist[0];
 			}
 		}

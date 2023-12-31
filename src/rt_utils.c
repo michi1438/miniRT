@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/26 18:22:14 by mguerga          ###   ########.fr       */
+/*   Updated: 2023/12/31 12:10:07 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,47 @@ float	ft_atof(char *str)
 	return (res * neg);
 }
 
-int	mix_color(int *rgb, float p_norm[3], t_elem *amb)
+int	mix_color(t_elem *objects, t_list **e_list, float pscreen[3], float dis)
 {
 	int	res;
 	int nrgb[3];
 	int i;
+	float	n_ratio;
+	t_elem *amb;
+	t_elem	*light;
+	t_list	*list;	
 
+	amb = findamb(e_list);
+	list = *e_list;
+	while (list != NULL)
+	{
+		light = (list)->content;
+		if (light->type == 'L')
+		{
+			n_ratio = amb->light_ratio * diffused(objects, light, pscreen, dis);
+			break;
+		}
+		list = list->next;
+	}
 	i = -1;
 	while (++i < 3)
-	{
-		nrgb[i] = ((rgb[i] + amb->rgb[i]) / 2);
-		if (nrgb[i] > 255)
-			nrgb[i] = 255;
-	}
-	res = ((int)(nrgb[0] * p_norm[2]) << 16 | (int)(nrgb[1] * p_norm[2]) << 8 | (int)(nrgb[2] * p_norm[2]));
+		nrgb[i] = (int)(objects->rgb[i] * n_ratio);
+	res = (nrgb[0] << 16 | nrgb[1] << 8 | nrgb[2]);
 	return (res);
+}
+
+float diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
+{
+	float p_hit[3];
+	float hit_norm[3];
+	float light_norm[3];
+	
+	p_hit[0] = pscreen[0] * dis;
+	p_hit[1] = pscreen[1] * dis;
+	p_hit[2] = pscreen[2] * dis;
+	vec_substract(hit_norm, p_hit, objects->xyz);
+	normalize(hit_norm);
+	vec_substract(light_norm, p_hit, light->xyz); 
+	normalize(light_norm);
+	return (hit_norm[2] + 1 / 2); // set up make diff light_norm and hit_norm for diffused.
 }
