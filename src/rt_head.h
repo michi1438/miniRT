@@ -6,15 +6,15 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/31 12:08:25 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/01 18:44:43 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
-# define S_WIDTH (1920 / 2)
-# define S_HEIGHT (1080 / 2)
+# define S_WIDTH (1920 / 20)
+# define S_HEIGHT (1080 / 20)
 
 # include <stdio.h>
 # include <float.h>
