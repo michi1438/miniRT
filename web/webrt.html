@@ -16,7 +16,93 @@
 	<br>
 	<button onclick="raytrace();">Raytrace</button>
 	<br>
-	<input type="number" id="rt_precision" name="quantity" min="0.0001" max="10" value="0.01">
+	<input type="number" id="rt_precision" name="quantity" min="0.0001" max="10" value="0.003">
+
+<script>
+	/* Useful ressources */
+
+	/* Collsion code is based on the following site: */
+	/* https://hugi.scene.org/online/hugi24/coding%20graphics%20chris%20dragan%20raytracing%20shapes.htm */
+	/* Archive: */
+	/* https://archive.md/LvRi6 */
+
+	/* https://iquilezles.org/articles/intersectors/ */
+	/* Archive: */
+	/* https://archive.md/OlpOC */
+
+    /* Intersect SegmentCylinder page 197 (Real time collision detection by Christer Ericson) */
+    /* http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf */
+</script>
+
+<script>
+	/* Images */
+
+	class V4 {
+	  constructor(x, y, z, a) {
+	    this.x = x;
+	    this.y = y;
+	    this.z = z;
+	    this.a = a;
+	  }
+
+	  toString() {
+			return ('[' + this.x.toFixed(3) + ', ' + this.y.toFixed(3) + ', ' + this.z.toFixed(3)+ ', ' + this.a.toFixed(3) + ']')
+		}
+	}
+
+	function v4(x = 0, y = 0, z = 0, a = 0) {
+		return (new V4(x, y, z, a));
+	}
+
+	function new_image_height(img, new_width) {
+		return (img.height / (img.width / new_width));
+	}
+	
+	function getPixelsFromImage(imgElement, target_width) {
+		// Create a canvas element
+		let canvas = document.createElement('canvas');
+		let context = canvas.getContext('2d');
+
+		// Set the canvas dimensions to match the image
+		let target_height = Math.trunc(new_image_height(imgElement, target_width)) + 1;
+		canvas.width = target_width;
+		canvas.height = target_height;
+
+		// Draw the image onto the canvas
+		context.drawImage(imgElement, 0, 0, target_width, target_height);
+
+		// Get the pixel data from the canvas
+		let imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+		//let pixels = imageData.data;
+
+		//pixels.push(v4(imageData[i + 0], imageData[i + 1], imageData[i + 2], imageData[i + 3]));
+
+		let pixels = [];
+		let j = -1;
+		for (var i = 0; i < imageData.length; i += 4) {
+			if (i % (target_width * 4) == 0) {
+				j ++;
+				pixels.push([]);
+			}
+			pixels[j].push(v4(imageData[i + 0], imageData[i + 1], imageData[i + 2], imageData[i + 3]));
+		}
+		/*for (var i = 0; i < imgElement.height; i++) {
+			pixels.push([]);
+			for (var j = 0; j < imgElement.width; j ++) {
+				let adv = (i * imgElement.height) * 4 + j * 4;
+				pixels[i].push(v4(imageData[adv + 0], imageData[adv + 1], imageData[adv + 2], imageData[adv + 3]));
+			}
+		}*/
+
+		return (pixels);
+	}
+
+	var sun_image =  new Image();
+	sun_image.src = 'sun.png';
+	
+</script>
+
+<script src="test_image.js"></script>
 
 <script>
 	function clamp(val, min, max) {
@@ -105,6 +191,23 @@
 	  }
 	}
 
+	/* https://math.stackexchange.com/a/64528 */
+	function plane_from_normal(point, normal) {
+		let w;
+		if (Math.abs(normal.x) <= Math.abs(normal.y) && Math.abs(normal.x) <= Math.abs(normal.z)) {
+			w = v3(1);
+		} else if (Math.abs(normal.y) <= Math.abs(normal.x) && Math.abs(normal.y) <= Math.abs(normal.z)) {
+			w = v3(0, 1);
+		} else {
+			w = v3(0, 0, 1);
+		}
+		let u = v3_cross(w, normal);
+		let v = v3_cross(normal, u);
+		let p1 = v3_add(point, u);
+		let p2 = v3_add(point, v);
+		return (new Plane(point, p1, p2));
+	}
+
 	class Line {
 		constructor(p1, p2) {
 			this.p1 = p1;
@@ -167,13 +270,17 @@
 		return (v3_add(p_rotated1, r));
 	}
 
+	function vect_angle(v1, v2) {
+		return (Math.acos(v3_dot(v1, v2) / (v3_len(v1) * v3_len(v2))));
+	}
+
 	/* projects a point on the camera plane */
 	/* returns null if the line between eye and point doesn't intersect plane or is behind screen */
 	var count = 4;
 	function project_point(point, camera) {
-		console.log('projecting point P' + count);
-		count --;
-		console.log(point);
+		//console.log('projecting point P' + count);
+		//count --;
+		//console.log(point);
 
 		/* FRUSTUM CULLING */
 		/* check for y axis */		
@@ -193,8 +300,8 @@
 
 		let line = new Line(camera.eye, point);
 		let canvas = camera.getCanvasPlane();
-		console.log('result:');
-		console.log(intersect(line, canvas));
+		//console.log('result:');
+		//console.log(intersect(line, canvas));
 		let intersection = intersect(line, canvas);
 		if (intersection == null) {
 			return (null);
@@ -379,6 +486,15 @@
 		}
 	}
 
+	class RtIntersection {
+		constructor(pos, normal, ray, item) {
+			this.pos = pos;
+			this.normal = normal;
+			this.ray = ray;
+			this.item = item;
+		}
+	}
+
 	function map_point_to_physical(camera, point, physical_width, physical_height) {
 		if (point == null) {
 			return (null);
@@ -392,8 +508,24 @@
 		return (v3(rel.x * x_ratio, rel.y * y_ratio /* * -1*/));
 	}
 
+	function map_physical_to_camera(camera, point, physical_width, physical_height) {
+		if (point == null) {
+			return (null);
+		}
+		let x_ratio = camera.canvas_width / physical_width;
+		let y_ratio = camera.canvas_height / physical_height;
+
+		point.x *= x_ratio;
+		point.y *= y_ratio;
+
+		let new_x = v3_add(camera.A, v3_scale(v3_norm(camera.getAB()), point.x)).x;
+		let new_y = v3_add(camera.A, v3_scale(v3_norm(camera.getAC()), point.y)).y;
+
+		return (v3(new_x, new_y, camera.A.z));
+	}
+
 	function v3(x = 0, y = 0, z = 0) {
-		return new V3(x, y, z);
+		return (new V3(x, y, z));
 	}
 
 	function v3_clone(v) {
@@ -472,8 +604,16 @@
 	function matrix_mult_vec(matrix, vec) {
 		let v1 = v3_scale(matrix.v1, vec.x);
 		let v2 = v3_scale(matrix.v2, vec.y);
-		let v3 = v3_scale(matrix.v3, vec.z);
-		return (v3_add(v1, v3_add(v2, v3)));
+		let v3_ = v3_scale(matrix.v3, vec.z);
+		return (v3_add(v1, v3_add(v2, v3_)));
+	}
+
+	/* Multiplying each term of a 3D matrix by a scalar */
+	function matrix_scale(matrix, scalar) {
+		let v1 = v3_scale(matrix.v1, scalar);
+		let v2 = v3_scale(matrix.v2, scalar);
+		let v3_ = v3_scale(matrix.v3, scalar);
+		return (new Matrix3d(v1, v2, v3_));
 	}
 
 	/* Multiplying two 3D matrices */
@@ -495,6 +635,20 @@
 		return (new Matrix3d(v1, v2, v3_));
 	}
 
+	function matrix_sub(m1, m2) {
+		let v1 = v3(m1.v1.x - m2.v1.x, m2.v1.y - m2.v1.y, m1.v1.z - m2.v1.z);
+		let v2 = v3(m1.v2.x - m2.v2.x, m2.v2.y - m2.v2.y, m1.v2.z - m2.v2.z);
+		let v3_ = v3(m1.v3.x - m2.v3.x, m2.v3.y - m2.v3.y, m1.v3.z - m2.v3.z);
+		return (new Matrix3d(v1, v2, v3_));
+	}
+
+	function get_identity_matrix() {
+		let v1 = v3(1, 0, 0);
+		let v2 = v3(0, 1, 0);
+		let v3_ = v3(0, 0, 1);
+		return (new Matrix3d(v1, v2, v3_))
+	}
+
 	class Item {
 	  constructor(type, pos, scale, rot, color, vertex_func, draw_mapping_func, raytrace_func, line_width = 1) {
 	    this.type = type;
@@ -508,8 +662,12 @@
 	    this.vertex_func = vertex_func;
 	    this.draw_mapping_func = draw_mapping_func;
 	    this.raytrace_func = raytrace_func;
-	    this.vertices = vertex_func(pos, scale);
-	    rotate_item(this, this.rot);
+	    if (this.vertex_func) {
+	    	this.vertices = vertex_func(pos, scale);
+	    	rotate_item(this, this.rot);
+	    }
+	    /* https://stackoverflow.com/a/12502559 */
+	    this.id = Math.random().toString(36).slice(2);
 	  }
 
 	  color_hex() {
@@ -598,20 +756,29 @@
 		ctx.closePath();
 	}
 
-	function draw_circle(x, y, radius, color = 'black', width = 1) {
+	function draw_circle(x, y, radius, color = 'black', width = 1, full = false) {
 		ctx.beginPath();
 		ctx.lineWidth = width;
 		ctx.strokeStyle = color;
 		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		if (full) {
+			ctx.fill();
+		}
 		ctx.stroke();
 		ctx.closePath();
+	}
+
+	function draw_square(x, y, size, color = 'black') {
+		ctx.fillStyle = color;
+		ctx.fillRect(x, y, size, size);
 	}
 
 	function draw_vect(v, color = 'black', width = 1, radius = 5) {
 		if (v == null) {
 			return ;
 		}
-		draw_circle(v.x, v.y, radius, color, width);
+		draw_square(v.x - radius / 2, v.y - radius / 2, radius, color);
+		//draw_circle(v.x, v.y, radius, color, width);
 	}
 
 	/* https://stackoverflow.com/a/5624139 */
@@ -707,7 +874,6 @@
 		fill_canvas('black');
 		for (let i = 0; i < items.length; i++) {
 			outline_item(items[i]);
-			
 		}
 
 		/* debug overlay */
@@ -772,6 +938,14 @@
 		if (mouse_grabbed) {
 			draw_vect(v3(htmlcanvas.width / 2, htmlcanvas.height / 2), 'red', 1, 3);
 		}
+		draw_lights();
+		/*for (let height = 0; height < test_image_pixels.length; height++) {
+		    for (let width = 0; width < test_image_pixels[height].length; width++) {
+		        let pixel = test_image_pixels[height][width];
+		        let color = rgbToHexV3(v3(pixel.x, pixel.y, pixel.z));
+		        draw_circle(width, height, 1, color, false);
+		    }
+		}*/
 	}
 
 	/* returns a list of sphere vertices */
@@ -989,7 +1163,7 @@
 		// pos.z = level of detail
 		let top = v3_add(pos, v3(0, -scale.y / 2));
 		let first = v3_add(top, v3(scale.x / 2));
-		console.log(`top: ${top}, first: ${first}`);
+		//console.log(`top: ${top}, first: ${first}`);
 		for (var i = 0; i < scale.z; i++) {
 			vertices.push(
 				rotate_point(
@@ -1084,6 +1258,9 @@
 	}
 
 	function rotate_item(item, rot) {
+		if (!item.vertex_func) {
+			return ;
+		}
 		for (let i = 0; i < item.vertices.length; i++) {
 			item.vertices[i] = rotate_point(item.vertices[i], rot, item.pos);
 		}
@@ -1099,51 +1276,61 @@
 	}
 
 	function outline_item(item) {
+		if (!item.vertex_func) {
+			return ;
+		}
 		let mappings = [];
 		for (var i = 0; i < item.vertices.length; i++) {
-			//console.log(i + 1);
-			//mappings.push(map_canvas_to_physical(project_point(item.vertices[i])));
 			let mapping = map_point_to_physical(camera, project_point(item.vertices[i], camera), htmlcanvas.width, htmlcanvas.height);
-			console.log(`pushing mapping: ${mapping}`);
+			//console.log(`pushing mapping: ${mapping}`);
 			mappings.push(mapping);
 		}
 		item.draw_mapping_func(mappings, item);
 	}
 	
-	let cube = new Item(ObjectType.Cube, v3(-0.5, 0, -5), v3(1, 1, 1), v3(), PINK, cube_vertices, draw_cube_mappings);
-	//add_item(cube);
+	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, cube_vertices, draw_cube_mappings);
 
-	let cube2 = new Item(ObjectType.Cube, v3(1, 0, -5), v3(1, 1, 1), v3(), BLUE, cube_vertices, draw_cube_mappings);
-	//add_item(cube2);
+	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, cube_vertices, draw_cube_mappings);
 
-	let pyramid = new Item(ObjectType.Pyramid, v3(1, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, pyramid_vertices, draw_pyramid_mappings);
-	//add_item(pyramid);
+	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 0, -3), v3(1, 8, 4), v3(), RED, sphere_vertices, draw_sphere_mappings);
-	
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -3), v3(1, 8, 4), v3(), RED, sphere_vertices, draw_sphere_mappings);
 
 	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, sphere_vertices, draw_sphere_mappings);
 	
-
 	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, sphere_vertices, draw_sphere_mappings);
-	
-
-	//add_item(sphere);
-	//add_item(sphere2);
-	//add_item(sphere3);
 
 	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, cylinder_vertices, draw_cylinder_mappings);
+
+	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
+	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -1000), v3(0, 0, 1), v3(), YELLOW, null, null);
+
+
+	add_item(cube);
+	add_item(cube2);
+	add_item(pyramid);
+	add_item(sphere);
+	//add_item(sphere2);
+	//add_item(sphere3);
 	add_item(cylinder);
+	add_item(test_plane);
 
 	var shift_pressed = false;
+	var two_pressed = false;
 	document.addEventListener('keydown', (event) => {
 		if (event.key == 'Shift') {
 			shift_pressed = true;
+		}
+		if (event.key == '2') {
+			two_pressed = true;
 		}
 	});
 	document.addEventListener('keyup', (event) => {
 		if (event.key == 'Shift') {
 			shift_pressed = false;
+		}
+		if (event.key == '2') {
+			two_pressed = false;
 		}
 	});
 
@@ -1197,6 +1384,14 @@
 	
 	/////////////////////////////////
 
+	function getMousePos(canvas, evt) {
+	    var rect = canvas.getBoundingClientRect();
+	    return {
+	        x: evt.clientX - rect.left,
+	        y: evt.clientY - rect.top
+	    };
+	}
+
 	// when the document is loaded, setup the listeners for the two canvas elements
     document.addEventListener('DOMContentLoaded', function () {
 	    setupPointerLock();
@@ -1213,13 +1408,18 @@
 
         // when element is clicked, we're going to request a
         // pointerlock
-        htmlcanvas.addEventListener('click', function () {
-		    var requestPointerLock = htmlcanvas.requestPointerLock || htmlcanvas.mozRequestPointerLock || htmlcanvas.webkitRequestPointerLock;
+        htmlcanvas.addEventListener('click', function (event) {
+        	if (!two_pressed) {
+        		var requestPointerLock = htmlcanvas.requestPointerLock || htmlcanvas.mozRequestPointerLock || htmlcanvas.webkitRequestPointerLock;
 
-		    // Ask the browser to lock the pointer
-		    if (requestPointerLock) {
-		        htmlcanvas.requestPointerLock();
-		    }
+			    // Ask the browser to lock the pointer
+			    if (requestPointerLock) {
+			        htmlcanvas.requestPointerLock();
+			    }
+        	} else {
+        		let real_pos = getMousePos(htmlcanvas, event);
+        		cast_ray_for_screen_coords(real_pos.x, real_pos.y);
+        	}
 		});
 
 
@@ -1374,6 +1574,8 @@
     }
 
     /* https://hugi.scene.org/online/hugi24/coding%20graphics%20chris%20dragan%20raytracing%20shapes.htm */
+
+    /* Plane as constructed by 3 points, NOT the plane Item */
     function intersect_ray_plane(ray, plane) {
     	/* ray direction */
     	let D = v3_norm(v3_sub(ray.p2, ray.p1));
@@ -1381,26 +1583,47 @@
     	let X = v3_sub(ray.p1, plane.p1);
     	let N = plane.getNormal();
     	let d_v = v3_dot(D, N);
-    	if (d_v == 0) {
-    		return ([]);
-    	}
     	let x_v = v3_dot(X, N);
+    	/*if (Math.abs(d_v) <= TOLERANCE) {
+    		return (null);
+    	}
     	let sign = 1;
     	if (!same_sign(d_v, x_v)) {
     		sign = -1;
     	}
     	let t = sign * x_v / d_v;
-    	return ([v3_add(ray.p1, v3_scale(D, t))]);
-    }
-    function point_plane_normal(point, plane) {
-    	let N = plane.getNormal();
-    	let temp = v3_add(point, N);
-    	if (same_side_of_plane(point, temp)) {
-    		return (N);
-    	} else {
-    		return (v3_invert(N));
+    	if (Math.abs(t) < TOLERANCE) {
+    		return (null);
     	}
+    	let normal = N;
+    	if (d_v < 0) {
+    		normal = v3_invert(N);
+    	}*/
+
+    	if (d_v == TOLERANCE || ((x_v < TOLERANCE) == (d_v < TOLERANCE))) {
+			return (null);
+    	}
+		let t = - x_v / d_v;
+		let int = v3_add(ray.p1, v3_scale(D, t));
+		let normal;
+		if (d_v <= TOLERANCE) {
+			normal = N;
+		} else {
+			normal = v3_invert(N);
+		}
+
+    	return (new RtIntersection(int, normal, ray, plane));
     }
+
+    /* For plane ITEM */
+    function intersect_ray_plane_item(ray, plane) {
+    	let res = intersect_ray_plane(ray, plane_from_normal(plane.pos, plane.scale));
+    	if (res != null) {
+    		res.item = plane;
+    	}
+    	return (res);
+    }
+    
     function intersect_ray_sphere(ray, sphere) {
     	let D = v3_norm(v3_sub(ray.p2, ray.p1));
     	let X = v3_sub(ray.p1, sphere.pos);
@@ -1409,17 +1632,24 @@
     	let r = sphere.scale.x / 2;
     	let c = v3_dot(X, X) - r*r;
     	let discriminant = b * b - 4 * a * c;
-    	if (discriminant < 0) {
-    		return ([]);
-    	} else if (discriminant == 0) {
-    		return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a))]);
+    	if (discriminant < TOLERANCE) {
+    		return (null);
     	} else {
-    		return ([v3_add(ray.p1, v3_scale(D, (-b + Math.sqrt(discriminant)) / 2 * a)), v3_add(ray.p1, v3_scale(D, (-b - Math.sqrt(discriminant)) / 2 * a))]);
+    		let t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+    		let t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+    		let point;
+    		if (t1 >= 0 && t1 < t2) {
+    			point = v3_add(ray.p1, v3_scale(D, t1));
+    		} else if (t2 >= 0) {
+    			point = v3_add(ray.p1, v3_scale(D, t2));
+    		}
+    		if (point) {
+    			return (new RtIntersection(point, v3_norm(v3_sub(point, sphere.pos)), ray, sphere));
+    		}
     	}
+    	return (null);
     }
-    function point_sphere_normal(point, sphere) {
-    	return (v3_norm(v3_sub(point, sphere.pos)));
-    }
+    
     function point_inside_square(s1, s2, s3, s4, point) {
     	let plane = new Plane(s1, s2, s3);
     	let norm = plane.getNormal();
@@ -1452,38 +1682,29 @@
     		]);
     }
     function intersect_ray_cube(ray, cube) {
-    	let res = [];
+    	let res = null;
+    	let dist = 0;
 
     	let cube_squares = get_cube_squares(cube);
     	for (var i = 0; i < cube_squares.length; i++) {
     		let plane = new Plane(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
-    		let ints = intersect_ray_plane(ray, plane);
-    		if (ints.length > 0) {
-	    		if (point_inside_square(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3], ints[0])) {
-	    			res.push(ints[0]);
+    		let int = intersect_ray_plane(ray, plane);
+    		if (int != null) {
+	    		if (point_inside_square(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3], int.pos)) {
+	    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+	    			if (res == null || dist_ < dist) {
+	    				res = int;
+	    				dist = dist_;
+	    			}
 	    		}
 	    	}
     	}
-    	return (res);
-    }
-    function point_cube_normal(point, cube) {
-    	let cube_squares = get_cube_squares(cube);
-    	let closest = 9999;
-    	let res = v3();
-
-    	for (var i = 0; i < cube_squares.length; i++) {
-    		let plane = new Plane(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
-	    	let dist = point_plane_dist(point, plane);
-	    	if (dist < closest) {
-	    		closest = dist;
-	    		res = plane.getNormal();
-		    	if (same_side_of_plane(plane, v3_add(res, point), cube.pos)) {
-		    		res = v3_invert(res);
-		    	}
-	    	}
+    	if (res != null) {
+    		res.item = cube;
     	}
     	return (res);
     }
+    
     function point_inside_triangle(s1, s2, s3, point) {
     	let plane = new Plane(s1, s2, s3);
     	let norm = plane.getNormal();
@@ -1514,189 +1735,124 @@
     		]);
     }
     function intersect_ray_pyramid(ray, pyramid) {
-    	let res = [];
+    	let res = null;
+    	let dist = 0;
     	
     	let base_square = get_pyramid_base_square(pyramid);
     	let plane = new Plane(base_square[0], base_square[1], base_square[2]);
-    	let ints = intersect_ray_plane(ray, plane);
-    	if (ints.length > 0) {
-    		if (point_inside_square(base_square[0], base_square[1], base_square[2], base_square[3], ints[0])) {
-    			res.push(ints[0]);
+    	let int = intersect_ray_plane(ray, plane);
+    	if (int) {
+    		if (point_inside_square(base_square[0], base_square[1], base_square[2], base_square[3], int.pos)) {
+    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+    			if (res == null || dist_ < dist) {
+    				res = int;
+    				dist = dist_;
+    			}
     		}
     	}
     	let triangles = get_pyramid_triangles(pyramid);
     	for (var i = 0; i < triangles.length; i++) {
     		plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
-	    	ints = intersect_ray_plane(ray, plane);
-	    	if (ints.length > 0) {
-	    		if (point_inside_triangle(triangles[i][0], triangles[i][1], triangles[i][2], ints[0])) {
-	    			res.push(ints[0]);
+	    	int = intersect_ray_plane(ray, plane);
+	    	if (int != null) {
+	    		if (point_inside_triangle(triangles[i][0], triangles[i][1], triangles[i][2], int.pos)) {
+	    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+	    			if (res == null || dist_ < dist) {
+	    				res = int;
+	    				dist = dist_;
+	    			}
 	    		}
 	    	}
     	}
-    	return (res);
-    }
-    function point_pyramid_normal(point, pyramid) {
-    	let base_square = get_pyramid_base_square(pyramid);
-    	let plane = new Plane(base_square[0], base_square[1], base_square[2]);
-    	let closest = point_plane_dist(point, plane);
-    	let res = plane.getNormal();
-    	if (same_side_of_plane(plane, v3_add(res, point), pyramid.pos)) {
-    		res = v3_invert(res);
-    	}
-
-    	let triangles = get_pyramid_triangles(pyramid);
-    	for (var i = 0; i < triangles.length; i++) {
-    		plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
-	    	let dist = point_plane_dist(point, plane);
-	    	if (dist < closest) {
-	    		closest = dist;
-	    		res = plane.getNormal();
-		    	if (same_side_of_plane(plane, v3_add(res, point), pyramid.pos)) {
-		    		res = v3_invert(res);
-		    	}
-	    	}
+    	if (res != null) {
+    		res.item = pyramid;
     	}
     	return (res);
     }
 
-    /* https://iquilezles.org/articles/intersectors/ */
-    /* dark magic */
     function intersect_ray_cylinder(ray, cylinder) {
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1)); // direction vector of the ray
-    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+    	let res = null;
+    	let dist = 0;
+
     	let cylinder_length = cylinder.scale.y;
-    	let a = v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2));
-    	let b = v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2));
-    	let ra = cylinder.scale.x / 2;
+    	let radius = cylinder.scale.x / 2;
+    	let D = v3_norm(v3_sub(ray.p2, ray.p1));
+    	let V = (v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])));
+    	let C = get_cylinder_top(cylinder);
+    	let bottom = get_cylinder_bottom(cylinder);
 
-    	let ba = v3_sub(b, a);
-    	let ro = ray.p1;
-    	let rd = D;
-	    let oc = v3_sub(ro, a);
-	    let baba = v3_dot(ba,ba);
-	    let bard = v3_dot(ba,rd);
-	    let baoc = v3_dot(ba,oc);
-	    let k2 = baba - bard*bard;
-	    let k1 = baba*v3_dot(oc,rd) - baoc*bard;
-	    let k0 = baba*v3_dot(oc,oc) - baoc*baoc - ra*ra*baba;
-	    let h = k1*k1 - k2*k0;
-	    if( h<0 ) return ([]);//no intersection
-	    h = Math.sqrt(h);
-	    let t = (-k1-h)/k2;
-	    // body
-	    let y = baoc + t*bard;
-	    if( y>0.0 && y<baba ) {
-	    	/* return vec4( t, (oc+t*rd - ba*y/baba)/ra ); */
-	    	
-	    	//return ([v3_scale(v3_sub(v3_add(oc, v3_scale(rd, t)), v3_scale(ba, y / baba)), 1 / ra)]);
-	    	return ([v3_add(v3_scale(V, t), ray.p1)]);
-		}
-	    // caps
-	    t = ( ((y<0.0) ? 0.0 : baba) - baoc)/bard;
-	    if( Math.abs(k1+k2*t)<h )
-	    {
-	    	return ([v3_add(v3_scale(V, t), ray.p1)]);
-	    }
-	    return ([]);//no intersection
-    }
-    /*
-	vec3 cylNormal( in vec3 p, in vec3 a, in vec3 b, float ra )
-	{
-	    vec3  pa = p - a;
-	    vec3  ba = b - a;
-	    float baba = dot(ba,ba);
-	    float paba = dot(pa,ba);
-	    float h = dot(pa,ba)/baba;
-	    return (pa - ba*h)/ra;
-	}
-    */
-    function point_cylinder_normal(point, cylinder) {
-    	let a = get_cylinder_top(cylinder);
-    	let b = get_cylinder_bottom(cylinder);
-    	let ra = cylinder.scale.x / 2;
+    	let X = v3_sub(ray.p1, C);
 
-	    let pa = v3_sub(point, a);
-	    let ba = v3_sub(b, a);
-	    let baba = v3_dot(ba,ba);
-	    let paba = v3_dot(pa,ba);
-	    let h = v3_dot(pa,ba)/baba;
-	    return (v3_scale(v3_sub(pa, v3_scale(ba, h)), 1 / ra));
-	    //return (pa - ba*h)/ra;
-	}
-
-    /* Ref: Intersect SegmentCylinder page 197 (Real time collision detection by Christer Ericson) */
-    /* http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf */
-    /* Unused, there seems to be a precision??? problem with it or something. the cylinder appears closer than it is */
-    function intersect_ray_cylinder_(ray, cylinder) {
-    	let res = [];
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1)); // direction vector of the ray
-    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])); // axis of the cylinder going from the point C to the 
-
-    	/*
-			a = (d × n) · (d × n)
-			b = (d × m) · (d × n)
-			c = (d × m) · (d × m) − r^2 (d · d)
-    	*/
-    	/* t = (-b +- sqrt(b^2 - a * c)) / a */
-
-    	/*
-    	               P
-    	             __x__
-                     |    |
-		A x ---x-----|----|-----> ray
-		       B     |    |
-		             |_x__|cylinder
-		               Q
-
-
-    	*/
-
-    	let A = ray.p1;
-    	let B = ray.p2;
-    	let cylinder_length = cylinder.scale.y ;
-    	let cylinder_radius = cylinder.scale.x / 2;
-    	let P = v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2));
-    	let Q = v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2));
-    	let d = v3_sub(Q, P);
-    	let m = v3_sub(A, P);
-    	let n = v3_sub(B, A);
-
-
-    	let a = v3_dot(v3_cross(d, n), v3_cross(d, n));
-    	let b = v3_dot(v3_cross(d, m), v3_cross(d, n));
-    	let c = v3_dot(v3_cross(d, m), v3_cross(d, m)) - cylinder_radius * cylinder_radius * v3_dot(d, d);
-
-    	if (b * b - a * c <= TOLERANCE) {
-    		return ([]);
+    	/* Testing cylinder caps */
+    	let plane_top = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
+    	let plane_top_int = intersect_ray_plane(ray, plane_top);
+    	if (plane_top_int != null) { 
+    		if (v3_len(v3_sub(C, plane_top_int.pos)) <= radius) {
+    			let dist_ = v3_len(plane_top_int.pos, ray.p1);
+    			if (res == null || dist_ < dist) {
+    				res = plane_top_int;
+    				dist = dist_;
+    			}
+    		}
     	}
 
-    	let plane1 = new Plane(cylinder.vertices[0], cylinder.vertices[1], cylinder.vertices[2]);
-    	let plane2 = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
+    	let plane_bottom = new Plane(cylinder.vertices[0], cylinder.vertices[1], cylinder.vertices[2]);
+    	let plane_bottom_int = intersect_ray_plane(ray, plane_bottom);
+    	if (plane_bottom_int != null) { 
+    		if (v3_len(v3_sub(bottom, plane_bottom_int.pos)) <= radius) {
+    			let dist_ = v3_len(plane_bottom_int.pos, ray.p1);
+    			if (res == null || dist_ < dist) {
+    				res = plane_bottom_int;
+    				dist = dist_;
+    			}
+    		}
+    	}
 
-    	let t1 = (-b + Math.sqrt(b * b - a * c)) / a;
-    	let t2 = (-b - Math.sqrt(b * b - a * c)) / a;
-    	//if (t1 < 0) return ([]);
-    	//if (t2 < 0) return ([]);
-    	let res1 = v3_add(ray.p1, v3_scale(D, t1));
-    	let proj = project_point_onto_line(new Line(P, Q), res1);
-    	//if (v3_len(v3_sub(cylinder.pos, proj)) <= cylinder_length / 2) {
-    		if (same_side_of_plane(plane1, cylinder.pos, res1) && same_side_of_plane(plane2, cylinder.pos, res1)) {
-    			res.push(res1);
-    		}
-    	//}
-    	let res2 = v3_add(ray.p1, v3_scale(D, t2));
-    	proj = project_point_onto_line(new Line(P, Q), res2);
-    	//if (v3_len(v3_sub(cylinder.pos, proj)) <= cylinder_length / 2) {
-    		if (same_side_of_plane(plane1, cylinder.pos, res2) && same_side_of_plane(plane2, cylinder.pos, res2)) {
-    			res.push(res2);	
-    		}
-    	//}
+    	let t = null;
+		let a = v3_dot(D, D) - Math.pow(v3_dot(D, V), 2);
+		let b = 2 * (v3_dot(D, X) - v3_dot(D, V) * v3_dot(X, V));
+    	let c = v3_dot(X, X) - Math.pow(v3_dot(X, V), 2) - radius * radius;
+		let discriminant = b * b - 4 * a * c;
+		if (discriminant < 0)
+		{
+			return (res);
+		}
+		let d1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+		let d2 = (-b - Math.sqrt(discriminant)) / (2 *a);
+		let m1 = v3_dot(D, V) * d1 + v3_dot(X, V);
+		let m2 = v3_dot(D, V) * d2 + v3_dot(X, V);
+		let	tmp;
+		if (d2 > d1)
+		{
+			tmp = d1;
+			d1 = d2;
+			d2 = tmp;
+			tmp = m1;
+			m1 = m2;
+			m2 = tmp;
+		}
+		if (m2 < cylinder.scale.y && m2 > 0) {
+			if (d2 < 0)
+			{
+				return (res);
+			}
+			t = d2;
+		}
+
+    	if (t != null && t >= 0 && (res == null || v3_len(D, t) < dist)) {
+    		let pos = v3_add(ray.p1, v3_scale(D, t));
+    		let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
+    		res = new RtIntersection(pos, normal, ray, cylinder);
+    	}
+    	if (res != null) {
+    		res.item = cylinder;
+    	}
     	return (res);
     }
+
     function ray_intersection(ray, object) {
     	if (object.type == ObjectType.Plane) {
-    		return (intersect_ray_plane(ray, object));
+    		return (intersect_ray_plane_item(ray, object));
     	} else if (object.type == ObjectType.Sphere) {
     		return (intersect_ray_sphere(ray, object));
     	} else if (object.type == ObjectType.Cube) {
@@ -1707,20 +1863,6 @@
     		return (intersect_ray_cylinder(ray, object));
     	}
     	return ([]);
-    }
-    function point_normal(point, object) {
-    	if (object.type == ObjectType.Plane) {
-    		return (point_plane_normal(point, object));
-    	} else if (object.type == ObjectType.Sphere) {
-    		return (point_sphere_normal(point, object));
-    	} else if (object.type == ObjectType.Cube) {
-    		return (point_cube_normal(point, object));
-    	} else if (object.type == ObjectType.Pyramid) {
-    		return (point_pyramid_normal(point, object));
-    	} else if (object.type == ObjectType.Cylinder) {
-    		return (point_cylinder_normal(point, object));
-    	}
-    	return (v3());
     }
 
 
@@ -1733,16 +1875,51 @@
 	}
     var lights = [];
 
-    let ambient = new LightAmbient(intensity_to_color(0.0));
-    lights.push(ambient);
+    let ambient = new LightAmbient(intensity_to_color(0.3));
+    let light_point1 = new LightPoint(intensity_to_color(1), v3(0, 0, 0));
+    let light_point2 = new LightPoint(intensity_to_color(1), v3(-3, 0, -2));
 
-    let light_point1 = new LightPoint(intensity_to_color(1), v3(-4, 0, -3));
+    lights.push(ambient);
     lights.push(light_point1);
+    //lights.push(light_point2);
 
     var debugg = null;
-    
+
+    function draw_lights() {
+    	for (var i = 0; i < lights.length; i++) {
+    		if (lights[i] instanceof LightPoint) {
+    			let projection = map_point_to_physical(camera, project_point(lights[i].pos, camera), htmlcanvas.width, htmlcanvas.height);
+    			if (projection) {
+    				ctx.drawImage(sun_image, projection.x - 25, projection.y - 25, 50, 50);
+    			}
+    		}
+    	}
+    }
+
+    /*
+	ComputeLighting(P, N) {
+	    i = 0.0
+	    for light in scene.Lights {
+	        if light.type == ambient {
+	        	i += light.intensity
+	        } else {
+	            if light.type == point {
+	            	L = light.position - P
+	            } else {
+	            	L = light.direction
+	            }
+	            n_dot_l = dot(N, L)
+	         	if n_dot_l > 0 {
+	            	i += light.intensity * n_dot_l/(length(N) * length(L))
+	            }
+	        }
+	    }
+	    return i
+	}
+    */	
+
     /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-    function compute_lighting(point, normal) {
+    function compute_lighting(point, normal, item) {
 		let res = v3();
 		for (let i=0; i < lights.length; i ++) {
 			if (lights[i] instanceof LightAmbient) {
@@ -1750,6 +1927,10 @@
 			} else {
 				let L = null;
 				if (lights[i] instanceof LightPoint) {
+					let int = cast_ray(new Line(lights[i].pos, point), false);
+					if (int.item.id != item.id) {
+						continue ;
+					}
 					L = v3_sub(lights[i].pos, point);
 				} else {
 					L = lights[i].direction;
@@ -1767,61 +1948,107 @@
 		return (res);
 	}
 
+	function get_item_color(int) {
+		if (int.item.type == ObjectType.Plane) {
+			let n = int.normal;
+			let n_ = v3(0, 0, 1);
+			let angle = vect_angle(n, n_);
+			/* rotating the point as if the normal of the plane was n_ */
+			let new_pos = v3_add(v3_scale(int.pos, Math.cos(angle)), v3_add(v3_scale(v3_cross(n, int.pos), Math.sin(angle)), v3_scale(n, v3_dot(n, int.pos) * (1 - Math.cos(angle)))));
+			
+			new_pos.x = Math.trunc(new_pos.x % target_test_image_width);
+			if (new_pos.x < 0) {
+				new_pos.x = target_test_image_width + new_pos.x;
+			}
+			new_pos.y = Math.trunc(new_pos.y % new_image_height(test_image, target_test_image_width));
+			if (new_pos.y > 0) {
+				new_pos.y = new_image_height(test_image, target_test_image_width) - new_pos.y;
+			}
+			let pixel = test_image_pixels[Math.abs(new_pos.y)][Math.abs(new_pos.x)];
+
+			if (true /*pixel.a == 0*/) {
+				return (v3(pixel.x, pixel.y, pixel.z));
+			} else {
+				return (int.item.color);
+			}
+			return (int.item.color);
+		} else {
+			return (int.item.color);
+		}
+	}
+
+	function get_item_color_checkerboard(int) {
+		if (int.item.type == ObjectType.Plane) {
+			let n = int.normal;
+			let n_ = v3(0, 0, 1);
+			let angle = vect_angle(n, n_);
+			/* rotating the point as if the normal of the plane was n_ */
+			let new_pos = v3_add(v3_scale(int.pos, Math.cos(angle)), v3_add(v3_scale(v3_cross(n, int.pos), Math.sin(angle)), v3_scale(n, v3_dot(n, int.pos) * (1 - Math.cos(angle)))));
+			let step = 1;
+			if (new_pos.x < 0) {
+				new_pos.x -= step;
+			}
+			if (new_pos.y < 0) {
+				new_pos.y -= step;
+			}
+			if (Math.trunc((new_pos.x / (step))) % (2) == 0 && Math.trunc((new_pos.y / step)) % 2 == 0) {
+				return (BLUE);
+			} else {
+				return (int.item.color);
+			}
+			return (int.item.color);
+		} else {
+			return (int.item.color);
+		}
+	}
+
+	function cast_ray(ray, do_draw = true) {
+		let intersection = null;
+		let dist = 0;
+		for (var j = 0; j < items.length; j++) {
+			let int_ = ray_intersection(ray, items[j]);
+			if (int_ != null) {
+				let dist_ = v3_len(int_.pos, ray.p1);
+    			if (intersection == null || dist_ < dist) {
+    				intersection = int_;
+    				dist = dist_;
+    			}
+			}
+		}
+		if (do_draw && intersection != null) {
+			let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
+			let light_color = compute_lighting(intersection.pos, intersection.normal, intersection.item);
+			let color;
+			if (1) {
+				color = rgbToHexV3(mult_colors(get_item_color(intersection), light_color));
+			} else {
+				color = rgbToHexV3(get_item_color(intersection));
+			}
+			draw_circle(mapped_point.x, mapped_point.y, 1, color, 2);
+		}
+		return (intersection);
+	}
+
     function raytrace() {
     	if (parseFloat(document.getElementById('rt_precision').value < TOLERANCE)) {
     		return ;
     	}
-    	debugg = [];
-    	let first_drawn = false;
+    	
     	console.log("raytracing...");
     	let rays = gen_rays(camera, parseFloat(document.getElementById('rt_precision').value));
 
-    	//rays.unshift(new Line(camera.eye, items[0].vertices[0]));
     	console.log(rays.length)
     	console.log(rays);
     	for (var i = 0; i < rays.length; i++) {
-    		//draw_vect(map_point_to_physical(camera, rays[i].p2, htmlcanvas.width, htmlcanvas.height), 'black', 2, 6);
-    		let intersections = [];
-    		for (var j = 0; j < items.length; j++) {
-    			let ints = ray_intersection(rays[i], items[j]);
-    			for (var k = 0; k < ints.length; k++) {
-    				intersections.push([ints[k], rays[i].p2,
-    									v3_len(v3_sub(ints[k], camera.eye)),
-    									items[j]]);
-    				debugg.push([rays[i].p2, i]);
-    				if (debugg.length == 1) {
-    					console.log(`first i is: ${i}`);
-    				}
-    			}
-    		}
-    		if (intersections.length > 0) {
-    			let closest_index = 0;
-    			let closest_val = intersections[0][2];
-    			for (var l = 0; l < intersections.length; l++) {
-    				if (intersections[l][2] < closest_val) {
-    					closest_index = l;
-    					closest_val = intersections[l][2];
-    				}
-    			}
-    			let le_point = map_point_to_physical(camera, intersections[closest_index][1], htmlcanvas.width, htmlcanvas.height);
-    			let normal = point_normal(intersections[closest_index][0], intersections[closest_index][3]);
-    			let light_color = compute_lighting(intersections[closest_index][0], normal);
-    			let color = rgbToHexV3(mult_colors(intersections[closest_index][3].color, light_color));
-    			let width = 0.5;
-    			if (!first_drawn) {
-    				color = 'red';
-    				width = 2;
-    				first_drawn = true;
-    				console.log(``);
-    				console.log(`drawing first point, unmapped: ${intersections[closest_index][1]}, mapped: ${le_point}`);
-    			}
-    			draw_circle(le_point.x, le_point.y, 1, color, width);
-    		}
+    		cast_ray(rays[i]);
     	}
     	console.log("done!");
-    	console.log(debugg);
-    	console.log(`first hitting ray: ${debugg[0][0]}`);
-    	console.log(`it intersects with the cube at ${ray_intersection(new Line(camera.eye, debugg[0][0]), items[0])[0]}`);
+    	draw_lights();
+    }
+
+    function cast_ray_for_screen_coords(x, y) {
+    	let mapped = map_physical_to_camera(camera, v3(x, y), htmlcanvas.width, htmlcanvas.height);
+    	cast_ray(new Line(camera.eye, mapped), true);
     }
 </script>
 
