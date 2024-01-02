@@ -6,15 +6,15 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/01 18:44:43 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/02 17:48:49 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
-# define S_WIDTH (1920 / 20)
-# define S_HEIGHT (1080 / 20)
+# define S_WIDTH (1920 / 2)
+# define S_HEIGHT (1080 / 2)
 
 # include <stdio.h>
 # include <float.h>
@@ -60,6 +60,7 @@ void	normalize(float *xyz);
 // FETCH_ELEM.C
 t_elem	*findcam(t_list **e_list);
 t_elem	*findamb(t_list **e_list);
+t_elem	*findlight(t_list **e_list);
 
 // INTERSECTING.C
 float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);

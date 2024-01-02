@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/01 18:46:57 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/02 18:19:48 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,12 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscreen[3], float dis)
 	float	n_ratio;
 	t_elem *amb;
 	t_elem	*light;
-	t_list	*list;	
 
 	amb = findamb(e_list);
-	list = *e_list;
-	while (list != NULL)
-	{
-		light = (list)->content;
-		if (light->type == 'L')
-		{
-			n_ratio = amb->light_ratio * diffused(objects, light, pscreen, dis);
-			break;
-		}
-		list = list->next;
-	}
+	light = findlight(e_list);
+	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscreen, dis));
+	if (n_ratio > 1)
+		n_ratio = 1;
 	i = -1;
 	while (++i < 3)
 		nrgb[i] = (int)(objects->rgb[i] * n_ratio);
@@ -86,25 +78,24 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscreen[3], float dis)
 	return (res);
 }
 
-float diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
 {
 	float p_hit[3];
 	float hit_norm[3];
 	float light_norm[3];
-	float hit_deg;
-	float light_deg;
+	float deg_diff[3];
+	float n_len;
 
 	p_hit[0] = pscreen[0] * dis;
 	p_hit[1] = pscreen[1] * dis;
 	p_hit[2] = pscreen[2] * dis;
 	vec_substract(hit_norm, p_hit, objects->xyz);
 	normalize(hit_norm);
-	hit_deg = (cos(hit_norm[0]) + cos(hit_norm[1]) + cos(hit_norm[2])) / 3;
 	vec_substract(light_norm, p_hit, light->xyz);
 	normalize(light_norm);
-	light_deg = (cos(light_norm[0]) + cos(light_norm[1]) + cos(light_norm[2])) / 3;
-	//printf("hit_deg - light_deg = %f\n", 1 - (light_deg - hit_deg)); 
-	//if (light_deg - hit_deg > 1)
-	///	return (1);
-	return (1 - (light_deg - hit_deg)); // set up make diff light_norm and hit_norm for diffused.
+	vec_substract(deg_diff, hit_norm, light_norm);
+	n_len = log10(sqrt(deg_diff[0] * deg_diff[0] + deg_diff[1] * deg_diff[1] + deg_diff[2] * deg_diff[2]));
+	if (n_len < 0)
+		n_len = 0;
+	return (n_len * light->light_ratio); // set up make diff light_norm and hit_norm for diffused.
 }
