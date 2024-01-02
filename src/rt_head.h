@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 17:48:49 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/02 22:09:14 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,11 @@ float	dotprod(float *vec1, float *vec2);
 void	vec_substract(float *res_vec, float *vec1, float *vec2);
 void	normalize(float *xyz);
 
+// FILL_CONTROL.c
+void	set_uvalue(t_elem *elem);
+void	init_elem(t_elem *elem, char *str);
+int		add_element(t_list	**e_list, char *str);
+
 // FILL_LIGHTSNCAMERA.c
 void	fill_err(char type);
 void	fill_ambiant(t_elem *elem, char **splited);
@@ -92,12 +97,10 @@ void	mlx_pp(t_scData *img, int x, int y, int color);
 int		scene_parsing(int ac, char **av);
 int		in_scene_parsing(int fd);
 void	musthave_elem(t_list *e_list);
-void	init_elem(t_elem *elem, char *str);
-int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(t_elem *objects, t_list **e_list, float pscreen[3], float dis);
+int		mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis);
 float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis);
 
 // ERR_HANDLING.C

@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/31 11:58:44 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/02 21:23:13 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,18 +62,4 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 		}
 		list = list->next;
 	}
-}
-
-void	inter_norm(float vec_norm[3], float pscreen[3], t_elem *objects, float dis)
-{
-	// specific to sphere...
-	vec_norm[0] = pscreen[0] * dis;
-	vec_norm[1] = pscreen[1] * dis;
-	vec_norm[2] = pscreen[2] * dis;
-	//printf("(%.2f,%.2f,%.2f)", p_norm[0], p_norm[1], p_norm[2]);
-	vec_substract(vec_norm, vec_norm, objects->xyz);
-	normalize(vec_norm);
-	vec_norm[0] = (vec_norm[0] + 1) / 2;
-	vec_norm[1] = (vec_norm[1] + 1) / 2;
-	vec_norm[2] = (vec_norm[2] + 1) / 2;
 }
