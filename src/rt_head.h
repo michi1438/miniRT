@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/11 17:04:55 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/02 22:09:14 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,13 @@ void	rt_matrix(float *ret, t_elem *cam_specs);
 // SCENE.C
 void	set_scene(t_scData *scrn, t_list **e_list);
 void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list);
-void	inter_norm(float P_norm[3], float pscreen[3], t_elem *objects, float dis);
 void	first_rays(t_scData *scrn, t_list **e_list);
 void	normalize(float *xyz);
 
 // FETCH_ELEM.C
 t_elem	*findcam(t_list **e_list);
 t_elem	*findamb(t_list **e_list);
+t_elem	*findlight(t_list **e_list);
 
 // INTERSECTING.C
 float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
@@ -70,6 +70,11 @@ int		solve_discriminent(float a, float b, float c, float *intersect_dist);
 float	dotprod(float *vec1, float *vec2);
 void	vec_substract(float *res_vec, float *vec1, float *vec2);
 void	normalize(float *xyz);
+
+// FILL_CONTROL.c
+void	set_uvalue(t_elem *elem);
+void	init_elem(t_elem *elem, char *str);
+int		add_element(t_list	**e_list, char *str);
 
 // FILL_LIGHTSNCAMERA.c
 void	fill_err(char type);
@@ -92,12 +97,11 @@ void	mlx_pp(t_scData *img, int x, int y, int color);
 int		scene_parsing(int ac, char **av);
 int		in_scene_parsing(int fd);
 void	musthave_elem(t_list *e_list);
-void	init_elem(t_elem *elem, char *str);
-int		add_element(t_list	**e_list, char *str);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(int *rgb, float p_norm[3], t_elem *amb);
+int		mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis);
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis);
 
 // ERR_HANDLING.C
 int		print_err(char *str);
