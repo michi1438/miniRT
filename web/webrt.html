@@ -120,9 +120,9 @@
 
 	function mult_colors(c1, c2) {
 		let res = v3(c1.x * c2.x, c1.y * c2.y, c1.z * c2.z);
-		res.x = clamp(res.x, 0, 255);
-		res.y = clamp(res.y, 0, 255);
-		res.z = clamp(res.z, 0, 255);
+		//res.x = clamp(res.x, 0, 255);
+		//res.y = clamp(res.y, 0, 255);
+		//res.z = clamp(res.z, 0, 255);
 		return (res);
 	}
 
@@ -597,7 +597,7 @@
 
 	/* https://stackoverflow.com/a/3863777 */
 	function point_plane_dist(point, plane) {
-		return (v3_dot(plane.getNormal(), (v3_sub(point, plane.p1))));
+		return (Math.abs(v3_dot(plane.getNormal(), (v3_sub(point, plane.p1)))));
 	}
 
 	/* Multiplying a 3D matrix with a 3D vector */
@@ -650,7 +650,7 @@
 	}
 
 	class Item {
-	  constructor(type, pos, scale, rot, color, vertex_func, draw_mapping_func, raytrace_func, line_width = 1) {
+	  constructor(type, pos, scale, rot, color, specular, is_checker, vertex_func, draw_mapping_func, raytrace_func, line_width = 1) {
 	    this.type = type;
 	    this.pos = pos;
 	    this.scale = scale;
@@ -659,6 +659,8 @@
 	    	//this.rot = v3(0, -1);
 	    }
 	    this.color = color;
+	    this.specular = specular;
+	    this.is_checker = is_checker;
 	    this.vertex_func = vertex_func;
 	    this.draw_mapping_func = draw_mapping_func;
 	    this.raytrace_func = raytrace_func;
@@ -712,7 +714,7 @@
 	var htmlcanvas = document.getElementById('canvas');
 	htmlcanvas.width = 1000;
 	htmlcanvas.height = 1000;
-	var [RED, GREEN, BLUE, YELLOW, LIGHTBLUE, BLACK, PINK] = [v3(255, 0, 0), v3(0, 255, 0), v3(0, 0, 255), v3(255, 255, 0), v3(68, 85, 90), v3(), v3(255, 222, 251)];
+	var [RED, GREEN, BLUE, YELLOW, LIGHTBLUE, BLACK, PINK, WHITE] = [v3(255, 0, 0), v3(0, 255, 0), v3(0, 0, 255), v3(255, 255, 0), v3(68, 85, 90), v3(), v3(255, 222, 251), v3(255, 255, 255)];
 	var ctx = htmlcanvas.getContext('2d');
 	const TOLERANCE = 0.000001;//1e-6; // how parallel a line is to the plane means parallel$
 	const origin = v3();
@@ -738,6 +740,10 @@
 	camera.eye = v3(0, 0, 0.1);*/
 
 	var items = [];
+
+	function equals_with_tolerance(val1, val2) {
+		return (val1 <= val2 + TOLERANCE && val1 >= val2 - TOLERANCE);
+	}
 
 	function draw_line(x1, y1, x2, y2, color = 'black', width = 2) {
 		ctx.strokeStyle = color;
@@ -1288,32 +1294,34 @@
 		item.draw_mapping_func(mappings, item);
 	}
 	
-	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, cube_vertices, draw_cube_mappings);
+	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, -1, true, cube_vertices, draw_cube_mappings);
 
-	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, cube_vertices, draw_cube_mappings);
+	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, -1, true, cube_vertices, draw_cube_mappings);
 
-	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, pyramid_vertices, draw_pyramid_mappings);
+	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -3), v3(1, 8, 4), v3(), RED, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -1000), v3(500, 8, 4), v3(), v3(255, 1, 1), 500, true, sphere_vertices, draw_sphere_mappings);
 
-	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, sphere_vertices, draw_sphere_mappings);
+	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, sphere_vertices, draw_sphere_mappings);
 	
-	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, sphere_vertices, draw_sphere_mappings);
+	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, sphere_vertices, draw_sphere_mappings);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, cylinder_vertices, draw_cylinder_mappings);
 
 	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
-	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -1000), v3(0, 0, 1), v3(), YELLOW, null, null);
+	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, true, null, null);
 
+	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, true, null, null);
 
 	add_item(cube);
-	add_item(cube2);
+	//add_item(cube2);
 	add_item(pyramid);
 	add_item(sphere);
 	//add_item(sphere2);
-	//add_item(sphere3);
+	add_item(sphere3);
 	add_item(cylinder);
-	add_item(test_plane);
+	//add_item(test_plane);
+	add_item(bottom_plane);
 
 	var shift_pressed = false;
 	var two_pressed = false;
@@ -1876,7 +1884,7 @@
     var lights = [];
 
     let ambient = new LightAmbient(intensity_to_color(0.3));
-    let light_point1 = new LightPoint(intensity_to_color(1), v3(0, 0, 0));
+    let light_point1 = new LightPoint(intensity_to_color(1), v3(0, 2, -1));
     let light_point2 = new LightPoint(intensity_to_color(1), v3(-3, 0, -2));
 
     lights.push(ambient);
@@ -1919,7 +1927,10 @@
     */	
 
     /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-    function compute_lighting(point, normal, item) {
+    function compute_lighting(intersection) {
+    	let point = intersection.pos;
+    	let normal = intersection.normal;
+    	let item = intersection.item;
 		let res = v3();
 		for (let i=0; i < lights.length; i ++) {
 			if (lights[i] instanceof LightAmbient) {
@@ -1928,8 +1939,10 @@
 				let L = null;
 				if (lights[i] instanceof LightPoint) {
 					let int = cast_ray(new Line(lights[i].pos, point), false);
-					if (int.item.id != item.id) {
-						continue ;
+					if (int && int.item.id != item.id) {
+						if (v3_len(v3_sub(int.pos, point)) < v3_len(v3_sub(point, lights[i].pos))) {
+							continue ;
+						}
 					}
 					L = v3_sub(lights[i].pos, point);
 				} else {
@@ -1948,8 +1961,99 @@
 		return (res);
 	}
 
+	function compute_specular(intersection) {
+		if (intersection.item.specular == -1) {
+    		return v3();
+    	}
+    	let point = intersection.pos;
+    	let normal = intersection.normal;
+    	let item = intersection.item;
+		let res = v3();
+		for (let i=0; i < lights.length; i ++) {
+			if (lights[i] instanceof LightAmbient) {
+				continue ;
+			}
+			let L = null;
+			if (lights[i] instanceof LightPoint) {
+				let int = cast_ray(new Line(lights[i].pos, point), false);
+				if (int && int.item.id != item.id) {
+					if (v3_len(v3_sub(int.pos, point)) < v3_len(v3_sub(point, lights[i].pos))) {
+						continue ;
+					}
+				}
+				L = v3_sub(lights[i].pos, point);
+			} else {
+				L = lights[i].direction;
+			}
+			let n_dot_l = v3_dot(normal, L);
+			let R = v3_sub(v3_scale(normal, 2 * v3_dot(normal, L)), L);
+			let V = v3_invert(v3_norm(v3_sub(intersection.ray.p2, intersection.ray.p1))); // Vector from the point towards the camera
+			let r_dot_v = v3_dot(R, V);
+			if (r_dot_v > 0) {
+				let new_col = modify_color_intensity(lights[i].color, Math.pow(r_dot_v / (v3_len(R) * v3_len(V)), item.specular));
+				res = add_colors(res, new_col);
+			}
+		}
+		return (res);
+	}
+
+	/* http://raytracerchallenge.com/bonus/texture-mapping.html */
+	function uv_at_chekers(color1, color2, checkers_width, checkers_height, u, v) {
+		let u2 = Math.floor(u * checkers_width);
+		let v2 = Math.floor(v * checkers_height);
+
+		if ((u2 + v2) % 2 == 0) {
+			return (color1);
+		} else {
+			return (color2);
+		}
+	}
+
+	function uv_at_image(image_pixels, imgElement, target_width, u, v) {
+		let target_height = Math.trunc(new_image_height(imgElement, target_width));
+		v = 1 - v;
+
+		let x = Math.round(u * (target_width - 1));
+		let y = Math.round(v * (target_height - 1));
+
+		return ([image_pixels[y][x]]);
+	}
+
+	function spherical_map(point, sphere) {
+		point = v3_add(point, v3_sub(v3(), sphere.pos));
+		let theta = Math.atan(point.x, point.z);
+		let radius = v3_len(point);
+		let phi = Math.acos(point.y / radius);
+		let raw_u = theta / (2 * Math.PI);
+	  	let u = 1 - (raw_u + 0.5);
+	  	let v = 1 - phi / Math.PI;
+	  	return ([u, v]);
+	}
+
+	function planar_map(point, plane) {
+		let u = point.x % 1;
+		if (u < 0) {
+			//u = (u + u / 2) % 1;
+		}
+  		let v = point.y % 1;
+  		return ([u, v]);
+	}
+
+	function cylindrical_map(point, cylinder) {
+		  point = v3_add(point, v3_sub(v3(), cylinder.pos));
+		  // compute the azimuthal angle, same as with spherical_map()
+		  let theta = Math.atan(point.x, point.z);
+		  let raw_u = theta / (2 * Math.PI);
+		  let u = 1 - (raw_u + 0.5);
+	
+		  // let v go from 0 to 1 between whole units of y
+		  let v = point.y % 1;
+	
+		  return ([u, v]);
+	}
+
 	function get_item_color(int) {
-		if (int.item.type == ObjectType.Plane) {
+		if (int.item.type == ObjectType.Plane && !int.item.is_checker) {
 			let n = int.normal;
 			let n_ = v3(0, 0, 1);
 			let angle = vect_angle(n, n_);
@@ -1972,32 +2076,95 @@
 				return (int.item.color);
 			}
 			return (int.item.color);
+		} else if (int.item.is_checker) {
+			return(get_item_color_checkerboard(int));
 		} else {
 			return (int.item.color);
 		}
 	}
 
+	/* https://stackoverflow.com/a/1024061 */
+	/* consistent x, y mapping on a plane with an arbitrary rotation applied to it */
+	/*
+		point: point to map
+		origin: origin of the plane
+		normal: normal of the plane
+	*/
+	function normalize_plane_point(point, origin, normal) {
+		if (equals_with_tolerance(Math.abs(normal.x), 1) && normal.y == 0 && normal.z == 0) {
+			let z_axis = v3(0, 0, 1);
+			let new_y_axis = v3_norm(v3_cross(z_axis, normal));
+			let new_x_axis = v3_norm(v3_cross(normal, new_y_axis));
+			let origin_to_point = v3_sub(point, origin);
+			return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis)));
+		}
+		let x_axis = v3(1, 0, 0);
+		let new_y_axis = v3_norm(v3_cross(x_axis, normal));
+		let new_x_axis = v3_norm(v3_cross(normal, new_y_axis));
+		let origin_to_point = v3_sub(point, origin);
+		return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis)));
+	}
+
+	function checker_pixel_for_plane(point, origin, normal, step, color1, color2) {
+		let new_pos = normalize_plane_point(point, origin, normal);
+		if (new_pos.x < 0) {
+			new_pos.x -= step;
+		}
+		if (new_pos.y < 0) {
+			new_pos.y -= step;
+		}
+		const checkerX = Math.floor(Math.abs(new_pos.x) / step);
+		const checkerY = Math.floor(Math.abs(new_pos.y) / step);
+		const parityX = checkerX % 2;
+		const parityY = checkerY % 2;
+	    if (parityX === parityY) {
+	    	return (color1);
+	    } else {
+	    	return (color2);
+	    }
+	}
+
 	function get_item_color_checkerboard(int) {
+		let inverse_color = v3_sub(WHITE, int.item.color);
 		if (int.item.type == ObjectType.Plane) {
-			let n = int.normal;
-			let n_ = v3(0, 0, 1);
-			let angle = vect_angle(n, n_);
-			/* rotating the point as if the normal of the plane was n_ */
-			let new_pos = v3_add(v3_scale(int.pos, Math.cos(angle)), v3_add(v3_scale(v3_cross(n, int.pos), Math.sin(angle)), v3_scale(n, v3_dot(n, int.pos) * (1 - Math.cos(angle)))));
-			let step = 1;
-			if (new_pos.x < 0) {
-				new_pos.x -= step;
+			return (checker_pixel_for_plane(int.pos, int.item.pos, int.item.scale, 2, inverse_color, int.item.color));
+		} else if (int.item.type == ObjectType.Sphere) {
+			let u_v = spherical_map(int.pos, int.item);
+			return(uv_at_chekers(int.item.color, inverse_color, 32, 8, u_v[0], u_v[1]));
+			
+			//return(uv_at_image(test_image_pixels, test_image, 200, u_v[0], u_v[1]));
+		} else if (int.item.type == ObjectType.Cylinder) {
+			let u_v = cylindrical_map(int.pos, int.item);
+			return(uv_at_chekers(int.item.color, inverse_color, 32, 8, u_v[0], u_v[1]));
+		} else if (int.item.type == ObjectType.Cube) {
+			let squares = get_cube_squares(int.item);
+			let nearest_plane;
+			let nearest_plane_dist;
+			for (var i = 0; i < squares.length; i++) {
+				let plane = new Plane(squares[i][0], squares[i][1], squares[i][2]);
+				let dist_ = point_plane_dist(int.pos, plane);
+				if (!nearest_plane || dist_ < nearest_plane_dist) {
+					nearest_plane = plane;
+					nearest_plane_dist = dist_;
+				}
 			}
-			if (new_pos.y < 0) {
-				new_pos.y -= step;
+			return (checker_pixel_for_plane(int.pos, nearest_plane.p2, nearest_plane.getNormal(), int.item.scale.x / 10, inverse_color, int.item.color));
+		} else if (int.item.type == ObjectType.Pyramid) {
+			let triangles = get_pyramid_triangles(int.item);
+			triangles.push(get_pyramid_base_square(int.item));
+			let nearest_plane;
+			let nearest_plane_dist;
+			for (var i = 0; i < triangles.length; i++) {
+				let plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
+				let dist_ = point_plane_dist(int.pos, plane);
+				if (!nearest_plane || dist_ < nearest_plane_dist) {
+					nearest_plane = plane;
+					nearest_plane_dist = dist_;
+				}
 			}
-			if (Math.trunc((new_pos.x / (step))) % (2) == 0 && Math.trunc((new_pos.y / step)) % 2 == 0) {
-				return (BLUE);
-			} else {
-				return (int.item.color);
-			}
-			return (int.item.color);
+			return (checker_pixel_for_plane(int.pos, nearest_plane.p2, nearest_plane.getNormal(), int.item.scale.x / 10, inverse_color, int.item.color));
 		} else {
+			
 			return (int.item.color);
 		}
 	}
@@ -2017,10 +2184,13 @@
 		}
 		if (do_draw && intersection != null) {
 			let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
-			let light_color = compute_lighting(intersection.pos, intersection.normal, intersection.item);
+			let light_color = compute_lighting(intersection);
+			let specular_coefficient = 0.7;
+			let specular_color = modify_color_intensity(compute_specular(intersection), specular_coefficient);
 			let color;
 			if (1) {
-				color = rgbToHexV3(mult_colors(get_item_color(intersection), light_color));
+				let diffuse_color = mult_colors(get_item_color(intersection), light_color);
+				color = rgbToHexV3(add_colors(diffuse_color, specular_color)); //rgbToHexV3(mult_colors(get_item_color(intersection), light_color));
 			} else {
 				color = rgbToHexV3(get_item_color(intersection));
 			}
