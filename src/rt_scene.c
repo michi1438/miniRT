@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 12:32:58 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/04 00:12:59 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 		objects = list->content;
 		if (objects->type == 's')
 		{
-			inter_dist[0] = intersect_sp(pscreen, cam_specs, objects);
+			inter_dist[0] = intersect_sp(pscreen, cam_specs->xyz, objects);
 			if (inter_dist[0] > 0 && inter_dist[0] < inter_dist[1])
 			{
 				p_hit[0] = pscreen[0] * inter_dist[0] + cam_specs->xyz[0];
@@ -66,4 +66,29 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 		}
 		list = list->next;
 	}
+}
+
+int	cycle_shadow(float n_vec[3], float orig_xyz[3], t_list **e_list, float lentolight)
+{
+	float	inter_dist;
+	t_list	*list;	
+	t_elem	*objects;
+
+	(void)lentolight;
+	list = *e_list;
+	inter_dist = FLT_MAX;
+	while (list->content != NULL)
+	{
+		objects = list->content;
+		if (objects->type == 's' && intersect_sp(n_vec, orig_xyz, objects) > 0 && objects->status == 0)
+		{
+			inter_dist = intersect_sp(n_vec, orig_xyz, objects);
+			printf("intersect dis = %f\n", inter_dist);
+		}
+		list = list->next;
+	}
+	if (inter_dist < FLT_MAX)
+		return (0);
+	else
+		return (1);
 }

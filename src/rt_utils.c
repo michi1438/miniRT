@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 12:28:25 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/04 00:11:17 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,9 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3])
 
 	amb = findamb(e_list);
 	light = findlight(e_list);
-	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr));
+	objects->status = 1;
+	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr, e_list));
+	objects->status = 0;
 	if (n_ratio > 1)
 		n_ratio = 1;
 	i = -1;
@@ -72,24 +74,30 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3])
 	return (res);
 }
 
-float	diffused(t_elem *objects, t_elem *light, float pscreen[3])
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3], t_list **e_list)
 {
 	float	p_hit[3];
 	float	hit_norm[3];
 	float	light_norm[3];
 	float	ddiff[3];
 	float	n_len;
+	float	lentolight;
 
+	(void)lentolight;
+	(void)e_list;
 	p_hit[0] = pscreen[0];
 	p_hit[1] = pscreen[1];
 	p_hit[2] = pscreen[2];
 	vec_substract(hit_norm, p_hit, objects->xyz);
 	normalize(hit_norm);
 	vec_substract(light_norm, p_hit, light->xyz);
+	lentolight = sqrt(pow(light_norm[0], 2) + pow(light_norm[1], 2) + pow(light_norm[2], 2));
 	normalize(light_norm);
 	vec_substract(ddiff, hit_norm, light_norm);
+	vec_substract(light_norm, light->xyz, p_hit);
+	normalize(light_norm);
 	n_len = log(sqrt(pow(ddiff[0], 2) + pow(ddiff[1], 2) + pow(ddiff[2], 2)));
-	if (n_len < 0)
-		n_len = 0;
+	if (n_len < 0 || cycle_shadow(light_norm, p_hit, e_list, lentolight) == 0)
+		return (0);
 	return (n_len * light->light_ratio);
 }
