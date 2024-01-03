@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 22:04:41 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 22:06:18 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 19:23:25 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	set_uvalue(t_elem *elem)
 	elem->sratio = (float)S_WIDTH / S_HEIGHT;
 	elem->radius = 0;
 	elem->height = 0;
+	elem->status = 0;
 	while (++i < 3)
 	{
 		elem->rgb[i] = -2;

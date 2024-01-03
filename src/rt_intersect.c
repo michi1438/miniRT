@@ -6,13 +6,13 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:28:03 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 10:53:53 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 16:09:49 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt_head.h"
 
-float	intersect_sp(float *normal_dir, t_elem *cam_specs, t_elem *obj)
+float	intersect_sp(float *normal_dir, float orig_xyz[3], t_elem *obj)
 {
 	float	to_obj[3];	
 	float	quad_abc[3];
@@ -22,7 +22,7 @@ float	intersect_sp(float *normal_dir, t_elem *cam_specs, t_elem *obj)
 	float	intersec_dist[2];
 
 	thc = 0;
-	vec_substract(to_obj, cam_specs->xyz, obj->xyz);
+	vec_substract(to_obj, orig_xyz, obj->xyz);
 	tca = dotprod(to_obj, normal_dir);
 	d2 = dotprod(to_obj, to_obj) - tca * tca;
 	if (d2 > obj->radius * obj->radius)
