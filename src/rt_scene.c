@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 11:15:14 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 21:23:13 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:51:58 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scr
 		objects = list->content;
 		if (objects->type == 's')
 		{
-			inter_dist[0] = intersect(pscreen, cam_specs, objects);
+			inter_dist[0] = intersect_sp(pscreen, cam_specs, objects);
 			if (inter_dist[0] > 0 && inter_dist[0] < inter_dist[1])
 			{
 				mlx_pp(scrn, xy[0], xy[1], mix_color(objects, e_list, pscreen, inter_dist[0]));

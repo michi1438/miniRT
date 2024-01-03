@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 22:09:14 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:52:16 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_elem	*findamb(t_list **e_list);
 t_elem	*findlight(t_list **e_list);
 
 // INTERSECTING.C
-float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj);
+float	intersect_sp(float *normal_dir, t_elem *cam_specs, t_elem *obj);
 int		solve_discriminent(float a, float b, float c, float *intersect_dist);
 
 // VEC_MATH.C

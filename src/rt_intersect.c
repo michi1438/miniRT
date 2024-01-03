@@ -6,13 +6,13 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 19:28:03 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/31 10:29:41 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:53:53 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt_head.h"
 
-float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj)
+float	intersect_sp(float *normal_dir, t_elem *cam_specs, t_elem *obj)
 {
 	float	to_obj[3];	
 	float	quad_abc[3];
@@ -50,26 +50,25 @@ float	intersect(float *normal_dir, t_elem *cam_specs, t_elem *obj)
 
 int	solve_discriminent(float a, float b, float c, float *intersect_dist)
 {
-	float discrim;
-	float q;
-   
+	float	discrim;
+	float	q;
+
 	discrim = b * b - 4 * a * c;
 	if (discrim < 0)
 		return (-1);
 	else if (discrim == 0)
 	{
-		intersect_dist[0] = - 0.5 * b / a;
-		intersect_dist[1] = - 0.5 * b / a;
+		intersect_dist[0] = -0.5 * b / a;
+		intersect_dist[1] = -0.5 * b / a;
 	}
 	else
 	{
 		if (b > 0)
 			q = -0.5 * (b + sqrt(discrim));
 		else
-			q =	-0.5 * (b - sqrt(discrim));
+			q = -0.5 * (b - sqrt(discrim));
 		intersect_dist[0] = q / a;
 		intersect_dist[1] = c / q;
-	//	printf("(%.5f,%.5f)\n", intersect_dist[0], intersect_dist[1]);
 	}
 	return (1);
 }

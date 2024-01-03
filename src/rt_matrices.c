@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/19 16:18:55 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/05 13:05:39 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:24:37 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,4 @@ void	rt_matrix(float *ret, t_elem *cam_specs)
 	ret[0] = abc[0];
 	ret[1] = abc[1];
 	ret[2] = abc[2];
-	ret[0] += cam_specs->xyz[0];
-	ret[1] += cam_specs->xyz[1];
-	ret[2] += cam_specs->xyz[2];
 }

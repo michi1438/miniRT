@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 22:09:59 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:55:26 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
 	vec_substract(light_norm, p_hit, light->xyz);
 	normalize(light_norm);
 	vec_substract(ddiff, hit_norm, light_norm);
-	n_len = log10(sqrt(pow(ddiff[0], 2) + pow(ddiff[1], 2) + pow(ddiff[2], 2)));
+	n_len = log(sqrt(pow(ddiff[0], 2) + pow(ddiff[1], 2) + pow(ddiff[2], 2)));
 	if (n_len < 0)
 		n_len = 0;
 	return (n_len * light->light_ratio);
