@@ -6,15 +6,15 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 10:52:16 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 13:16:52 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
-# define S_WIDTH (1920 / 2)
-# define S_HEIGHT (1080 / 2)
+# define S_WIDTH (1368)
+# define S_HEIGHT (912)
 
 # include <stdio.h>
 # include <float.h>
@@ -100,8 +100,8 @@ void	musthave_elem(t_list *e_list);
 
 // UTILS.C (maybe put this in libft)
 float	ft_atof(char *str);
-int		mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis);
-float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis);
+int		mix_color(t_elem *objects, t_list **e_list, float pscr[3]);
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3]);
 
 // ERR_HANDLING.C
 int		print_err(char *str);

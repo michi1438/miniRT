@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 10:55:26 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 12:28:25 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ float	ft_atof(char *str)
 	return (res * neg);
 }
 
-int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
+int	mix_color(t_elem *objects, t_list **e_list, float pscr[3])
 {
 	int		res;
 	int		nrgb[3];
@@ -62,7 +62,7 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
 
 	amb = findamb(e_list);
 	light = findlight(e_list);
-	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr, dis));
+	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr));
 	if (n_ratio > 1)
 		n_ratio = 1;
 	i = -1;
@@ -72,7 +72,7 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
 	return (res);
 }
 
-float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3])
 {
 	float	p_hit[3];
 	float	hit_norm[3];
@@ -80,9 +80,9 @@ float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
 	float	ddiff[3];
 	float	n_len;
 
-	p_hit[0] = pscreen[0] * dis;
-	p_hit[1] = pscreen[1] * dis;
-	p_hit[2] = pscreen[2] * dis;
+	p_hit[0] = pscreen[0];
+	p_hit[1] = pscreen[1];
+	p_hit[2] = pscreen[2];
 	vec_substract(hit_norm, p_hit, objects->xyz);
 	normalize(hit_norm);
 	vec_substract(light_norm, p_hit, light->xyz);
