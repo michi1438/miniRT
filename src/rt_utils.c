@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/12 08:59:19 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/03 10:55:26 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ size_t	mantislen(char *str, int neg)
 
 float	ft_atof(char *str)
 {
-	float	res = 0;
+	float	res;
 	int		i;
 	int		neg;
 	int		len;
 
+	res = 0;
 	neg = 1;
 	i = 0;
 	if (str[i] == '-')
@@ -47,21 +48,48 @@ float	ft_atof(char *str)
 	len = 0;
 	while (str[i] != '\0' && str[i] != '.')
 		res += (str[i++] - '0') * pow(10, --len);
-/*	XXX TEST for precision...
-	printf("This is a test for the ft_atof()'s precision...\n");
-	printf("printf(\"%%.30f\\n\", (float)res * neg);	--> ");
-	printf("%.30f\n", (float)res * neg);
-	printf("printf(\"%%.30f\\n\", 0.2);			--> ");
-	printf("%.30f\n\n", 0.2);
-*/
 	return (res * neg);
 }
 
-int	mix_color(int *rgb, float p_norm[3], t_elem *amb)
+int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
 {
-	int	res;
+	int		res;
+	int		nrgb[3];
+	int		i;
+	float	n_ratio;
+	t_elem	*amb;
+	t_elem	*light;
 
-	(void)amb;
-	res = ((int)(rgb[0] * p_norm[2]) << 16 | (int)(rgb[1] * p_norm[2]) << 8 | (int)(rgb[2] * p_norm[2]));
+	amb = findamb(e_list);
+	light = findlight(e_list);
+	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr, dis));
+	if (n_ratio > 1)
+		n_ratio = 1;
+	i = -1;
+	while (++i < 3)
+		nrgb[i] = (int)(objects->rgb[i] * n_ratio);
+	res = (nrgb[0] << 16 | nrgb[1] << 8 | nrgb[2]);
 	return (res);
+}
+
+float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
+{
+	float	p_hit[3];
+	float	hit_norm[3];
+	float	light_norm[3];
+	float	ddiff[3];
+	float	n_len;
+
+	p_hit[0] = pscreen[0] * dis;
+	p_hit[1] = pscreen[1] * dis;
+	p_hit[2] = pscreen[2] * dis;
+	vec_substract(hit_norm, p_hit, objects->xyz);
+	normalize(hit_norm);
+	vec_substract(light_norm, p_hit, light->xyz);
+	normalize(light_norm);
+	vec_substract(ddiff, hit_norm, light_norm);
+	n_len = log(sqrt(pow(ddiff[0], 2) + pow(ddiff[1], 2) + pow(ddiff[2], 2)));
+	if (n_len < 0)
+		n_len = 0;
+	return (n_len * light->light_ratio);
 }
