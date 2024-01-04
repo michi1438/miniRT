@@ -9,7 +9,7 @@ void	fill_sphere(t_elem *elem, char **splited)
 	if (splited[1] == NULL || splited[2] == NULL || splited[3] == NULL)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
-	elem->diameter = ft_atof(splited[2]);
+	elem->radius = ft_atof(splited[2]) / 2;
 	rgb_split = ft_split(splited[3], ',');
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && rgb_split[i] != NULL)
@@ -68,7 +68,7 @@ void	fill_cylinder(t_elem *elem, char **splited)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
 	norm_xyz_split = ft_split(splited[2], ',');
-	elem->diameter = ft_atof(splited[3]);
+	elem->radius = ft_atof(splited[3]) / 2;
 	elem->height = ft_atof(splited[4]);
 	rgb_split = ft_split(splited[5], ',');
 	i = -1;
