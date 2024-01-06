@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 10:55:26 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/04 17:02:03 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ float	ft_atof(char *str)
 	return (res * neg);
 }
 
-int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
+int	mix_color(t_elem *objects, t_list **e_list, float pscr[3])
 {
 	int		res;
 	int		nrgb[3];
@@ -62,7 +62,10 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
 
 	amb = findamb(e_list);
 	light = findlight(e_list);
-	n_ratio = (amb->light_ratio / 2 + diffused(objects, light, pscr, dis));
+	objects->status = 1;
+	n_ratio = (amb->light_ratio * 2.0f / 3.0f + diffused(objects, light, pscr, e_list));
+	// FIXME is there a way to specify 2 / 3 as a less intensive way for the computer ?
+	objects->status = 0;
 	if (n_ratio > 1)
 		n_ratio = 1;
 	i = -1;
@@ -72,24 +75,32 @@ int	mix_color(t_elem *objects, t_list **e_list, float pscr[3], float dis)
 	return (res);
 }
 
-float	diffused(t_elem *objects, t_elem *light, float pscreen[3], float dis)
+float	diffused(t_elem *objects, t_elem *light, float pscr[3], t_list **e_list)
 {
 	float	p_hit[3];
 	float	hit_norm[3];
-	float	light_norm[3];
-	float	ddiff[3];
+	float	lnrm[3];
+	float	diff[3];
 	float	n_len;
+	float	l_light;
 
-	p_hit[0] = pscreen[0] * dis;
-	p_hit[1] = pscreen[1] * dis;
-	p_hit[2] = pscreen[2] * dis;
+	p_hit[0] = pscr[0];
+	p_hit[1] = pscr[1];
+	p_hit[2] = pscr[2];
 	vec_substract(hit_norm, p_hit, objects->xyz);
 	normalize(hit_norm);
-	vec_substract(light_norm, p_hit, light->xyz);
-	normalize(light_norm);
-	vec_substract(ddiff, hit_norm, light_norm);
-	n_len = log(sqrt(pow(ddiff[0], 2) + pow(ddiff[1], 2) + pow(ddiff[2], 2)));
-	if (n_len < 0)
-		n_len = 0;
+	vec_substract(lnrm, p_hit, light->xyz);
+	l_light = sqrt(lnrm[0] * lnrm[0] + lnrm[1] * lnrm[1] + lnrm[2] * lnrm[2]);
+	// FIXME what is best pow(var, 2) or (var * var) ?
+	normalize(lnrm);
+	vec_substract(diff, hit_norm, lnrm);
+	vec_substract(lnrm, light->xyz, p_hit);
+	normalize(lnrm);
+	n_len = sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]);
+	if (n_len < M_SQRT2) // XXX shadows starts at the equator... try to comment this out and tell me what you think...
+		return (0);
+	n_len = log(n_len / M_SQRT2);
+	if (n_len < 0 || cycle_shadow(lnrm, p_hit, e_list, l_light) == 0)
+		return (0);
 	return (n_len * light->light_ratio);
 }

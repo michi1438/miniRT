@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/02 17:46:16 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/04 17:05:59 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void	fill_light(t_elem *elem, char **splited)
 	char	**rgb_split;
 	int		i;
 
+	rgb_split = NULL;
 	if (splited[1] == NULL || splited[2] == NULL)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
