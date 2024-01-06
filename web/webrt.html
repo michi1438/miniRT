@@ -63,6 +63,7 @@
 		let canvas = document.createElement('canvas');
 		let context = canvas.getContext('2d');
 
+		target_width = Math.trunc(target_width);
 		// Set the canvas dimensions to match the image
 		let target_height = Math.trunc(new_image_height(imgElement, target_width)) + 1;
 		canvas.width = target_width;
@@ -191,8 +192,21 @@
 	  }
 	}
 
-	/* https://math.stackexchange.com/a/64528 */
+	function colinear_check(v1, v2) {
+		let cross = v3_cross(v1, v2);
+		return (equals_with_tolerance(v1.x, 0) && equals_with_tolerance(v1.y, 0) && equals_with_tolerance(v1.z, 0));
+	}
+
 	function plane_from_normal(point, normal) {
+		/*let temp = v3(1);
+		if (colinear_check(temp, normal)) {
+			temp = v3(0, 1);
+		}	
+		let v1 = v3_cross(temp, normal);
+		let v2 = v3_cross(v1, normal);
+		return (new Plane(point, v3_add(point, v1), v3_add(point, v2)));*/
+
+		/* https://math.stackexchange.com/a/64528 */
 		let w;
 		if (Math.abs(normal.x) <= Math.abs(normal.y) && Math.abs(normal.x) <= Math.abs(normal.z)) {
 			w = v3(1);
@@ -600,6 +614,23 @@
 		return (Math.abs(v3_dot(plane.getNormal(), (v3_sub(point, plane.p1)))));
 	}
 
+	function signed_point_plane_dist(point, plane) {
+		return (v3_dot(plane.getNormal(), (v3_sub(point, plane.p1))));
+	}
+
+	/* https://stackoverflow.com/a/17661431 */
+	function project_point_onto_plane(point, plane) {
+		let dist = signed_point_plane_dist(point, plane);
+		let n = plane.getNormal();
+		if (dist > 0) {
+			/* the normal is pointing towards the point */
+			return (v3_sub(point, n));
+		} else {
+			/* opposite case */
+			return (v3_add(point, n));
+		}
+	}
+
 	/* Multiplying a 3D matrix with a 3D vector */
 	function matrix_mult_vec(matrix, vec) {
 		let v1 = v3_scale(matrix.v1, vec.x);
@@ -825,9 +856,8 @@
 		items.push(item);
 	}
 
-	function lerp(start, end, t) {
-	    // Linear interpolation function
-	    return (1 - t) * start + t * end;
+	function lerp(start, end, x) {
+	    return (1 - x) * start + x * end;
 	}
 
 	function smoothColorTransition(counter, maxCounter) {
@@ -1300,7 +1330,7 @@
 
 	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -1000), v3(500, 8, 4), v3(), v3(255, 1, 1), 500, true, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, sphere_vertices, draw_sphere_mappings);
 
 	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, sphere_vertices, draw_sphere_mappings);
 	
@@ -1380,7 +1410,7 @@
 			debug_toggle = !debug_toggle;
 			draw();
 		} else {
-			console.log(event);
+			//console.log(event);
 		}
 	});
 
@@ -1796,7 +1826,7 @@
     	let plane_top_int = intersect_ray_plane(ray, plane_top);
     	if (plane_top_int != null) { 
     		if (v3_len(v3_sub(C, plane_top_int.pos)) <= radius) {
-    			let dist_ = v3_len(plane_top_int.pos, ray.p1);
+    			let dist_ = v3_len(v3_sub(plane_top_int.pos, ray.p1));
     			if (res == null || dist_ < dist) {
     				res = plane_top_int;
     				dist = dist_;
@@ -1808,7 +1838,7 @@
     	let plane_bottom_int = intersect_ray_plane(ray, plane_bottom);
     	if (plane_bottom_int != null) { 
     		if (v3_len(v3_sub(bottom, plane_bottom_int.pos)) <= radius) {
-    			let dist_ = v3_len(plane_bottom_int.pos, ray.p1);
+    			let dist_ = v3_len(v3_sub(plane_bottom_int.pos, ray.p1));
     			if (res == null || dist_ < dist) {
     				res = plane_bottom_int;
     				dist = dist_;
@@ -2052,6 +2082,8 @@
 		  return ([u, v]);
 	}
 
+	var pixels_cache = null;
+	var cache_width = 0;
 	function get_item_color(int) {
 		if (int.item.type == ObjectType.Plane && !int.item.is_checker) {
 			let n = int.normal;
@@ -2076,6 +2108,62 @@
 				return (int.item.color);
 			}
 			return (int.item.color);
+		} else if (int.item.type == ObjectType.Sphere && !int.item.is_checker) {
+			let new_width = (2 * Math.PI * (int.item.scale.x / 2)) / 10 ;
+			new_width = Math.max(new_width, test_image.width);
+			let new_pixels;
+			if (cache_width == new_width) {
+				new_pixels = pixels_cache;
+			} else {
+				cache_width = new_width;
+				new_pixels = getPixelsFromImage(test_image, new_width);
+				pixels_cache = new_pixels;
+			}
+			let coords = cartesian_to_sphere(int.pos, int.item);
+			/* taking theta and phi */
+			let x_coord = coords.x; // theta
+			let y_coord = coords.z; // phi
+
+
+
+			let u = x_coord / (2 * Math.PI);
+	        let v = y_coord / Math.PI;
+
+	        // Map UV coordinates to image coordinates
+	        x = Math.floor(u * (new_width - 1))
+	        y = Math.floor(v * (new_image_height(test_image, new_width) - 1))
+
+	        //# Sample pixel from the image
+	        let pixel = new_pixels[y][x];
+			return (v3(pixel.x, pixel.y, pixel.z));
+			
+
+
+
+
+
+			/* theta spans from 0 to 2pi */
+			/* phi spans from 0 to pi */
+
+			//let new_width = (2 * Math.PI * (int.item.scale.x / 2)) / 10 ;
+			//new_width = Math.max(new_width, test_image.width);
+
+			/* x_coord should be made proportional to new_width */
+			/* y_coord too */
+			x_coord = (x_coord / (2 * Math.PI)) * new_width;
+			y_coord = (y_coord / Math.PI) * new_image_height(test_image, new_width);
+
+			x_coord = Math.trunc(x_coord % new_width);
+			if (x_coord < 0) {
+				x_coord = new_width + x_coord;
+			}
+			y_coord = Math.trunc(y_coord % new_image_height(test_image, new_width));
+			if (y_coord > 0) {
+				y_coord = new_image_height(test_image, new_width) - y_coord;
+			}
+			//let pixel = new_pixels[Math.abs(Math.trunc(y_coord))][Math.abs(Math.trunc(x_coord))];
+
+			return (v3(pixel.x, pixel.y, pixel.z));
 		} else if (int.item.is_checker) {
 			return(get_item_color_checkerboard(int));
 		} else {
@@ -2103,6 +2191,21 @@
 		let new_x_axis = v3_norm(v3_cross(normal, new_y_axis));
 		let origin_to_point = v3_sub(point, origin);
 		return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis)));
+	}
+
+	function cartesian_to_sphere(point, sphere) {
+		let rho = v3_len(v3_sub(point, sphere.pos));
+		// z axis is sphere.rot
+		z_axis = sphere.rot;
+		if (sphere.rot.x == 0 && sphere.rot.y == 0 && sphere.rot.z == 0) {
+			z_axis = v3(0, 0, 1);
+		}
+		let phi = vect_angle(z_axis, v3_sub(point, sphere.pos));
+		let plane = plane_from_normal(sphere.pos, z_axis);
+		let proj = project_point_onto_plane(point, plane);
+		/* the following works because of how plane_from_normal behaves (p1 is sphere.pos) */
+		let theta = vect_angle(v3_sub(plane.p2, sphere.pos), v3_sub(point, sphere.pos));
+		return (v3(rho, theta, phi));
 	}
 
 	function checker_pixel_for_plane(point, origin, normal, step, color1, color2) {
@@ -2175,7 +2278,7 @@
 		for (var j = 0; j < items.length; j++) {
 			let int_ = ray_intersection(ray, items[j]);
 			if (int_ != null) {
-				let dist_ = v3_len(int_.pos, ray.p1);
+				let dist_ = v3_len(v3_sub(int_.pos, ray.p1));
     			if (intersection == null || dist_ < dist) {
     				intersection = int_;
     				dist = dist_;
@@ -2217,6 +2320,7 @@
     }
 
     function cast_ray_for_screen_coords(x, y) {
+    	console.log(`casting for ${x}, ${y}`);
     	let mapped = map_physical_to_camera(camera, v3(x, y), htmlcanvas.width, htmlcanvas.height);
     	cast_ray(new Line(camera.eye, mapped), true);
     }
