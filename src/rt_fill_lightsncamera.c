@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/08 11:34:22 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/08 12:08:59 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ void	fill_camera(t_elem *elem, char **splited)
 	{
 		free(xyz_split[i]);
 		free(norm_xyz_split[i]);
-		printf("elem->norm_xyz[i] = %f\n", elem->norm_xyz[i]);
-		printf("M_PI = %f\n", M_PI + 0.001); // XXX this is cheating there is probably a better way...
+//		printf("elem->norm_xyz[i] = %f\n", elem->norm_xyz[i]);
+//		printf("M_PI = %f\n", M_PI + 0.001); // XXX this is cheating there is probably a better way...
 		if (fabs(elem->norm_xyz[i]) > M_PI + 0.001)
 			fill_err(elem->type);
 	}
