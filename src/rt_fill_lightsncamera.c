@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/04 17:05:59 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/08 10:38:04 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	fill_ambiant(t_elem *elem, char **splited)
 		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
 			fill_err(elem->type);
 	}
+	free(rgb_split);
 }
 
 void	fill_camera(t_elem *elem, char **splited)
@@ -68,6 +69,9 @@ void	fill_camera(t_elem *elem, char **splited)
 		if (fabs(elem->norm_xyz[i]) > 0.51 * M_PI)
 			fill_err(elem->type);
 	}
+	
+	free(xyz_split);
+	free(norm_xyz_split);
 }
 
 void	fill_light(t_elem *elem, char **splited)
@@ -97,4 +101,6 @@ void	fill_light(t_elem *elem, char **splited)
 		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
 			fill_err(elem->type);
 	}
+	free(xyz_split);
+	free(rgb_split);
 }

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/16 19:48:34 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/08 10:28:30 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ void	fill_sphere(t_elem *elem, char **split)
 		free(rgb_split[i]);
 		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
 			fill_err(elem->type);
+	}
+	if (xyz_split != NULL && rgb_split != NULL)
+	{
+		free(xyz_split);
+		free(rgb_split);
 	}
 }	
 
