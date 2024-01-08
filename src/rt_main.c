@@ -14,7 +14,12 @@
 
 int	main(int ac, char **av)
 {
-	if (scene_parsing(ac, av) == 1)
+	t_list	*elst;
+
+	test();
+	elst = scene_parsing(ac, av);
+	if (!elst)
 		return (1);
+	put_to_screen(&elst);
 	return (0);
 }

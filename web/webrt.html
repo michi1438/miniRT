@@ -313,6 +313,7 @@
 		return (matrix_mult_vec(matrix, point));
 	}
 
+	/* TOTRANSLATE */
 	/* projects a point on the camera plane */
 	/* returns null if the line between eye and point doesn't intersect plane or is behind screen */
 	var count = 4;
@@ -1392,16 +1393,16 @@
 
 	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, null, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, earth_image, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, null, sphere_vertices, draw_sphere_mappings);
 
 	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, null, sphere_vertices, draw_sphere_mappings);
 	
 	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, null, sphere_vertices, draw_sphere_mappings);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, test_image, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, null, cylinder_vertices, draw_cylinder_mappings);
 
 	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
-	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, test_image, null, null);
+	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, null, null, null);
 
 	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, false, null, null, null);
 

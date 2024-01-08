@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_vecmath.c                                       :+:      :+:    :+:   */
+/*   util1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,26 +10,43 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rt_head.h"
+#include "../rt_head.h"
 
-void	normalize(float *xyz)
+t_v3	v3(float x, float y, float z)
 {
-	float	vec_len;
+	t_v3	res;
 
-	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2));
-	xyz[0] = xyz[0] / vec_len;
-	xyz[1] = xyz[1] / vec_len;
-	xyz[2] = xyz[2] / vec_len;
+	res.x = x;
+	res.y = y;
+	res.z = z;
+	return (res);
 }
 
-float	dotprod(float * vec1, float * vec2)
+vec	v3_add(vec a, vec b)
 {
-	return (vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]);
+	return (v3(a.x + b.x, a.y + b.y, a.z + b.z));
 }
 
-void	vec_substract(float * res_vec, float * vec1, float * vec2)
+float	clamp(float val, float min, float max)
 {
-	res_vec[0] = vec1[0] - vec2[0];
-	res_vec[1] = vec1[1] - vec2[1];
-	res_vec[2] = vec1[2] - vec2[2];
+	return (fmin(fmax(val, min), max));
+}
+
+vec	add_colors(vec c1, vec c2)
+{
+	vec	res;
+
+	res = v3_add(c1, c2);
+	res.x = clamp(res.x, 0, 255);
+	res.y = clamp(res.y, 0, 255);
+	res.z = clamp(res.z, 0, 255);
+	return (res);
+}
+
+vec	mult_colors(vec c1, vec c2)
+{
+	vec	res;
+
+	res = v3(c1.x * c2.x, c1.y * c2.y, c1.z * c2.z);
+	return (res);
 }

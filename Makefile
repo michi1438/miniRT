@@ -23,7 +23,15 @@ SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_scene.c rt_vecmath.c rt_intersect.c rt_matrices.c \
 			 rt_fetch_elem.c rt_fill_control.c
 
-SOURCES = $(addprefix src/, $(SRC_MINIRT))
+SRC_UTIL = util1.c util2.c util3.c util4.c
+
+SOURCES_UTIL = $(addprefix src/util/, $(SRC_UTIL))
+
+SOURCES_ = $(addprefix src/, $(SRC_MINIRT))
+
+SOURCES = $(SOURCES_UTIL) $(SOURCES_)
+
+INCLUDES = src/rt_head.h
 
 OBJS = $(SOURCES:c=o)
 
@@ -39,9 +47,9 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(INCLUDES)
 	make -C libft/
-	$(CC) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
+	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
 	rm -f $(OBJS) 

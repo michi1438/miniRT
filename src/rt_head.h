@@ -18,10 +18,24 @@
 
 # include <stdio.h>
 # include <float.h>
+# ifdef __linux__
 # include "../minilibx-linux/mlx.h"
-//# include "../minilibx_opengl_20191021/mlx.h"
+# else
+# include "../minilibx_opengl_20191021/mlx.h"
+# endif
 # include "../libft/src_libft.h"
 # include <math.h>
+
+//typedef float vec[3];
+
+typedef struct s_v3
+{
+	float	x;
+	float	y;
+	float	z;
+}	t_v3;
+
+typedef t_v3	vec;
 
 typedef struct s_elem
 {
@@ -95,8 +109,8 @@ int		put_to_screen(t_list **e_list);
 void	mlx_pp(t_scData *img, int x, int y, int color);
 
 // SCENE_PARSING.C
-int		scene_parsing(int ac, char **av);
-int		in_scene_parsing(int fd);
+t_list 	*scene_parsing(int ac, char **av);
+t_list 	*in_scene_parsing(int fd);
 void	musthave_elem(t_list *e_list);
 
 // UTILS.C (maybe put this in libft)
@@ -109,5 +123,66 @@ int		print_err(char *str);
 
 // TESTING.C
 void	print_elem(t_elem *elem);
+
+enum	e_Direction {
+	Forward,
+	Backward,
+	Left,
+	Right,
+	Up,
+	Down
+};
+
+enum	e_ObjectType {
+	Plane,
+	Sphere,
+	Cube,
+	Pyramid,
+	Cylinder
+};
+
+typedef struct s_plane
+{
+	vec	p1;
+	vec	p2;
+	vec	p3;
+}	t_plane;
+
+typedef struct s_line
+{
+	vec	p1;
+	vec	p2;
+}	t_line;
+
+typedef struct s_matrix3d
+{
+	vec	v1;
+	vec	v2;
+	vec	v3;
+}	t_matrix3d;
+
+// UTIL1.C
+t_v3	v3(float x, float y, float z);
+vec		v3_add(vec a, vec b);
+float	clamp (float val, float min, float max);
+vec		add_colors(vec c1, vec c2);
+vec		mult_colors(vec c1, vec c2);
+
+// UTIL2.C
+vec	modify_color_intensity(vec color, float scalar);
+vec	intensity_to_color(float intensity);
+int	same_sign(float a, float b);
+t_plane	plane(vec p1, vec p2, vec p3);
+vec	plane_normal(t_plane plane);
+
+// UTIL3.C
+int	colinear_check(vec v1, vec v2);
+t_plane	plane_from_normal(vec point, vec normal);
+t_line	line(vec p1, vec p2);
+t_matrix3d	matrix3d(vec v1, vec v2, vec v3);
+int	same_side_of_line(t_line line, vec A, vec B);
+
+// UTIL4.C
+
 
 #endif // RT_HEAD_H
