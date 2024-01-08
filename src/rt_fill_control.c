@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 22:04:41 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/03 19:23:25 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/08 10:22:19 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	init_elem(t_elem *elem, char *str)
 	i = 0;
 	while (splited[i] != NULL)
 		free(splited[i++]);
+	if (splited != NULL)
+		free(splited);
 }
 
 int	add_element(t_list	**e_list, char *str)
