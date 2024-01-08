@@ -30,19 +30,34 @@
 	/* Archive: */
 	/* https://archive.md/OlpOC */
 
-    /* Intersect SegmentCylinder page 197 (Real time collision detection by Christer Ericson) */
-    /* http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf */
+	/* Intersect SegmentCylinder page 197 (Real time collision detection by Christer Ericson) */
+	/* http://www.r-5.org/files/books/computers/algo-list/realtime-3d/Christer_Ericson-Real-Time_Collision_Detection-EN.pdf */
 </script>
 
 <script>
 	/* Images */
+	class RtImage {
+		constructor(src, target_width = 0) {
+			this.img = new Image();
+			this.img.src = src;
+			this.target_width = target_width;
+			if (this.target_width == 0) {
+				this.target_width = this.img.width;
+			}
+			this.pixels;
+			this.img.parentRtImage = this;
+			this.img.onload = function () {
+				this.parentRtImage.pixels = getPixelsFromImage(this.parentRtImage.img, this.parentRtImage.target_width);
+			}
+		}
+	}
 
 	class V4 {
 	  constructor(x, y, z, a) {
-	    this.x = x;
-	    this.y = y;
-	    this.z = z;
-	    this.a = a;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.a = a;
 	  }
 
 	  toString() {
@@ -170,9 +185,9 @@
 
 	class V3 {
 	  constructor(x, y, z) {
-	    this.x = x;
-	    this.y = y;
-	    this.z = z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	  }
 
 	  toString() {
@@ -182,13 +197,13 @@
 
 	class Plane {
 	  constructor(p1, p2, p3) {
-	    this.p1 = p1;
-	    this.p2 = p2;
-	    this.p3 = p3;
+		this.p1 = p1;
+		this.p2 = p2;
+		this.p3 = p3;
 	  }
 
 	  getNormal() {
-	  	return(v3_norm(v3_cross(v3_sub(this.p2, this.p1), v3_sub(this.p3, this.p1))));
+		return(v3_norm(v3_cross(v3_sub(this.p2, this.p1), v3_sub(this.p3, this.p1))));
 	  }
 	}
 
@@ -229,6 +244,7 @@
 		}
 	}
 
+	/* v1, v2, and v3 are COLUMNS */
 	class Matrix3d {
 		constructor(v1, v2, v3) {
 			this.v1 = v1;
@@ -288,6 +304,15 @@
 		return (Math.acos(v3_dot(v1, v2) / (v3_len(v1) * v3_len(v2))));
 	}
 
+	function express_point_in_basis(point, b1, b2, b3) {
+		let matrix = new Matrix3d(b1, b2, b3); /*new Matrix3d(
+			v3(b1.x, b2.x, b3.x),
+			v3(b1.y, b2.y, b3.y),
+			v3(b1.z, b2.z, b3.z),
+			);*/
+		return (matrix_mult_vec(matrix, point));
+	}
+
 	/* projects a point on the camera plane */
 	/* returns null if the line between eye and point doesn't intersect plane or is behind screen */
 	var count = 4;
@@ -330,13 +355,13 @@
 	}
 
 	function expressPointInBasis(A, B, C, point) {
-	    // Calculate coefficients
-	    const denominator = (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y);
+		// Calculate coefficients
+		const denominator = (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y);
 
-	    const x = ((point.x - A.x) * (C.y - A.y) - (C.x - A.x) * (point.y - A.y)) / denominator;
-	    const y = ((B.x - A.x) * (point.y - A.y) - (point.x - A.x) * (B.y - A.y)) / denominator;
+		const x = ((point.x - A.x) * (C.y - A.y) - (C.x - A.x) * (point.y - A.y)) / denominator;
+		const y = ((B.x - A.x) * (point.y - A.y) - (point.x - A.x) * (B.y - A.y)) / denominator;
 
-	    return { x, y };
+		return { x, y };
 	}
 
 	/*
@@ -591,7 +616,7 @@
 	}
 
 	function v3_dot(a, b) {
-	    return (a.x * b.x + a.y * b.y + a.z * b.z);
+		return (a.x * b.x + a.y * b.y + a.z * b.z);
 	}
 
 	/* https://stackoverflow.com/a/12499474 */
@@ -600,13 +625,13 @@
 		let B = line.p2;
 		let C = point;
 		let x1 = A.x, y1 = A.y, z1 = A.z;
-	    let x2 = B.x, y2 = B.y, z2 = B.z;
-	    let x3 = C.x, y3 = C.y, z3 = C.z;
-	    let px = x2 - x1, py = y2 - y1, pz = z2 - z1;
-	    let dAB = px * px + py * py + pz * pz;
-	    let u = ((x3 - x1) * px + (y3 - y1) * py + (z3 - z1) * pz) / dAB;
-    	let x = x1 + u * px, y = y1 + u * py, z = z1 + u * pz;
-    	return (v3(x, y, z));
+		let x2 = B.x, y2 = B.y, z2 = B.z;
+		let x3 = C.x, y3 = C.y, z3 = C.z;
+		let px = x2 - x1, py = y2 - y1, pz = z2 - z1;
+		let dAB = px * px + py * py + pz * pz;
+		let u = ((x3 - x1) * px + (y3 - y1) * py + (z3 - z1) * pz) / dAB;
+		let x = x1 + u * px, y = y1 + u * py, z = z1 + u * pz;
+		return (v3(x, y, z));
 	}
 
 	/* https://stackoverflow.com/a/3863777 */
@@ -621,7 +646,7 @@
 	/* https://stackoverflow.com/a/17661431 */
 	function project_point_onto_plane(point, plane) {
 		let dist = signed_point_plane_dist(point, plane);
-		let n = plane.getNormal();
+		let n = v3_scale(plane.getNormal(), dist);
 		if (dist > 0) {
 			/* the normal is pointing towards the point */
 			return (v3_sub(point, n));
@@ -631,7 +656,7 @@
 		}
 	}
 
-	/* Multiplying a 3D matrix with a 3D vector */
+	/* Multiplying a 3D matrix with a 3D vector (M x V) */
 	function matrix_mult_vec(matrix, vec) {
 		let v1 = v3_scale(matrix.v1, vec.x);
 		let v2 = v3_scale(matrix.v2, vec.y);
@@ -681,43 +706,61 @@
 	}
 
 	class Item {
-	  constructor(type, pos, scale, rot, color, specular, is_checker, vertex_func, draw_mapping_func, raytrace_func, line_width = 1) {
-	    this.type = type;
-	    this.pos = pos;
-	    this.scale = scale;
-	    this.rot = rot;
-	    if (rot.x == 0 && rot.y == 0 && rot.z == 0) {
-	    	//this.rot = v3(0, -1);
-	    }
-	    this.color = color;
-	    this.specular = specular;
-	    this.is_checker = is_checker;
-	    this.vertex_func = vertex_func;
-	    this.draw_mapping_func = draw_mapping_func;
-	    this.raytrace_func = raytrace_func;
-	    if (this.vertex_func) {
-	    	this.vertices = vertex_func(pos, scale);
-	    	rotate_item(this, this.rot);
-	    }
-	    /* https://stackoverflow.com/a/12502559 */
-	    this.id = Math.random().toString(36).slice(2);
-	  }
+		constructor(type, pos, scale, rot, color, specular, is_checker, image, vertex_func, draw_mapping_func, raytrace_func, line_width = 1) {
+			this.type = type;
+			this.pos = pos;
+			this.scale = scale;
+			this.rot = rot;
+			if (rot.x == 0 && rot.y == 0 && rot.z == 0) {
+				//this.rot = v3(0, -1);
+			}
+			this.color = color;
+			this.specular = specular;
+			this.is_checker = is_checker;
+			this.image = image;
+			this.vertex_func = vertex_func;
+			this.draw_mapping_func = draw_mapping_func;
+			this.raytrace_func = raytrace_func;
+			this.z_ref_point = v3_add(v3(0, 1), this.pos);
+			if (this.vertex_func) {
+				this.vertices = vertex_func(pos, scale);
+				rotate_item(this, this.rot);
+			}
+			/* https://stackoverflow.com/a/12502559 */
+			this.id = Math.random().toString(36).slice(2);
+			this.pixel_cache = null;
+			this.cache_width = 0;
+		}
 
-	  color_hex() {
-	  	return (rgbToHex(this.color.x, this.color.y, this.color.z));
-	  }
+		get_axis() {
+			return (v3_norm(v3_sub(this.z_ref_point, this.pos)));
+		}
+
+		draw_axes() {
+			let z_axis = v3_scale(this.get_axis(), 0.5);
+			let plane = plane_from_normal(this.pos, z_axis);
+			let y_axis = v3_scale(v3_norm(v3_sub(plane.p2, this.pos)), 0.5);
+			let x_axis = v3_scale(v3_norm(v3_sub(plane.p3, this.pos)), 0.5);
+			draw_segment(this.pos, v3_add(this.pos, z_axis), 'blue');
+			draw_segment(this.pos, v3_add(this.pos, y_axis), 'green');
+			draw_segment(this.pos, v3_add(this.pos, x_axis), 'red');
+		}
+
+		color_hex() {
+			return (rgbToHex(this.color.x, this.color.y, this.color.z));
+		}
 	}
 
 	function get_cylinder_top(cylinder) {
-    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
-    	let cylinder_length = cylinder.scale.y;
-    	return (v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2)));
+		let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+		let cylinder_length = cylinder.scale.y;
+		return (v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2)));
 	}
 
 	function get_cylinder_bottom(cylinder) {
-    	let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
-    	let cylinder_length = cylinder.scale.y;
-    	return(v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2)));
+		let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+		let cylinder_length = cylinder.scale.y;
+		return(v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2)));
 	}
 
 	function intersect(line, plane) {
@@ -852,40 +895,54 @@
 		draw_line(p1.x, p1.y, p2.x, p2.y, item.color_hex(), item.line_width);
 	}
 
+	function draw_segment(p1, p2, color = 'lightgreen') {
+		p1 = map_point_to_physical(camera, project_point(p1, camera), htmlcanvas.width, htmlcanvas.height);
+		if (!p1) {
+			return ;
+		}
+		p2 = map_point_to_physical(camera, project_point(p2, camera), htmlcanvas.width, htmlcanvas.height);
+		if (!p2) {
+			return ;
+		}
+		draw_vect(p1, color, 0.3);//, '#' + point_connector_color.toString(16));
+		draw_vect(p2, color, 0.3);//'#' + point_connector_color.toString(16));
+		draw_line(p1.x, p1.y, p2.x, p2.y, color, 2);
+	}
+
 	function add_item(item) {
 		items.push(item);
 	}
 
 	function lerp(start, end, x) {
-	    return (1 - x) * start + x * end;
+		return (1 - x) * start + x * end;
 	}
 
 	function smoothColorTransition(counter, maxCounter) {
-	    // Function to smoothly transition between colors for a cyclic counter
-	    const startColor = [255, 0, 0];  // Red
-	    const middleColor = [0, 255, 0]; // Green
-	    const endColor = [0, 0, 255];    // Blue
+		// Function to smoothly transition between colors for a cyclic counter
+		const startColor = [255, 0, 0];  // Red
+		const middleColor = [0, 255, 0]; // Green
+		const endColor = [0, 0, 255];    // Blue
 
-	    const t = counter / maxCounter;
-	    if (counter <= maxCounter / 3) {
-	        return v3(
-	            Math.round(lerp(startColor[0], middleColor[0], t)),
-	            Math.round(lerp(startColor[1], middleColor[1], t)),
-	            Math.round(lerp(startColor[2], middleColor[2], t))
-	        );
-	    } else if (counter <= maxCounter / 3 * 2) {
-	        return v3(
-	            Math.round(lerp(middleColor[0], endColor[0], t)),
-	            Math.round(lerp(middleColor[1], endColor[1], t)),
-	            Math.round(lerp(middleColor[2], endColor[2], t))
-	        );
-	    } else {
-	    	return v3(
-	            Math.round(lerp(endColor[0], startColor[0], t)),
-	            Math.round(lerp(endColor[1], startColor[1], t)),
-	            Math.round(lerp(endColor[2], startColor[2], t))
-	        );
-	    }
+		const t = counter / maxCounter;
+		if (counter <= maxCounter / 3) {
+			return v3(
+				Math.round(lerp(startColor[0], middleColor[0], t)),
+				Math.round(lerp(startColor[1], middleColor[1], t)),
+				Math.round(lerp(startColor[2], middleColor[2], t))
+			);
+		} else if (counter <= maxCounter / 3 * 2) {
+			return v3(
+				Math.round(lerp(middleColor[0], endColor[0], t)),
+				Math.round(lerp(middleColor[1], endColor[1], t)),
+				Math.round(lerp(middleColor[2], endColor[2], t))
+			);
+		} else {
+			return v3(
+				Math.round(lerp(endColor[0], startColor[0], t)),
+				Math.round(lerp(endColor[1], startColor[1], t)),
+				Math.round(lerp(endColor[2], startColor[2], t))
+			);
+		}
 	}
 	var iter = 0;
 	var color_iter = 0;
@@ -893,15 +950,18 @@
 		if (rotate_items_toggle) {
 			for (let i = 0; i < items.length; i++) {
 				//scale_item(items[i], v3(0.2 + Math.sin(iter), 0.2 + Math.sin(iter), 0.2 + Math.sin(iter)));
-		  		rotate_item(items[i], v3_scale(v3(1, 2, 4), items_rotation_speed));
-		  		iter += 0.05;
-		  		iter = iter % Math.PI;
-		  		color_iter = (color_iter + 1) % 600;
+				rotate_item(items[i], v3_scale(v3(1, 2, 4), items_rotation_speed));
+				iter += 0.05;
+				iter = iter % Math.PI;
+				color_iter = (color_iter + 1) % 600;
 
-		  		//items[i].color = smoothColorTransition(color_iter, 600);
+				//items[i].color = smoothColorTransition(color_iter, 600);
 			}
 			draw();
-			raytrace();
+			for (let i = 0; i < items.length; i++) {
+				items[i].draw_axes();
+			}
+			//raytrace();
 		}
 	}
 
@@ -976,11 +1036,11 @@
 		}
 		draw_lights();
 		/*for (let height = 0; height < test_image_pixels.length; height++) {
-		    for (let width = 0; width < test_image_pixels[height].length; width++) {
-		        let pixel = test_image_pixels[height][width];
-		        let color = rgbToHexV3(v3(pixel.x, pixel.y, pixel.z));
-		        draw_circle(width, height, 1, color, false);
-		    }
+			for (let width = 0; width < test_image_pixels[height].length; width++) {
+				let pixel = test_image_pixels[height][width];
+				let color = rgbToHexV3(v3(pixel.x, pixel.y, pixel.z));
+				draw_circle(width, height, 1, color, false);
+			}
 		}*/
 	}
 
@@ -1300,6 +1360,8 @@
 		for (let i = 0; i < item.vertices.length; i++) {
 			item.vertices[i] = rotate_point(item.vertices[i], rot, item.pos);
 		}
+		item.z_ref_point = rotate_point(item.z_ref_point, rot, item.pos);
+		/* deprecated */
 		item.rot = v3_add(item.rot, rot);
 	}
 
@@ -1324,24 +1386,24 @@
 		item.draw_mapping_func(mappings, item);
 	}
 	
-	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, -1, true, cube_vertices, draw_cube_mappings);
+	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, -1, true, null, cube_vertices, draw_cube_mappings);
 
-	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, -1, true, cube_vertices, draw_cube_mappings);
+	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, -1, true, null, cube_vertices, draw_cube_mappings);
 
-	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, pyramid_vertices, draw_pyramid_mappings);
+	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, null, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, earth_image, sphere_vertices, draw_sphere_mappings);
 
-	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, sphere_vertices, draw_sphere_mappings);
+	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, null, sphere_vertices, draw_sphere_mappings);
 	
-	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, sphere_vertices, draw_sphere_mappings);
+	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, null, sphere_vertices, draw_sphere_mappings);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, test_image, cylinder_vertices, draw_cylinder_mappings);
 
 	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
-	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, true, null, null);
+	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, test_image, null, null);
 
-	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, true, null, null);
+	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, false, null, null, null);
 
 	add_item(cube);
 	//add_item(cube2);
@@ -1350,7 +1412,7 @@
 	//add_item(sphere2);
 	add_item(sphere3);
 	add_item(cylinder);
-	//add_item(test_plane);
+	add_item(test_plane);
 	add_item(bottom_plane);
 
 	var shift_pressed = false;
@@ -1415,157 +1477,157 @@
 	});
 
 	document.addEventListener('DOMContentLoaded', (event) => {
-	  	draw();
-	  	animation_interval = setInterval(animate, 25);
+		draw();
+		animation_interval = setInterval(animate, 25);
 	});
 
 	
 	/////////////////////////////////
 
 	function getMousePos(canvas, evt) {
-	    var rect = canvas.getBoundingClientRect();
-	    return {
-	        x: evt.clientX - rect.left,
-	        y: evt.clientY - rect.top
-	    };
+		var rect = canvas.getBoundingClientRect();
+		return {
+			x: evt.clientX - rect.left,
+			y: evt.clientY - rect.top
+		};
 	}
 
 	// when the document is loaded, setup the listeners for the two canvas elements
-    document.addEventListener('DOMContentLoaded', function () {
-	    setupPointerLock();
+	document.addEventListener('DOMContentLoaded', function () {
+		setupPointerLock();
 	});
 
 
-    // Configure all the pointer lock stuff
-    function setupPointerLock() {
+	// Configure all the pointer lock stuff
+	function setupPointerLock() {
 
-        // register the callback when a pointerlock event occurs
-        document.addEventListener('pointerlockchange', changeCallback, false);
-        document.addEventListener('mozpointerlockchange', changeCallback, false);
-        document.addEventListener('webkitpointerlockchange', changeCallback, false);
+		// register the callback when a pointerlock event occurs
+		document.addEventListener('pointerlockchange', changeCallback, false);
+		document.addEventListener('mozpointerlockchange', changeCallback, false);
+		document.addEventListener('webkitpointerlockchange', changeCallback, false);
 
-        // when element is clicked, we're going to request a
-        // pointerlock
-        htmlcanvas.addEventListener('click', function (event) {
-        	if (!two_pressed) {
-        		var requestPointerLock = htmlcanvas.requestPointerLock || htmlcanvas.mozRequestPointerLock || htmlcanvas.webkitRequestPointerLock;
+		// when element is clicked, we're going to request a
+		// pointerlock
+		htmlcanvas.addEventListener('click', function (event) {
+			if (!two_pressed) {
+				var requestPointerLock = htmlcanvas.requestPointerLock || htmlcanvas.mozRequestPointerLock || htmlcanvas.webkitRequestPointerLock;
 
-			    // Ask the browser to lock the pointer
-			    if (requestPointerLock) {
-			        htmlcanvas.requestPointerLock();
-			    }
-        	} else {
-        		let real_pos = getMousePos(htmlcanvas, event);
-        		cast_ray_for_screen_coords(real_pos.x, real_pos.y);
-        	}
+				// Ask the browser to lock the pointer
+				if (requestPointerLock) {
+					htmlcanvas.requestPointerLock();
+				}
+			} else {
+				let real_pos = getMousePos(htmlcanvas, event);
+				cast_ray_for_screen_coords(real_pos.x, real_pos.y);
+			}
 		});
 
 
-    }
+	}
 
 
-    // called when the pointer lock has changed. Here we check whether the
-    // pointerlock was initiated on the element we want.
-    function changeCallback(e) {
-        if (document.pointerLockElement === htmlcanvas ||
-                document.mozPointerLockElement === htmlcanvas ||
-                document.webkitPointerLockElement === htmlcanvas) {
+	// called when the pointer lock has changed. Here we check whether the
+	// pointerlock was initiated on the element we want.
+	function changeCallback(e) {
+		if (document.pointerLockElement === htmlcanvas ||
+				document.mozPointerLockElement === htmlcanvas ||
+				document.webkitPointerLockElement === htmlcanvas) {
 
-            // we've got a pointerlock for our element, add a mouselistener
-            document.addEventListener("mousemove", moveCallback, false);
-            mouse_grabbed = true;
-        } else {
+			// we've got a pointerlock for our element, add a mouselistener
+			document.addEventListener("mousemove", moveCallback, false);
+			mouse_grabbed = true;
+		} else {
 
-            // pointer lock is no longer active, remove the callback
-            document.removeEventListener("mousemove", moveCallback, false);
-            mouse_grabbed = false;
-            // and reset the entry coordinates
-            entryCoordinates = {x:-1, y:-1};
-        }
-    };
-
-
-    // handles an event on the canvas for the pointerlock example
-    var entryCoordinates = {x:-1, y:-1};
-    function moveCallback(e) {
-
-        // if we enter this for the first time, get the initial position
-        if (entryCoordinates.x == -1) {
-            entryCoordinates = getPosition(htmlcanvas, e);
-        }
+			// pointer lock is no longer active, remove the callback
+			document.removeEventListener("mousemove", moveCallback, false);
+			mouse_grabbed = false;
+			// and reset the entry coordinates
+			entryCoordinates = {x:-1, y:-1};
+		}
+	};
 
 
-        //get a reference to the canvas
-        var movementX = e.movementX ||
-                e.mozMovementX ||
-                e.webkitMovementX ||
-                0;
+	// handles an event on the canvas for the pointerlock example
+	var entryCoordinates = {x:-1, y:-1};
+	function moveCallback(e) {
 
-        var movementY = e.movementY ||
-                e.mozMovementY ||
-                e.webkitMovementY ||
-                0;
+		// if we enter this for the first time, get the initial position
+		if (entryCoordinates.x == -1) {
+			entryCoordinates = getPosition(htmlcanvas, e);
+		}
 
 
-        // calculate the new coordinates where we should draw the ship
-        entryCoordinates.x = entryCoordinates.x + movementX;
-        entryCoordinates.y = entryCoordinates.y + movementY;
+		//get a reference to the canvas
+		var movementX = e.movementX ||
+				e.mozMovementX ||
+				e.webkitMovementX ||
+				0;
 
-        if (entryCoordinates.x > htmlcanvas.offsetWidth -65) {
-            entryCoordinates.x = htmlcanvas.offsetWidth -65;
-        } else if (entryCoordinates.x < 0) {
-            entryCoordinates.x = 0;
-        }
+		var movementY = e.movementY ||
+				e.mozMovementY ||
+				e.webkitMovementY ||
+				0;
 
-        if (entryCoordinates.y > htmlcanvas.offsetHeight - 85) {
-            entryCoordinates.y = htmlcanvas.offsetHeight - 85;
-        } else if (entryCoordinates.y < 0) {
-            entryCoordinates.y = 0;
-        }
 
-        // determine the direction
-        var direction = 0;
-        if (movementX > 0) {
-            direction = 1;
-        } else if (movementX < 0) {
-            direction = -1;
-        }
+		// calculate the new coordinates where we should draw the ship
+		entryCoordinates.x = entryCoordinates.x + movementX;
+		entryCoordinates.y = entryCoordinates.y + movementY;
 
-        // clear and render the spaceship
-        //ctx.clearRect(0,0,400,400);
-        //generateStars(ctx);
-        //showShip(entryCoordinates.x, entryCoordinates.y, direction,ctx);
-        let coor = `entryCoordinates: (${entryCoordinates.x} ; ${entryCoordinates.y}), movement: (${movementX} ; ${movementY})`;
+		if (entryCoordinates.x > htmlcanvas.offsetWidth -65) {
+			entryCoordinates.x = htmlcanvas.offsetWidth -65;
+		} else if (entryCoordinates.x < 0) {
+			entryCoordinates.x = 0;
+		}
+
+		if (entryCoordinates.y > htmlcanvas.offsetHeight - 85) {
+			entryCoordinates.y = htmlcanvas.offsetHeight - 85;
+		} else if (entryCoordinates.y < 0) {
+			entryCoordinates.y = 0;
+		}
+
+		// determine the direction
+		var direction = 0;
+		if (movementX > 0) {
+			direction = 1;
+		} else if (movementX < 0) {
+			direction = -1;
+		}
+
+		// clear and render the spaceship
+		//ctx.clearRect(0,0,400,400);
+		//generateStars(ctx);
+		//showShip(entryCoordinates.x, entryCoordinates.y, direction,ctx);
+		let coor = `entryCoordinates: (${entryCoordinates.x} ; ${entryCoordinates.y}), movement: (${movementX} ; ${movementY})`;
 		document.getElementById("coords").innerHTML = coor;
 
 		camera.rotate(Direction.Up, movementY / -100);
 		camera.rotate(Direction.Right, movementX / 100);
 		draw();
-    }
+	}
 
-    // Returns a position based on a mouseevent on a canvas. Based on code
-    // from here: http://miloq.blogspot.nl/2011/05/coordinates-mouse-click-canvas.html
-    function getPosition(canvas, event) {
-        var x = new Number();
-        var y = new Number();
+	// Returns a position based on a mouseevent on a canvas. Based on code
+	// from here: http://miloq.blogspot.nl/2011/05/coordinates-mouse-click-canvas.html
+	function getPosition(canvas, event) {
+		var x = new Number();
+		var y = new Number();
 
-        if (event.x != undefined && event.y != undefined) {
-            x = event.x;
-            y = event.y;
-        }
-        else // Firefox method to get the position
-        {
-            x = event.clientX + document.body.scrollLeft +
-                    document.documentElement.scrollLeft;
-            y = event.clientY + document.body.scrollTop +
-                    document.documentElement.scrollTop;
-        }
+		if (event.x != undefined && event.y != undefined) {
+			x = event.x;
+			y = event.y;
+		}
+		else // Firefox method to get the position
+		{
+			x = event.clientX + document.body.scrollLeft +
+					document.documentElement.scrollLeft;
+			y = event.clientY + document.body.scrollTop +
+					document.documentElement.scrollTop;
+		}
 
-        x -= canvas.offsetLeft;
-        y -= canvas.offsetTop;
+		x -= canvas.offsetLeft;
+		y -= canvas.offsetTop;
 
-        return {x:x, y:y};
-    }
+		return {x:x, y:y};
+	}
 
 	/////////////////////////////////
 
@@ -1584,63 +1646,63 @@
 			prev_mouse_y = event.clientY;
 			prev_mouse_x = event.clientX;
 			console.log('X: ' + event.clientX);
-    		console.log('Y: ' + event.clientY);
+			console.log('Y: ' + event.clientY);
 			draw();
 		}*/
 	});
 
 	function toggleAnimation(checkbox) {
-        rotate_items_toggle = checkbox.checked;
-    }
+		rotate_items_toggle = checkbox.checked;
+	}
 
 
 
 
-    /////////////////
-    //raytracing
-    function gen_rays(camera, resolution) {
-    	res = [];
-    	let x_axis = v3_norm(camera.getAB());
-    	let y_axis = v3_norm(camera.getAC());
-    	for (var i = 0; i < camera.canvas_width; i += resolution) {
-    		for (var j = 0; j < camera.canvas_height; j += resolution) {
-    			let pt = v3_add(v3_add(camera.A, v3_scale(x_axis, i)), v3_scale(y_axis, j));
-    			res.push(new Line(camera.eye, pt));
-    		}
-    	}
-    	return (res);
-    }
+	/////////////////
+	//raytracing
+	function gen_rays(camera, resolution) {
+		res = [];
+		let x_axis = v3_norm(camera.getAB());
+		let y_axis = v3_norm(camera.getAC());
+		for (var i = 0; i < camera.canvas_width; i += resolution) {
+			for (var j = 0; j < camera.canvas_height; j += resolution) {
+				let pt = v3_add(v3_add(camera.A, v3_scale(x_axis, i)), v3_scale(y_axis, j));
+				res.push(new Line(camera.eye, pt));
+			}
+		}
+		return (res);
+	}
 
-    /* https://hugi.scene.org/online/hugi24/coding%20graphics%20chris%20dragan%20raytracing%20shapes.htm */
+	/* https://hugi.scene.org/online/hugi24/coding%20graphics%20chris%20dragan%20raytracing%20shapes.htm */
 
-    /* Plane as constructed by 3 points, NOT the plane Item */
-    function intersect_ray_plane(ray, plane) {
-    	/* ray direction */
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1));
-    	/* O - C (o = ray origin, c = point on the plane) */
-    	let X = v3_sub(ray.p1, plane.p1);
-    	let N = plane.getNormal();
-    	let d_v = v3_dot(D, N);
-    	let x_v = v3_dot(X, N);
-    	/*if (Math.abs(d_v) <= TOLERANCE) {
-    		return (null);
-    	}
-    	let sign = 1;
-    	if (!same_sign(d_v, x_v)) {
-    		sign = -1;
-    	}
-    	let t = sign * x_v / d_v;
-    	if (Math.abs(t) < TOLERANCE) {
-    		return (null);
-    	}
-    	let normal = N;
-    	if (d_v < 0) {
-    		normal = v3_invert(N);
-    	}*/
-
-    	if (d_v == TOLERANCE || ((x_v < TOLERANCE) == (d_v < TOLERANCE))) {
+	/* Plane as constructed by 3 points, NOT the plane Item */
+	function intersect_ray_plane(ray, plane) {
+		/* ray direction */
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
+		/* O - C (o = ray origin, c = point on the plane) */
+		let X = v3_sub(ray.p1, plane.p1);
+		let N = plane.getNormal();
+		let d_v = v3_dot(D, N);
+		let x_v = v3_dot(X, N);
+		/*if (Math.abs(d_v) <= TOLERANCE) {
 			return (null);
-    	}
+		}
+		let sign = 1;
+		if (!same_sign(d_v, x_v)) {
+			sign = -1;
+		}
+		let t = sign * x_v / d_v;
+		if (Math.abs(t) < TOLERANCE) {
+			return (null);
+		}
+		let normal = N;
+		if (d_v < 0) {
+			normal = v3_invert(N);
+		}*/
+
+		if (d_v == TOLERANCE || ((x_v < TOLERANCE) == (d_v < TOLERANCE))) {
+			return (null);
+		}
 		let t = - x_v / d_v;
 		let int = v3_add(ray.p1, v3_scale(D, t));
 		let normal;
@@ -1650,51 +1712,51 @@
 			normal = v3_invert(N);
 		}
 
-    	return (new RtIntersection(int, normal, ray, plane));
-    }
+		return (new RtIntersection(int, normal, ray, plane));
+	}
 
-    /* For plane ITEM */
-    function intersect_ray_plane_item(ray, plane) {
-    	let res = intersect_ray_plane(ray, plane_from_normal(plane.pos, plane.scale));
-    	if (res != null) {
-    		res.item = plane;
-    	}
-    	return (res);
-    }
-    
-    function intersect_ray_sphere(ray, sphere) {
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1));
-    	let X = v3_sub(ray.p1, sphere.pos);
-    	let a = v3_dot(D, D);
-    	let b = 2 * v3_dot(D, X);
-    	let r = sphere.scale.x / 2;
-    	let c = v3_dot(X, X) - r*r;
-    	let discriminant = b * b - 4 * a * c;
-    	if (discriminant < TOLERANCE) {
-    		return (null);
-    	} else {
-    		let t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-    		let t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-    		let point;
-    		if (t1 >= 0 && t1 < t2) {
-    			point = v3_add(ray.p1, v3_scale(D, t1));
-    		} else if (t2 >= 0) {
-    			point = v3_add(ray.p1, v3_scale(D, t2));
-    		}
-    		if (point) {
-    			return (new RtIntersection(point, v3_norm(v3_sub(point, sphere.pos)), ray, sphere));
-    		}
-    	}
-    	return (null);
-    }
-    
-    function point_inside_square(s1, s2, s3, s4, point) {
-    	let plane = new Plane(s1, s2, s3);
-    	let norm = plane.getNormal();
-    	let altitudeComponent = Math.abs(v3_dot(v3_sub(point, s1), norm));
-    	if (altitudeComponent >= TOLERANCE) {
-    		return (false);
-    	}
+	/* For plane ITEM */
+	function intersect_ray_plane_item(ray, plane) {
+		let res = intersect_ray_plane(ray, plane_from_normal(plane.pos, plane.scale));
+		if (res != null) {
+			res.item = plane;
+		}
+		return (res);
+	}
+	
+	function intersect_ray_sphere(ray, sphere) {
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
+		let X = v3_sub(ray.p1, sphere.pos);
+		let a = v3_dot(D, D);
+		let b = 2 * v3_dot(D, X);
+		let r = sphere.scale.x / 2;
+		let c = v3_dot(X, X) - r*r;
+		let discriminant = b * b - 4 * a * c;
+		if (discriminant < TOLERANCE) {
+			return (null);
+		} else {
+			let t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+			let t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+			let point;
+			if (t1 >= 0 && t1 < t2) {
+				point = v3_add(ray.p1, v3_scale(D, t1));
+			} else if (t2 >= 0) {
+				point = v3_add(ray.p1, v3_scale(D, t2));
+			}
+			if (point) {
+				return (new RtIntersection(point, v3_norm(v3_sub(point, sphere.pos)), ray, sphere));
+			}
+		}
+		return (null);
+	}
+	
+	function point_inside_square(s1, s2, s3, s4, point) {
+		let plane = new Plane(s1, s2, s3);
+		let norm = plane.getNormal();
+		let altitudeComponent = Math.abs(v3_dot(v3_sub(point, s1), norm));
+		if (altitudeComponent >= TOLERANCE) {
+			return (false);
+		}
 		if (!same_side_of_line(new Line(s1, s2), s3, point)) {
 			return (false);
 		}
@@ -1708,48 +1770,48 @@
 			return (false);
 		}
 		return (true);
-    }
-    function get_cube_squares(cube) {
-    	return ([
-    		[cube.vertices[0], cube.vertices[1], cube.vertices[2], cube.vertices[3]],
-    		[cube.vertices[1], cube.vertices[2], cube.vertices[6], cube.vertices[5]],
-    		[cube.vertices[2], cube.vertices[3], cube.vertices[7], cube.vertices[6]],
-    		[cube.vertices[0], cube.vertices[3], cube.vertices[7], cube.vertices[4]],
-    		[cube.vertices[0], cube.vertices[1], cube.vertices[5], cube.vertices[4]],
-    		[cube.vertices[7], cube.vertices[6], cube.vertices[5], cube.vertices[4]]
-    		]);
-    }
-    function intersect_ray_cube(ray, cube) {
-    	let res = null;
-    	let dist = 0;
+	}
+	function get_cube_squares(cube) {
+		return ([
+			[cube.vertices[0], cube.vertices[1], cube.vertices[2], cube.vertices[3]],
+			[cube.vertices[1], cube.vertices[2], cube.vertices[6], cube.vertices[5]],
+			[cube.vertices[2], cube.vertices[3], cube.vertices[7], cube.vertices[6]],
+			[cube.vertices[0], cube.vertices[3], cube.vertices[7], cube.vertices[4]],
+			[cube.vertices[0], cube.vertices[1], cube.vertices[5], cube.vertices[4]],
+			[cube.vertices[7], cube.vertices[6], cube.vertices[5], cube.vertices[4]]
+			]);
+	}
+	function intersect_ray_cube(ray, cube) {
+		let res = null;
+		let dist = 0;
 
-    	let cube_squares = get_cube_squares(cube);
-    	for (var i = 0; i < cube_squares.length; i++) {
-    		let plane = new Plane(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
-    		let int = intersect_ray_plane(ray, plane);
-    		if (int != null) {
-	    		if (point_inside_square(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3], int.pos)) {
-	    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
-	    			if (res == null || dist_ < dist) {
-	    				res = int;
-	    				dist = dist_;
-	    			}
-	    		}
-	    	}
-    	}
-    	if (res != null) {
-    		res.item = cube;
-    	}
-    	return (res);
-    }
-    
-    function point_inside_triangle(s1, s2, s3, point) {
-    	let plane = new Plane(s1, s2, s3);
-    	let norm = plane.getNormal();
-    	let altitudeComponent = Math.abs(v3_dot(v3_sub(point, s1), norm));
-    	if (altitudeComponent >= TOLERANCE) {
-    		return (false);
-    	}
+		let cube_squares = get_cube_squares(cube);
+		for (var i = 0; i < cube_squares.length; i++) {
+			let plane = new Plane(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
+			let int = intersect_ray_plane(ray, plane);
+			if (int != null) {
+				if (point_inside_square(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3], int.pos)) {
+					let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+					if (res == null || dist_ < dist) {
+						res = int;
+						dist = dist_;
+					}
+				}
+			}
+		}
+		if (res != null) {
+			res.item = cube;
+		}
+		return (res);
+	}
+	
+	function point_inside_triangle(s1, s2, s3, point) {
+		let plane = new Plane(s1, s2, s3);
+		let norm = plane.getNormal();
+		let altitudeComponent = Math.abs(v3_dot(v3_sub(point, s1), norm));
+		if (altitudeComponent >= TOLERANCE) {
+			return (false);
+		}
 		if (!same_side_of_line(new Line(s1, s2), s3, point)) {
 			return (false);
 		}
@@ -1760,96 +1822,96 @@
 			return (false);
 		}
 		return (true);
-    }
-    function get_pyramid_base_square(pyramid) {
-    	return ([pyramid.vertices[1], pyramid.vertices[2], pyramid.vertices[3], pyramid.vertices[4]]);
-    }
-    function get_pyramid_triangles(pyramid) {
-    	return ([
-    		[pyramid.vertices[0], pyramid.vertices[1], pyramid.vertices[4]],
-    		[pyramid.vertices[0], pyramid.vertices[1], pyramid.vertices[2]],
-    		[pyramid.vertices[0], pyramid.vertices[2], pyramid.vertices[3]],
-    		[pyramid.vertices[0], pyramid.vertices[3], pyramid.vertices[4]]
-    		]);
-    }
-    function intersect_ray_pyramid(ray, pyramid) {
-    	let res = null;
-    	let dist = 0;
-    	
-    	let base_square = get_pyramid_base_square(pyramid);
-    	let plane = new Plane(base_square[0], base_square[1], base_square[2]);
-    	let int = intersect_ray_plane(ray, plane);
-    	if (int) {
-    		if (point_inside_square(base_square[0], base_square[1], base_square[2], base_square[3], int.pos)) {
-    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
-    			if (res == null || dist_ < dist) {
-    				res = int;
-    				dist = dist_;
-    			}
-    		}
-    	}
-    	let triangles = get_pyramid_triangles(pyramid);
-    	for (var i = 0; i < triangles.length; i++) {
-    		plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
-	    	int = intersect_ray_plane(ray, plane);
-	    	if (int != null) {
-	    		if (point_inside_triangle(triangles[i][0], triangles[i][1], triangles[i][2], int.pos)) {
-	    			let dist_ = v3_len(v3_sub(int.pos, ray.p1));
-	    			if (res == null || dist_ < dist) {
-	    				res = int;
-	    				dist = dist_;
-	    			}
-	    		}
-	    	}
-    	}
-    	if (res != null) {
-    		res.item = pyramid;
-    	}
-    	return (res);
-    }
+	}
+	function get_pyramid_base_square(pyramid) {
+		return ([pyramid.vertices[1], pyramid.vertices[2], pyramid.vertices[3], pyramid.vertices[4]]);
+	}
+	function get_pyramid_triangles(pyramid) {
+		return ([
+			[pyramid.vertices[0], pyramid.vertices[1], pyramid.vertices[4]],
+			[pyramid.vertices[0], pyramid.vertices[1], pyramid.vertices[2]],
+			[pyramid.vertices[0], pyramid.vertices[2], pyramid.vertices[3]],
+			[pyramid.vertices[0], pyramid.vertices[3], pyramid.vertices[4]]
+			]);
+	}
+	function intersect_ray_pyramid(ray, pyramid) {
+		let res = null;
+		let dist = 0;
+		
+		let base_square = get_pyramid_base_square(pyramid);
+		let plane = new Plane(base_square[0], base_square[1], base_square[2]);
+		let int = intersect_ray_plane(ray, plane);
+		if (int) {
+			if (point_inside_square(base_square[0], base_square[1], base_square[2], base_square[3], int.pos)) {
+				let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+				if (res == null || dist_ < dist) {
+					res = int;
+					dist = dist_;
+				}
+			}
+		}
+		let triangles = get_pyramid_triangles(pyramid);
+		for (var i = 0; i < triangles.length; i++) {
+			plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
+			int = intersect_ray_plane(ray, plane);
+			if (int != null) {
+				if (point_inside_triangle(triangles[i][0], triangles[i][1], triangles[i][2], int.pos)) {
+					let dist_ = v3_len(v3_sub(int.pos, ray.p1));
+					if (res == null || dist_ < dist) {
+						res = int;
+						dist = dist_;
+					}
+				}
+			}
+		}
+		if (res != null) {
+			res.item = pyramid;
+		}
+		return (res);
+	}
 
-    function intersect_ray_cylinder(ray, cylinder) {
-    	let res = null;
-    	let dist = 0;
+	function intersect_ray_cylinder(ray, cylinder) {
+		let res = null;
+		let dist = 0;
 
-    	let cylinder_length = cylinder.scale.y;
-    	let radius = cylinder.scale.x / 2;
-    	let D = v3_norm(v3_sub(ray.p2, ray.p1));
-    	let V = (v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])));
-    	let C = get_cylinder_top(cylinder);
-    	let bottom = get_cylinder_bottom(cylinder);
+		let cylinder_length = cylinder.scale.y;
+		let radius = cylinder.scale.x / 2;
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
+		let V = (v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])));
+		let C = get_cylinder_top(cylinder);
+		let bottom = get_cylinder_bottom(cylinder);
 
-    	let X = v3_sub(ray.p1, C);
+		let X = v3_sub(ray.p1, C);
 
-    	/* Testing cylinder caps */
-    	let plane_top = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
-    	let plane_top_int = intersect_ray_plane(ray, plane_top);
-    	if (plane_top_int != null) { 
-    		if (v3_len(v3_sub(C, plane_top_int.pos)) <= radius) {
-    			let dist_ = v3_len(v3_sub(plane_top_int.pos, ray.p1));
-    			if (res == null || dist_ < dist) {
-    				res = plane_top_int;
-    				dist = dist_;
-    			}
-    		}
-    	}
+		/* Testing cylinder caps */
+		let plane_top = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
+		let plane_top_int = intersect_ray_plane(ray, plane_top);
+		if (plane_top_int != null) { 
+			if (v3_len(v3_sub(C, plane_top_int.pos)) <= radius) {
+				let dist_ = v3_len(v3_sub(plane_top_int.pos, ray.p1));
+				if (res == null || dist_ < dist) {
+					res = plane_top_int;
+					dist = dist_;
+				}
+			}
+		}
 
-    	let plane_bottom = new Plane(cylinder.vertices[0], cylinder.vertices[1], cylinder.vertices[2]);
-    	let plane_bottom_int = intersect_ray_plane(ray, plane_bottom);
-    	if (plane_bottom_int != null) { 
-    		if (v3_len(v3_sub(bottom, plane_bottom_int.pos)) <= radius) {
-    			let dist_ = v3_len(v3_sub(plane_bottom_int.pos, ray.p1));
-    			if (res == null || dist_ < dist) {
-    				res = plane_bottom_int;
-    				dist = dist_;
-    			}
-    		}
-    	}
+		let plane_bottom = new Plane(cylinder.vertices[0], cylinder.vertices[1], cylinder.vertices[2]);
+		let plane_bottom_int = intersect_ray_plane(ray, plane_bottom);
+		if (plane_bottom_int != null) { 
+			if (v3_len(v3_sub(bottom, plane_bottom_int.pos)) <= radius) {
+				let dist_ = v3_len(v3_sub(plane_bottom_int.pos, ray.p1));
+				if (res == null || dist_ < dist) {
+					res = plane_bottom_int;
+					dist = dist_;
+				}
+			}
+		}
 
-    	let t = null;
+		let t = null;
 		let a = v3_dot(D, D) - Math.pow(v3_dot(D, V), 2);
 		let b = 2 * (v3_dot(D, X) - v3_dot(D, V) * v3_dot(X, V));
-    	let c = v3_dot(X, X) - Math.pow(v3_dot(X, V), 2) - radius * radius;
+		let c = v3_dot(X, X) - Math.pow(v3_dot(X, V), 2) - radius * radius;
 		let discriminant = b * b - 4 * a * c;
 		if (discriminant < 0)
 		{
@@ -1877,90 +1939,90 @@
 			t = d2;
 		}
 
-    	if (t != null && t >= 0 && (res == null || v3_len(D, t) < dist)) {
-    		let pos = v3_add(ray.p1, v3_scale(D, t));
-    		let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
-    		res = new RtIntersection(pos, normal, ray, cylinder);
-    	}
-    	if (res != null) {
-    		res.item = cylinder;
-    	}
-    	return (res);
-    }
-
-    function ray_intersection(ray, object) {
-    	if (object.type == ObjectType.Plane) {
-    		return (intersect_ray_plane_item(ray, object));
-    	} else if (object.type == ObjectType.Sphere) {
-    		return (intersect_ray_sphere(ray, object));
-    	} else if (object.type == ObjectType.Cube) {
-    		return (intersect_ray_cube(ray, object));
-    	} else if (object.type == ObjectType.Pyramid) {
-    		return (intersect_ray_pyramid(ray, object));
-    	} else if (object.type == ObjectType.Cylinder) {
-    		return (intersect_ray_cylinder(ray, object));
-    	}
-    	return ([]);
-    }
-
-
-    function set_cam_pos() {
-    	camera.A = v3(-1.000, 1.000, -3.600);
-    	camera.B = v3(1.000, 1.000, -3.600);
-    	camera.C = v3(-1.000, -1.000, -3.600);
-    	camera.eye = v3(0.000, 0.000, -2.600);
-    	draw();
+		if (t != null && t >= 0 && (res == null || v3_len(D, t) < dist)) {
+			let pos = v3_add(ray.p1, v3_scale(D, t));
+			let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
+			res = new RtIntersection(pos, normal, ray, cylinder);
+		}
+		if (res != null) {
+			res.item = cylinder;
+		}
+		return (res);
 	}
-    var lights = [];
 
-    let ambient = new LightAmbient(intensity_to_color(0.3));
-    let light_point1 = new LightPoint(intensity_to_color(1), v3(0, 2, -1));
-    let light_point2 = new LightPoint(intensity_to_color(1), v3(-3, 0, -2));
+	function ray_intersection(ray, object) {
+		if (object.type == ObjectType.Plane) {
+			return (intersect_ray_plane_item(ray, object));
+		} else if (object.type == ObjectType.Sphere) {
+			return (intersect_ray_sphere(ray, object));
+		} else if (object.type == ObjectType.Cube) {
+			return (intersect_ray_cube(ray, object));
+		} else if (object.type == ObjectType.Pyramid) {
+			return (intersect_ray_pyramid(ray, object));
+		} else if (object.type == ObjectType.Cylinder) {
+			return (intersect_ray_cylinder(ray, object));
+		}
+		return ([]);
+	}
 
-    lights.push(ambient);
-    lights.push(light_point1);
-    //lights.push(light_point2);
 
-    var debugg = null;
+	function set_cam_pos() {
+		camera.A = v3(-1.000, 1.000, -3.600);
+		camera.B = v3(1.000, 1.000, -3.600);
+		camera.C = v3(-1.000, -1.000, -3.600);
+		camera.eye = v3(0.000, 0.000, -2.600);
+		draw();
+	}
+	var lights = [];
 
-    function draw_lights() {
-    	for (var i = 0; i < lights.length; i++) {
-    		if (lights[i] instanceof LightPoint) {
-    			let projection = map_point_to_physical(camera, project_point(lights[i].pos, camera), htmlcanvas.width, htmlcanvas.height);
-    			if (projection) {
-    				ctx.drawImage(sun_image, projection.x - 25, projection.y - 25, 50, 50);
-    			}
-    		}
-    	}
-    }
+	let ambient = new LightAmbient(intensity_to_color(0.3));
+	let light_point1 = new LightPoint(intensity_to_color(1), v3(0, 2, -1));
+	let light_point2 = new LightPoint(intensity_to_color(1), v3(-3, 0, -2));
 
-    /*
+	lights.push(ambient);
+	lights.push(light_point1);
+	//lights.push(light_point2);
+
+	var debugg = null;
+
+	function draw_lights() {
+		for (var i = 0; i < lights.length; i++) {
+			if (lights[i] instanceof LightPoint) {
+				let projection = map_point_to_physical(camera, project_point(lights[i].pos, camera), htmlcanvas.width, htmlcanvas.height);
+				if (projection) {
+					ctx.drawImage(sun_image, projection.x - 25, projection.y - 25, 50, 50);
+				}
+			}
+		}
+	}
+
+	/*
 	ComputeLighting(P, N) {
-	    i = 0.0
-	    for light in scene.Lights {
-	        if light.type == ambient {
-	        	i += light.intensity
-	        } else {
-	            if light.type == point {
-	            	L = light.position - P
-	            } else {
-	            	L = light.direction
-	            }
-	            n_dot_l = dot(N, L)
-	         	if n_dot_l > 0 {
-	            	i += light.intensity * n_dot_l/(length(N) * length(L))
-	            }
-	        }
-	    }
-	    return i
+		i = 0.0
+		for light in scene.Lights {
+			if light.type == ambient {
+				i += light.intensity
+			} else {
+				if light.type == point {
+					L = light.position - P
+				} else {
+					L = light.direction
+				}
+				n_dot_l = dot(N, L)
+				if n_dot_l > 0 {
+					i += light.intensity * n_dot_l/(length(N) * length(L))
+				}
+			}
+		}
+		return i
 	}
-    */	
+	*/	
 
-    /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-    function compute_lighting(intersection) {
-    	let point = intersection.pos;
-    	let normal = intersection.normal;
-    	let item = intersection.item;
+	/* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
+	function compute_lighting(intersection) {
+		let point = intersection.pos;
+		let normal = intersection.normal;
+		let item = intersection.item;
 		let res = v3();
 		for (let i=0; i < lights.length; i ++) {
 			if (lights[i] instanceof LightAmbient) {
@@ -1993,11 +2055,11 @@
 
 	function compute_specular(intersection) {
 		if (intersection.item.specular == -1) {
-    		return v3();
-    	}
-    	let point = intersection.pos;
-    	let normal = intersection.normal;
-    	let item = intersection.item;
+			return v3();
+		}
+		let point = intersection.pos;
+		let normal = intersection.normal;
+		let item = intersection.item;
 		let res = v3();
 		for (let i=0; i < lights.length; i ++) {
 			if (lights[i] instanceof LightAmbient) {
@@ -2028,6 +2090,7 @@
 	}
 
 	/* http://raytracerchallenge.com/bonus/texture-mapping.html */
+	/* archive: https://archive.md/c96z4 */
 	function uv_at_chekers(color1, color2, checkers_width, checkers_height, u, v) {
 		let u2 = Math.floor(u * checkers_width);
 		let v2 = Math.floor(v * checkers_height);
@@ -2039,14 +2102,14 @@
 		}
 	}
 
-	function uv_at_image(image_pixels, imgElement, target_width, u, v) {
-		let target_height = Math.trunc(new_image_height(imgElement, target_width));
-		v = 1 - v;
+	function uv_at_image(rt_image, u, v) {
+		let target_height = Math.floor(new_image_height(rt_image.img, rt_image.target_width));
+		v = (1 - v) % 1;
 
-		let x = Math.round(u * (target_width - 1));
-		let y = Math.round(v * (target_height - 1));
+		let x = Math.floor(u * (rt_image.target_width - 1));
+		let y = Math.floor(v * (target_height - 1));
 
-		return ([image_pixels[y][x]]);
+		return (rt_image.pixels[y][x]);
 	}
 
 	function spherical_map(point, sphere) {
@@ -2055,9 +2118,9 @@
 		let radius = v3_len(point);
 		let phi = Math.acos(point.y / radius);
 		let raw_u = theta / (2 * Math.PI);
-	  	let u = 1 - (raw_u + 0.5);
-	  	let v = 1 - phi / Math.PI;
-	  	return ([u, v]);
+		let u = 1 - (raw_u + 0.5);
+		let v = 1 - phi / Math.PI;
+		return ([u, v]);
 	}
 
 	function planar_map(point, plane) {
@@ -2065,105 +2128,132 @@
 		if (u < 0) {
 			//u = (u + u / 2) % 1;
 		}
-  		let v = point.y % 1;
-  		return ([u, v]);
+		let v = point.y % 1;
+		return ([u, v]);
 	}
 
 	function cylindrical_map(point, cylinder) {
-		  point = v3_add(point, v3_sub(v3(), cylinder.pos));
-		  // compute the azimuthal angle, same as with spherical_map()
-		  let theta = Math.atan(point.x, point.z);
-		  let raw_u = theta / (2 * Math.PI);
-		  let u = 1 - (raw_u + 0.5);
-	
-		  // let v go from 0 to 1 between whole units of y
-		  let v = point.y % 1;
-	
-		  return ([u, v]);
+		//point = v3_add(point, v3_sub(v3(), cylinder.pos));
+		/* expressing point in local coords */
+		let y_axis = cylinder.get_axis();
+		let plane = plane_from_normal(cylinder.pos, y_axis);
+		let z = plane.p2;
+		let x = plane.p3;
+		let y = v3_add(cylinder.pos, y_axis);
+		
+		let z_axis = v3_norm(v3_sub(z, cylinder.pos));
+		let x_axis = v3_norm(v3_sub(x, cylinder.pos));
+
+		let xy_plane = new Plane(cylinder.pos, x, y);
+		let xy_proj = project_point_onto_plane(point, xy_plane);
+		let x_proj = project_point_onto_line(new Line(cylinder.pos, x), xy_proj);
+		let x_dist = v3_len(v3_sub(cylinder.pos, x_proj));
+		if (v3_dot(x_axis, v3_sub(x_proj, cylinder.pos)) < 0) {
+			x_dist *= -1;
+		}
+		let y_proj = project_point_onto_line(new Line(cylinder.pos, y), xy_proj);
+		let y_dist = v3_len(v3_sub(cylinder.pos, y_proj));
+		if (v3_dot(y_axis, v3_sub(y_proj, cylinder.pos)) < 0) {
+			y_dist *= -1;
+		}
+		let zy_plane = new Plane(cylinder.pos, z, y);
+		let zy_proj = project_point_onto_plane(point, zy_plane);
+		let z_proj = project_point_onto_line(new Line(cylinder.pos, z), zy_proj);
+		let z_dist = v3_len(v3_sub(cylinder.pos, z_proj));
+		if (v3_dot(z_axis, v3_sub(z_proj, cylinder.pos)) < 0) {
+			z_dist *= -1;
+		}
+		point = v3(x_dist, y_dist, z_dist);
+
+		/* for some reason it doesn't work */
+		//point = express_point_in_basis(point, x_axis, y_axis, z_axis);
+
+		// compute the azimuthal angle, same as with spherical_map()
+		let theta = Math.atan(point.x, point.z);
+		let raw_u = theta / (2 * Math.PI);
+		let u = (1 - (raw_u + 0.5)) % 1;
+
+		// let v go from 0 to 1 between whole units of y
+		let v = point.y % 1;
+
+		return ([u, v]);
 	}
 
-	var pixels_cache = null;
-	var cache_width = 0;
-	function get_item_color(int) {
-		if (int.item.type == ObjectType.Plane && !int.item.is_checker) {
+	//var pixels_cache = null;
+	//var cache_width = 0;
+	function get_item_color_image(int) {
+		if (int.item.type == ObjectType.Plane) {
 			let n = int.normal;
 			let n_ = v3(0, 0, 1);
 			let angle = vect_angle(n, n_);
 			/* rotating the point as if the normal of the plane was n_ */
 			let new_pos = v3_add(v3_scale(int.pos, Math.cos(angle)), v3_add(v3_scale(v3_cross(n, int.pos), Math.sin(angle)), v3_scale(n, v3_dot(n, int.pos) * (1 - Math.cos(angle)))));
+			if (equals_with_tolerance(n.x, 0) && equals_with_tolerance(n.y, 1) && equals_with_tolerance(n.z, 0)) {
+				new_pos = v3(int.pos.x, int.pos.z);
+			}
 			
-			new_pos.x = Math.trunc(new_pos.x % target_test_image_width);
+			new_pos.x = Math.trunc(new_pos.x % int.item.image.target_width);
 			if (new_pos.x < 0) {
-				new_pos.x = target_test_image_width + new_pos.x;
+				new_pos.x = int.item.image.target_width + new_pos.x;
 			}
-			new_pos.y = Math.trunc(new_pos.y % new_image_height(test_image, target_test_image_width));
+			new_pos.y = Math.trunc(new_pos.y % new_image_height(int.item.image.img, int.item.image.target_width));
 			if (new_pos.y > 0) {
-				new_pos.y = new_image_height(test_image, target_test_image_width) - new_pos.y;
+				new_pos.y = new_image_height(int.item.image.img, int.item.image.target_width) - new_pos.y;
 			}
-			let pixel = test_image_pixels[Math.abs(new_pos.y)][Math.abs(new_pos.x)];
+			let pixel = int.item.image.pixels[Math.abs(Math.floor(new_pos.y))][Math.abs(Math.floor(new_pos.x))];
 
-			if (true /*pixel.a == 0*/) {
-				return (v3(pixel.x, pixel.y, pixel.z));
-			} else {
-				return (int.item.color);
-			}
-			return (int.item.color);
-		} else if (int.item.type == ObjectType.Sphere && !int.item.is_checker) {
-			let new_width = (2 * Math.PI * (int.item.scale.x / 2)) / 10 ;
-			new_width = Math.max(new_width, test_image.width);
+			return (v3(pixel.x, pixel.y, pixel.z));
+		} else if (int.item.type == ObjectType.Sphere) {
 			let new_pixels;
-			if (cache_width == new_width) {
-				new_pixels = pixels_cache;
+			if (int.item.cache_width == int.item.image.img.width) {
+				new_pixels = int.item.pixel_cache;
 			} else {
-				cache_width = new_width;
-				new_pixels = getPixelsFromImage(test_image, new_width);
-				pixels_cache = new_pixels;
+				int.item.cache_width = int.item.image.img.width;
+				new_pixels = getPixelsFromImage(int.item.image.img, int.item.image.img.width);
+				int.item.pixel_cache = new_pixels;
 			}
 			let coords = cartesian_to_sphere(int.pos, int.item);
 			/* taking theta and phi */
-			let x_coord = coords.x; // theta
+			let x_coord = coords.y; // theta
 			let y_coord = coords.z; // phi
 
-
-
 			let u = x_coord / (2 * Math.PI);
-	        let v = y_coord / Math.PI;
+			let v = y_coord / Math.PI;
 
-	        // Map UV coordinates to image coordinates
-	        x = Math.floor(u * (new_width - 1))
-	        y = Math.floor(v * (new_image_height(test_image, new_width) - 1))
-
-	        //# Sample pixel from the image
-	        let pixel = new_pixels[y][x];
+			// Map UV coordinates to image coordinates
+			x = Math.floor(u * (int.item.image.img.width - 1))
+			y = Math.floor(v * (new_image_height(int.item.image.img, int.item.image.img.width) - 1))
+			let pixel = new_pixels[y][x];
 			return (v3(pixel.x, pixel.y, pixel.z));
-			
-
-
-
-
-
-			/* theta spans from 0 to 2pi */
-			/* phi spans from 0 to pi */
-
-			//let new_width = (2 * Math.PI * (int.item.scale.x / 2)) / 10 ;
-			//new_width = Math.max(new_width, test_image.width);
-
-			/* x_coord should be made proportional to new_width */
-			/* y_coord too */
-			x_coord = (x_coord / (2 * Math.PI)) * new_width;
-			y_coord = (y_coord / Math.PI) * new_image_height(test_image, new_width);
-
-			x_coord = Math.trunc(x_coord % new_width);
-			if (x_coord < 0) {
-				x_coord = new_width + x_coord;
-			}
-			y_coord = Math.trunc(y_coord % new_image_height(test_image, new_width));
-			if (y_coord > 0) {
-				y_coord = new_image_height(test_image, new_width) - y_coord;
-			}
-			//let pixel = new_pixels[Math.abs(Math.trunc(y_coord))][Math.abs(Math.trunc(x_coord))];
-
+		} else if (int.item.type == ObjectType.Cylinder) {
+			let u_v = cylindrical_map(int.pos, int.item);
+			let img_color = uv_at_image(int.item.image, u_v[0], u_v[1]);
+			/* TODO: transparency check / blend */
+			return(v3(img_color.x, img_color.y, img_color.z));
+		} else if (int.item.type == ObjectType.Cube || int.item.type == ObjectType.Pyramid) {
+			let plane = get_intersection_plane(int);
+			let x_axis = v3_norm(v3_sub(plane.p2, plane.p1));
+			let y_axis = v3_norm(v3_sub(plane.p3, plane.p1));
+			let x_proj = project_point_onto_line(new Line(plane.p1, plane.p2), int.pos);
+			let x_dist = v3_len(v3_sub(plane.p1, x_proj));
+			/*if (v3_dot(x_axis, v3_sub(x_proj, plane.p1)) < 0) {
+				x_dist *= -1;
+			}*/
+			let y_proj = project_point_onto_line(new Line(plane.p1, plane.p3), int.pos);
+			let y_dist = v3_len(v3_sub(plane.p1, y_proj));
+			/*if (v3_dot(y_axis, v3_sub(y_proj, plane.p1)) < 0) {
+				y_dist *= -1;
+			}*/
+			x_dist %= int.item.image.target_width - 1;
+			y_dist %= new_image_height(int.item.image.img, int.item.image.target_width) - 1;
+			let pixel = int.item.image.pixels[Math.floor(y_dist * 1000)][Math.floor(x_dist * 1000)];
 			return (v3(pixel.x, pixel.y, pixel.z));
+		}
+	}
+
+	function get_item_color(int) {
+		if (int.item.image != null) {
+			return get_item_color_image(int);
 		} else if (int.item.is_checker) {
 			return(get_item_color_checkerboard(int));
 		} else {
@@ -2196,15 +2286,15 @@
 	function cartesian_to_sphere(point, sphere) {
 		let rho = v3_len(v3_sub(point, sphere.pos));
 		// z axis is sphere.rot
-		z_axis = sphere.rot;
+		z_axis = sphere.get_axis();
 		if (sphere.rot.x == 0 && sphere.rot.y == 0 && sphere.rot.z == 0) {
-			z_axis = v3(0, 0, 1);
+			z_axis = v3(0, 1);
 		}
 		let phi = vect_angle(z_axis, v3_sub(point, sphere.pos));
 		let plane = plane_from_normal(sphere.pos, z_axis);
 		let proj = project_point_onto_plane(point, plane);
 		/* the following works because of how plane_from_normal behaves (p1 is sphere.pos) */
-		let theta = vect_angle(v3_sub(plane.p2, sphere.pos), v3_sub(point, sphere.pos));
+		let theta = vect_angle(v3_sub(plane.p2, sphere.pos), v3_sub(proj, sphere.pos));
 		return (v3(rho, theta, phi));
 	}
 
@@ -2220,11 +2310,39 @@
 		const checkerY = Math.floor(Math.abs(new_pos.y) / step);
 		const parityX = checkerX % 2;
 		const parityY = checkerY % 2;
-	    if (parityX === parityY) {
-	    	return (color1);
-	    } else {
-	    	return (color2);
-	    }
+		if (parityX === parityY) {
+			return (color1);
+		} else {
+			return (color2);
+		}
+	}
+
+	function get_intersection_plane(int) {
+		let nearest_plane;
+		let nearest_plane_dist;
+		if (int.item.type == ObjectType.Cube) {
+			let squares = get_cube_squares(int.item);
+			for (var i = 0; i < squares.length; i++) {
+				let plane = new Plane(squares[i][0], squares[i][1], squares[i][2]);
+				let dist_ = point_plane_dist(int.pos, plane);
+				if (!nearest_plane || dist_ < nearest_plane_dist) {
+					nearest_plane = plane;
+					nearest_plane_dist = dist_;
+				}
+			}
+		} else /* pyramid */ {
+			let triangles = get_pyramid_triangles(int.item);
+			triangles.push(get_pyramid_base_square(int.item));
+			for (var i = 0; i < triangles.length; i++) {
+				let plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
+				let dist_ = point_plane_dist(int.pos, plane);
+				if (!nearest_plane || dist_ < nearest_plane_dist) {
+					nearest_plane = plane;
+					nearest_plane_dist = dist_;
+				}
+			}
+		}
+		return (nearest_plane);
 	}
 
 	function get_item_color_checkerboard(int) {
@@ -2234,37 +2352,14 @@
 		} else if (int.item.type == ObjectType.Sphere) {
 			let u_v = spherical_map(int.pos, int.item);
 			return(uv_at_chekers(int.item.color, inverse_color, 32, 8, u_v[0], u_v[1]));
-			
-			//return(uv_at_image(test_image_pixels, test_image, 200, u_v[0], u_v[1]));
 		} else if (int.item.type == ObjectType.Cylinder) {
 			let u_v = cylindrical_map(int.pos, int.item);
 			return(uv_at_chekers(int.item.color, inverse_color, 32, 8, u_v[0], u_v[1]));
 		} else if (int.item.type == ObjectType.Cube) {
-			let squares = get_cube_squares(int.item);
-			let nearest_plane;
-			let nearest_plane_dist;
-			for (var i = 0; i < squares.length; i++) {
-				let plane = new Plane(squares[i][0], squares[i][1], squares[i][2]);
-				let dist_ = point_plane_dist(int.pos, plane);
-				if (!nearest_plane || dist_ < nearest_plane_dist) {
-					nearest_plane = plane;
-					nearest_plane_dist = dist_;
-				}
-			}
+			let nearest_plane = get_intersection_plane(int);
 			return (checker_pixel_for_plane(int.pos, nearest_plane.p2, nearest_plane.getNormal(), int.item.scale.x / 10, inverse_color, int.item.color));
 		} else if (int.item.type == ObjectType.Pyramid) {
-			let triangles = get_pyramid_triangles(int.item);
-			triangles.push(get_pyramid_base_square(int.item));
-			let nearest_plane;
-			let nearest_plane_dist;
-			for (var i = 0; i < triangles.length; i++) {
-				let plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
-				let dist_ = point_plane_dist(int.pos, plane);
-				if (!nearest_plane || dist_ < nearest_plane_dist) {
-					nearest_plane = plane;
-					nearest_plane_dist = dist_;
-				}
-			}
+			let nearest_plane = get_intersection_plane(int);
 			return (checker_pixel_for_plane(int.pos, nearest_plane.p2, nearest_plane.getNormal(), int.item.scale.x / 10, inverse_color, int.item.color));
 		} else {
 			
@@ -2279,10 +2374,10 @@
 			let int_ = ray_intersection(ray, items[j]);
 			if (int_ != null) {
 				let dist_ = v3_len(v3_sub(int_.pos, ray.p1));
-    			if (intersection == null || dist_ < dist) {
-    				intersection = int_;
-    				dist = dist_;
-    			}
+				if (intersection == null || dist_ < dist) {
+					intersection = int_;
+					dist = dist_;
+				}
 			}
 		}
 		if (do_draw && intersection != null) {
@@ -2302,28 +2397,28 @@
 		return (intersection);
 	}
 
-    function raytrace() {
-    	if (parseFloat(document.getElementById('rt_precision').value < TOLERANCE)) {
-    		return ;
-    	}
-    	
-    	console.log("raytracing...");
-    	let rays = gen_rays(camera, parseFloat(document.getElementById('rt_precision').value));
+	function raytrace() {
+		if (parseFloat(document.getElementById('rt_precision').value < TOLERANCE)) {
+			return ;
+		}
+		
+		console.log("raytracing...");
+		let rays = gen_rays(camera, parseFloat(document.getElementById('rt_precision').value));
 
-    	console.log(rays.length)
-    	console.log(rays);
-    	for (var i = 0; i < rays.length; i++) {
-    		cast_ray(rays[i]);
-    	}
-    	console.log("done!");
-    	draw_lights();
-    }
+		console.log(rays.length)
+		console.log(rays);
+		for (var i = 0; i < rays.length; i++) {
+			cast_ray(rays[i]);
+		}
+		console.log("done!");
+		draw_lights();
+	}
 
-    function cast_ray_for_screen_coords(x, y) {
-    	console.log(`casting for ${x}, ${y}`);
-    	let mapped = map_physical_to_camera(camera, v3(x, y), htmlcanvas.width, htmlcanvas.height);
-    	cast_ray(new Line(camera.eye, mapped), true);
-    }
+	function cast_ray_for_screen_coords(x, y) {
+		console.log(`casting for ${x}, ${y}`);
+		let mapped = map_physical_to_camera(camera, v3(x, y), htmlcanvas.width, htmlcanvas.height);
+		cast_ray(new Line(camera.eye, mapped), true);
+	}
 </script>
 
 </body></html>
