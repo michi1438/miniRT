@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/08 10:28:30 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/08 11:10:21 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,12 @@ void	fill_plane(t_elem *elem, char **split)
 			|| elem->norm_xyz[i] < -1 || elem->norm_xyz[i] > 1)
 			fill_err(elem->type);
 	}
+	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
+	{
+		free(norm_xyz_split);
+		free(xyz_split);
+		free(rgb_split);
+	}
 }
 
 void	fill_cylinder(t_elem *elem, char **split)
@@ -94,6 +100,12 @@ void	fill_cylinder(t_elem *elem, char **split)
 		if (elem->rgb[i] < 0 || elem->rgb[i] > 255 || elem->norm_xyz[i] < -1
 			|| elem->norm_xyz[i] > 1)
 			fill_err(elem->type);
+	}
+	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
+	{
+		free(norm_xyz_split);
+		free(xyz_split);
+		free(rgb_split);
 	}
 }
 
