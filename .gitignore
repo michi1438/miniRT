@@ -6,3 +6,11 @@ tags
 minilibx_opengl_20191021
 minilibx-linux
 .gdb_history
+.idea/
+.idea/*
+.idea
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   util3.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
 /*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
@@ -37,7 +37,7 @@ t_plane	plane_from_normal(vec point, vec normal)
 	}
 	u = v3_cross(w, normal);
 	v = v3_cross(normal, u);
-	return (plane(point, v3_add(point, u), v3_add(point, v)));
+	return (plane_c(point, v3_add(point, u), v3_add(point, v)));
 }
 
 t_line	line(vec p1, vec p2)
@@ -49,7 +49,7 @@ t_line	line(vec p1, vec p2)
 	return (res);
 }
 
-t_matrix3d	matrix3d(vec v1, vec v2, vec v3)
+t_matrix3d	matrix3d_c(vec v1, vec v2, vec v3)
 {
 	t_matrix3d	res;
 

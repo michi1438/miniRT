@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util2.c                                            :+:      :+:    :+:   */
+/*   util7.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,41 +12,27 @@
 
 #include "../rt_head.h"
 
-vec	modify_color_intensity(vec color, float scalar)
+vec	v3_invert(vec a)
 {
-	vec	res;
-
-	res = v3_scale(color, scalar);
-	res.x = clamp(res.x, 0, 255);
-	res.y = clamp(res.y, 0, 255);
-	res.z = clamp(res.z, 0, 255);
-	return (res);
+	return (v3_scale(a, -1))
 }
 
-/* Takes an intensity from 0 to 1 and returns a corresponding v3 white light color */
-vec	intensity_to_color(float intensity)
+vec	v3_abs(vec a)
 {
-	float	mult;
-
-	mult = clamp(intensity, 0, 1);
-	return (v3(255 * mult, 255 * mult, 255 * mult));
+	return (v3(fabs(a.x), fabs(a.y), fabs(a.z)));
 }
 
-int	same_sign(float a, float b)
+float	v3_len(vec a)
 {
-	return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
+	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
 }
 
-t_plane	plane_(vec p1, vec p2, vec p3)
+vec	v3_norm(vec v)
 {
-	t_plane	res;
-
-	res.p1 = p1;
-	res.p2 = p2;
-	res.p3 = p3;
+	return (v3_scale(v, 1/v3_len(v)));
 }
 
-vec	plane_normal(t_plane plane)
+float	v3_norm_squared(vec v)
 {
-	return(v3_norm(v3_cross(v3_sub(plane.p2, plane.p1), v3_sub(plane.p3, plane.p1))));
+	return (v.x * v.x + v.y * v.y + v.z * v.z);
 }

@@ -26,6 +26,8 @@
 # include "../libft/src_libft.h"
 # include <math.h>
 
+# define TOLERANCE 0.000001
+
 //typedef float vec[3];
 
 typedef struct s_v3
@@ -161,6 +163,59 @@ typedef struct s_matrix3d
 	vec	v3;
 }	t_matrix3d;
 
+typedef struct s_camera
+{
+	float	canvas_width;
+	float	canvas_height;
+	vec		eye;
+	vec		A;
+	vec		B;
+	vec		C;
+}	t_camera;
+
+enum	e_LightType {
+	Ambient,
+	Point
+};
+
+typedef struct s_light
+{
+	enum e_LightType	type;
+	vec					color;
+	vec					pos;
+}	t_light;
+
+typedef struct s_image
+{
+
+}	t_image;
+
+typedef struct s_item
+{
+	enum e_ObjectType	type;
+	vec					pos;
+	vec					scale;
+	vec					color;
+	float				specular;
+	int					is_checker;
+	vec					z_ref_point;
+	vec					vertices[34];
+	int					vertices_len;
+	int					id;
+	vec					*pixel_cache;
+	int					cache_width;
+	int					cache_length;
+	t_image				*image;
+}	t_item;
+
+typedef struct s_intersection
+{
+	vec	pos;
+	vec	normal;
+	t_line	ray;
+	t_item	item;
+}	t_intersection;
+
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
 vec		v3_add(vec a, vec b);
@@ -172,17 +227,87 @@ vec		mult_colors(vec c1, vec c2);
 vec	modify_color_intensity(vec color, float scalar);
 vec	intensity_to_color(float intensity);
 int	same_sign(float a, float b);
-t_plane	plane(vec p1, vec p2, vec p3);
+t_plane	plane_c(vec p1, vec p2, vec p3);
 vec	plane_normal(t_plane plane);
 
 // UTIL3.C
 int	colinear_check(vec v1, vec v2);
 t_plane	plane_from_normal(vec point, vec normal);
-t_line	line(vec p1, vec p2);
-t_matrix3d	matrix3d(vec v1, vec v2, vec v3);
+t_line	line_c(vec p1, vec p2);
+t_matrix3d	matrix3d_c(vec v1, vec v2, vec v3);
 int	same_side_of_line(t_line line, vec A, vec B);
 
 // UTIL4.C
+int	same_side_of_plane(t_plane plane, vec A, vec B);
+vec	rotate_point(vec p, vec v, vec r);
+float	vect_angle(vec v1, vec v2);
+float	degree_to_radian(float angle);
 
+// UTIL5.C
+vec	v3_sub(vec a, vec b);
+vec	v3_clone(vec v);
+vec	v3_null();
+int	v3_is_null(vec v);
+vec	project_point(vec point, t_camera camera);
+
+// CAMERA.C
+t_camera	camera_(float eye_canv_dist, float screen_width, float screen_height);
+vec	camera_get_AC(t_camera camera);
+vec	camera_get_AB(t_camera camera);
+t_plane	camera_get_canvas_plane(t_camera camera);
+vec	camera_get_center(t_camera camera);
+
+// CAMERA2.C
+vec	camera_get_norm(t_camera camera);
+void	camera_rotate(t_camera camera, enum e_Direction direction, float amount);
+void	camera_move(t_camera camera, enum e_Direction direction, float amount);
+
+// CAMERA3.C
+vec	get_point_canvas_rel(t_camera camera, vec p);
+vec	camera_get_D(t_camera camera);
+
+// ITEM.C
+t_item	create_item(enum e_ObjectType type, vec pos, vec scale, vec color);
+vec	item_get_axis(t_item item);
+void	item_draw_axes(t_item item);
+unsigned int	item_color_hex(t_item item);
+
+// UTIL6.C
+t_light	light(enum e_LightType type, vec color, vec pos);
+t_intersection	intersection(vec pos, vec normal, t_line ray, t_item item);
+vec	map_point_to_physical(t_camera camera, vec point, float physical_width, float physical_height);
+vec	map_physical_to_camera(t_camera camera, vec point, float physical_width, float physical_height);
+vec	v3_scale(vec a, float scale);
+
+// UTIL7.C
+vec	v3_invert(vec a);
+vec	v3_abs(vec a);
+float	v3_len(vec a);
+vec	v3_norm(vec v);
+float	v3_norm_squared(vec v);
+
+// UTIL8.C
+vec	v3_cross(vec a, vec b);
+float	v3_dot(vec a, vec b);
+vec	project_point_onto_line(t_line line, vec point);
+float	point_plane_dist(vec point, t_plane plane);
+float	signed_point_plane_dist(vec point, t_plane plane);
+
+// UTIL9.C
+vec	project_point_onto_plane(vec point, t_plane plane);
+vec	matrix_mult_vec(t_matrix3d matrix, vec v);
+t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar);
+t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2);
+t_matrix3d	matrix_sub(t_matrix3d m1, t_matrix3d m2);
+
+// UTIL 11.C
+t_matrix3d	get_identity_matrix(void);
+vec	get_cylinder_top(t_item cylinder);
+vec	get_cylinder_bottom(t_item cylinder);
+vec	intersect(t_line line, t_plane plane);
+int	equals_with_tolerance(float val1, float val2);
+
+// DRAW_LINE.C
+void	draw_line_dda(t_scData *scrn, vec p1, vec p2, int color);
 
 #endif // RT_HEAD_H

@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   util1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
 /*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */

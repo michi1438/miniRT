@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util2.c                                            :+:      :+:    :+:   */
+/*   camera3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,41 +12,31 @@
 
 #include "../rt_head.h"
 
-vec	modify_color_intensity(vec color, float scalar)
+/* expresses a 3d point relatively to point A */
+vec	get_point_canvas_rel(t_camera camera, vec p)
 {
-	vec	res;
+	vec AB_proj;
+	vec AC_proj;
+	vec A_AB_proj;
+	vec A_AC_proj;
+	int	xy_mult[2];
 
-	res = v3_scale(color, scalar);
-	res.x = clamp(res.x, 0, 255);
-	res.y = clamp(res.y, 0, 255);
-	res.z = clamp(res.z, 0, 255);
-	return (res);
+	AB_proj = project_point_onto_line(line_(camera.A, camera.B), p);
+	AC_proj = project_point_onto_line(line(camera.A, camera.C), p);
+	A_AB_proj = v3_sub(AB_proj, camera.A);
+	A_AC_proj = v3_sub(AC_proj, camera.A);
+	xy_mult[0] = 1;
+	xy_mult[1] = 1;
+	if (!same_side_of_line(line(camera.A, camera.B), camera.C, p)) {
+		xy_mult[1] = -1;
+	}
+	if (!same_side_of_line(line(camera.A, camera.C), camera.B, p)) {
+		xy_mult[0] = -1;
+	}
+	return (v3(v3_len(A_AB_proj) * xy_mult[0], v3_len(A_AC_proj) * xy_mult[1], 0));
 }
 
-/* Takes an intensity from 0 to 1 and returns a corresponding v3 white light color */
-vec	intensity_to_color(float intensity)
+vec	camera_get_D(t_camera camera)
 {
-	float	mult;
-
-	mult = clamp(intensity, 0, 1);
-	return (v3(255 * mult, 255 * mult, 255 * mult));
-}
-
-int	same_sign(float a, float b)
-{
-	return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
-}
-
-t_plane	plane_(vec p1, vec p2, vec p3)
-{
-	t_plane	res;
-
-	res.p1 = p1;
-	res.p2 = p2;
-	res.p3 = p3;
-}
-
-vec	plane_normal(t_plane plane)
-{
-	return(v3_norm(v3_cross(v3_sub(plane.p2, plane.p1), v3_sub(plane.p3, plane.p1))));
+	return (v3_add(camera.B, camera_get_AC(camera)));
 }

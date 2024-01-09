@@ -23,7 +23,8 @@ SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_scene.c rt_vecmath.c rt_intersect.c rt_matrices.c \
 			 rt_fetch_elem.c rt_fill_control.c
 
-SRC_UTIL = util1.c util2.c util3.c util4.c
+SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
+			util8.c util9.c util10.c draw_line.c util11.c
 
 SOURCES_UTIL = $(addprefix src/util/, $(SRC_UTIL))
 
@@ -49,6 +50,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) $(INCLUDES)
 	make -C libft/
+	make -C minilibx-linux/
 	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
