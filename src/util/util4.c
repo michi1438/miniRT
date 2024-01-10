@@ -14,8 +14,8 @@
 
 int	same_side_of_plane(t_plane plane, vec A, vec B)
 {
-	vec	dot1;
-	vec	dot2;
+	float	dot1;
+	float	dot2;
 
 	dot1 = v3_dot(plane_normal(plane), v3_sub(A, plane.p1));
 	dot2 = v3_dot(plane_normal(plane), v3_sub(B, plane.p1));

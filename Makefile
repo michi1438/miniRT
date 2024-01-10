@@ -24,7 +24,8 @@ SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_fetch_elem.c rt_fill_control.c
 
 SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
-			util8.c util9.c util10.c draw_line.c util11.c
+			util8.c util9.c util10.c draw_line.c util11.c util12.c util13.c util14.c util15.c util16.c\
+			util17.c
 
 SOURCES_UTIL = $(addprefix src/util/, $(SRC_UTIL))
 

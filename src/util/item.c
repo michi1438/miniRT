@@ -38,7 +38,7 @@ vec	item_get_axis(t_item item)
 	return (v3_norm(v3_sub(item.z_ref_point, item.pos)));
 }
 
-void	item_draw_axes(t_item item)
+void	item_draw_axes(t_rtdata data, t_item item)
 {
 	vec	z_axis;
 	t_plane	plane;
@@ -49,12 +49,7 @@ void	item_draw_axes(t_item item)
 	plane = plane_from_normal(item.pos, z_axis);
 	y_axis = v3_scale(v3_norm(v3_sub(plane.p2, item.pos)), 0.5);
 	x_axis = v3_scale(v3_norm(v3_sub(plane.p3, item.pos)), 0.5);
-	draw_segment(item.pos, v3_add(item.pos, z_axis), BLUE);
-	draw_segment(item.pos, v3_add(item.pos, y_axis), GREEN);
-	draw_segment(item.pos, v3_add(item.pos, x_axis), RED);
-}
-
-unsigned int	item_color_hex(t_item item)
-{
-	return (rgb_to_hex(item.color.x, item.color.y, item.color.z));
+	draw_segment(data, item.pos, v3_add(item.pos, z_axis), color_from_int(BLUE));
+	draw_segment(data, item.pos, v3_add(item.pos, y_axis), color_from_int(GREEN));
+	draw_segment(data, item.pos, v3_add(item.pos, x_axis), color_from_int(RED));
 }

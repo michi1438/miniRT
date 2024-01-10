@@ -27,6 +27,11 @@
 # include <math.h>
 
 # define TOLERANCE 0.000001
+# define ROT_SPEED 0.003
+
+# define RED 0x00FF0000
+# define GREEN 0x0000FF00
+# define BLUE 0x000000FF
 
 //typedef float vec[3];
 
@@ -213,8 +218,35 @@ typedef struct s_intersection
 	vec	pos;
 	vec	normal;
 	t_line	ray;
-	t_item	item;
+	t_item	*item;
 }	t_intersection;
+
+typedef struct s_rtdata
+{
+	t_camera	camera;
+	t_scData	*scrn;
+	t_list		*items;
+}	t_rtdata;
+
+typedef struct s_terms
+{
+	vec	D;
+	vec	X;
+	vec	N;
+	float	d_v;
+	float	x_v;
+	float	t;
+	vec	normal;
+	vec	intr;
+	float	a;
+	float	b;
+	float	c;
+	float	r;
+	float	discriminant;
+	float	t1;
+	float	t2;
+	vec		point;
+}	t_terms;
 
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
@@ -269,7 +301,7 @@ vec	camera_get_D(t_camera camera);
 // ITEM.C
 t_item	create_item(enum e_ObjectType type, vec pos, vec scale, vec color);
 vec	item_get_axis(t_item item);
-void	item_draw_axes(t_item item);
+void	item_draw_axes(t_rtdata data, t_item item);
 unsigned int	item_color_hex(t_item item);
 
 // UTIL6.C
@@ -300,14 +332,54 @@ t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar);
 t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2);
 t_matrix3d	matrix_sub(t_matrix3d m1, t_matrix3d m2);
 
-// UTIL 11.C
+// UTIL 10.C
 t_matrix3d	get_identity_matrix(void);
 vec	get_cylinder_top(t_item cylinder);
 vec	get_cylinder_bottom(t_item cylinder);
 vec	intersect(t_line line, t_plane plane);
 int	equals_with_tolerance(float val1, float val2);
 
+// UTIL 11.C
+int		vec_color_to_int(vec color);
+void	draw_line(t_scData *scrn, vec p1, vec p2, vec color);
+void	draw_square(t_scData *scrn, vec pos, float size, vec color);
+void	draw_vect(t_scData *scrn, vec v, vec color);
+void	connect_points(t_scData *scrn, vec p1, vec p2, t_item item);
+
 // DRAW_LINE.C
 void	draw_line_dda(t_scData *scrn, vec p1, vec p2, int color);
+
+// UTIL12.C
+void	fill_screen(t_scData *scrn, vec color);
+void	draw_segment(t_rtdata data, vec p1, vec p2, vec color);
+void	add_item(t_item item);
+void	animate(t_rtdata data);
+void	draw(t_rtdata data);
+
+// UTIL13.C
+vec	color_from_int(int color);
+void	sphere_vertices(vec pos, vec scale, t_item *item);
+void	pyramid_vertices(vec pos, vec scale, t_item *item);
+void	cube_vertices(vec pos, vec scale, t_item *item);
+void	cylinder_vertices(vec pos, vec scale, t_item *item);
+
+// UTIL14.C
+void	draw_cube_mappings(t_scData *scrn, vec mappings[34], t_item item);
+void	draw_pyramid_mappings(t_scData *scrn, vec mappings[34], t_item item);
+void	draw_sphere_mappings(t_scData *scrn, vec mappings[34], t_item item);
+void	draw_cylinder_mappings(t_scData *scrn, vec mappings[34], t_item item);
+
+// UTIL15.C
+void	move_item(t_item *item, vec pos);
+void	move_item_to(t_item *item, vec pos);
+void	rotate_item(t_item *item, vec rot);
+void	outline_item(t_rtdata data, t_item item);
+
+// UTIL16.C
+void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34]);
+void	gen_rays(t_camera camera, double resolution, t_line rays[S_WIDTH * S_HEIGHT]);
+t_intersection	int_null();
+int	int_is_null(t_intersection intersection);
+t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
 
 #endif // RT_HEAD_H

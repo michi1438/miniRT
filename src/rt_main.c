@@ -16,7 +16,6 @@ int	main(int ac, char **av)
 {
 	t_list	*elst;
 
-	test();
 	elst = scene_parsing(ac, av);
 	if (!elst)
 		return (1);
