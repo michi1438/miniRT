@@ -65,7 +65,6 @@ int	int_is_null(t_intersection intersection)
 t_intersection	intersect_ray_plane(t_line ray, t_plane plane)
 {
 	t_terms	terms;
-	t_intersection	int_;
 
 	terms.D = v3_norm(v3_sub(ray.p2, ray.p1));
 	terms.X = v3_sub(ray.p1, plane.p1);
@@ -83,8 +82,5 @@ t_intersection	intersect_ray_plane(t_line ray, t_plane plane)
 	} else {
 		terms.normal = v3_invert(terms.N);
 	}
-	int_.pos = terms.intr;
-	int_.normal = terms.normal;
-	int_.ray = ray;
-	return (int_);
+	return (int_create(terms.intr, terms.normal, ray, NULL));
 }

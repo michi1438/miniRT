@@ -1930,7 +1930,7 @@
 			t = d2;
 		}
 
-		if (t != null && t >= 0 && (res == null || v3_len(D, t) < dist)) {
+		if (t != null && t >= 0 && (res == null || v3_len(v3_scale(D, t)) < dist)) { //TODO: check whether it's actually v3_scale
 			let pos = v3_add(ray.p1, v3_scale(D, t));
 			let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
 			res = new RtIntersection(pos, normal, ray, cylinder);
@@ -2105,7 +2105,7 @@
 
 	function spherical_map(point, sphere) {
 		point = v3_add(point, v3_sub(v3(), sphere.pos));
-		let theta = Math.atan(point.x, point.z);
+		let theta = Math.atan2(point.x, point.z);
 		let radius = v3_len(point);
 		let phi = Math.acos(point.y / radius);
 		let raw_u = theta / (2 * Math.PI);

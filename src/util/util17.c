@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util16.c                                           :+:      :+:    :+:   */
+/*   util17.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -47,63 +47,93 @@ t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
 			terms.point = v3_add(ray.p1, v3_scale(terms.D, terms.t2));
 		}
 		if (!v3_is_null(terms.point)) {
-			return (new RtIntersection(point, v3_norm(v3_sub(point, sphere.pos)), ray, sphere));
+			return (int_create(terms.point, v3_norm(v3_sub(terms.point, sphere->pos)),  ray, sphere));
 		}
 	}
 	return (int_null());
 }
 
-function point_inside_square(s1, s2, s3, s4, point) {
-	let plane = new Plane(s1, s2, s3);
-	let norm = plane.getNormal();
-	let altitudeComponent = Math.abs(v3_dot(v3_sub(point, s1), norm));
-	if (altitudeComponent >= TOLERANCE) {
-		return (false);
-	}
-	if (!same_side_of_line(new Line(s1, s2), s3, point)) {
-		return (false);
-	}
-	if (!same_side_of_line(new Line(s2, s3), s1, point)) {
-		return (false);
-	}
-	if (!same_side_of_line(new Line(s3, s4), s1, point)) {
-		return (false);
-	}
-	if (!same_side_of_line(new Line(s4, s1), s3, point)) {
-		return (false);
-	}
-	return (true);
-}
-function get_cube_squares(cube) {
-	return ([
-	[cube.vertices[0], cube.vertices[1], cube.vertices[2], cube.vertices[3]],
-	[cube.vertices[1], cube.vertices[2], cube.vertices[6], cube.vertices[5]],
-	[cube.vertices[2], cube.vertices[3], cube.vertices[7], cube.vertices[6]],
-	[cube.vertices[0], cube.vertices[3], cube.vertices[7], cube.vertices[4]],
-	[cube.vertices[0], cube.vertices[1], cube.vertices[5], cube.vertices[4]],
-	[cube.vertices[7], cube.vertices[6], cube.vertices[5], cube.vertices[4]]
-	]);
-}
-function intersect_ray_cube(ray, cube) {
-	let res = null;
-	let dist = 0;
+int	point_inside_square(t_vecfour sqr, vec point)
+{
+	t_plane	plane;
+	vec		norm;
 
-	let cube_squares = get_cube_squares(cube);
-	for (var i = 0; i < cube_squares.length; i++) {
-		let plane = new Plane(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
-		let int = intersect_ray_plane(ray, plane);
-		if (int != null) {
-			if (point_inside_square(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3], int.pos)) {
-				let dist_ = v3_len(v3_sub(int.pos, ray.p1));
-				if (res == null || dist_ < dist) {
-					res = int;
-					dist = dist_;
+	plane = plane_c(sqr.p1, sqr.p2, sqr.p3);
+	norm = plane_normal(plane);
+	if (fabs(v3_dot(v3_sub(point, sqr.p1), norm)) >= TOLERANCE) {
+		return (0);
+	}
+	if (!same_side_of_line(line_c(sqr.p1, sqr.p2), sqr.p3, point)) {
+		return (0);
+	}
+	if (!same_side_of_line(line_c(sqr.p2, sqr.p3), sqr.p1, point)) {
+		return (0);
+	}
+	if (!same_side_of_line(line_c(sqr.p3, sqr.p4), sqr.p1, point)) {
+		return (0);
+	}
+	if (!same_side_of_line(line_c(sqr.p4, sqr.p1), sqr.p3, point)) {
+		return (0);
+	}
+	return (1);
+}
+
+void	get_cube_squares(const t_item cube, vec square_buffer[6][4])
+{
+	square_buffer[0][0] = cube.vertices[0];
+	square_buffer[0][1] = cube.vertices[1];
+	square_buffer[0][2] = cube.vertices[2];
+	square_buffer[0][3] = cube.vertices[3];
+	square_buffer[1][0] = cube.vertices[1];
+	square_buffer[1][1] = cube.vertices[2];
+	square_buffer[1][2] = cube.vertices[6];
+	square_buffer[1][3] = cube.vertices[5];
+	square_buffer[2][0] = cube.vertices[2];
+	square_buffer[2][1] = cube.vertices[3];
+	square_buffer[2][2] = cube.vertices[7];
+	square_buffer[2][3] = cube.vertices[6];
+	square_buffer[3][0] = cube.vertices[0];
+	square_buffer[3][1] = cube.vertices[3];
+	square_buffer[3][2] = cube.vertices[7];
+	square_buffer[3][3] = cube.vertices[4];
+	square_buffer[4][0] = cube.vertices[0];
+	square_buffer[4][1] = cube.vertices[1];
+	square_buffer[4][2] = cube.vertices[5];
+	square_buffer[4][3] = cube.vertices[4];
+	square_buffer[5][0] = cube.vertices[7];
+	square_buffer[5][1] = cube.vertices[6];
+	square_buffer[5][2] = cube.vertices[5];
+	square_buffer[5][3] = cube.vertices[4];
+}
+
+t_intersection	intersect_ray_cube(t_line ray, t_item *cube)
+{
+	t_terms	ts;
+	vec		cube_squares[6][4];
+	int		i;
+	t_plane	plane;
+
+	ts.inter = int_null();
+	ts.dist = 0;
+	get_cube_squares(*cube, cube_squares);
+	i = 0;
+	while (i < 6)
+	{
+		plane = plane_c(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
+		ts.inter2 = intersect_ray_plane(ray, plane);
+		if (!int_is_null(ts.inter2))
+		{
+			if (point_inside_square(get_vecfour(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3]), ts.inter2.pos))
+			{
+				ts.dist_ = v3_len(v3_sub(ts.inter2.pos, ray.p1));
+				if (int_is_null(ts.inter) || ts.dist_ < ts.dist) {
+					ts.inter = ts.inter2;
+					ts.dist = ts.dist_;
 				}
 			}
 		}
+		i ++;
 	}
-	if (res != null) {
-		res.item = cube;
-	}
-	return (res);
+	ts.inter.item = cube;
+	return (ts.inter);
 }

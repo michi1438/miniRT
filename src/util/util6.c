@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../rt_head.h"§
+#include "../rt_head.h"
 
 t_light	light(enum e_LightType type, vec color, vec pos)
 {
@@ -22,7 +22,7 @@ t_light	light(enum e_LightType type, vec color, vec pos)
 	return (res);
 }
 
-t_intersection	intersection(vec pos, vec normal, t_line ray, t_item item)
+t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item)
 {
 	t_intersection	res;
 

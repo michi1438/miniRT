@@ -192,7 +192,10 @@ typedef struct s_light
 
 typedef struct s_image
 {
-
+	vec		**pixels;
+	float	target_width;
+	float	width;
+	float	height;
 }	t_image;
 
 typedef struct s_item
@@ -207,7 +210,7 @@ typedef struct s_item
 	vec					vertices[34];
 	int					vertices_len;
 	int					id;
-	vec					*pixel_cache;
+	vec					**pixel_cache;
 	int					cache_width;
 	int					cache_length;
 	t_image				*image;
@@ -230,23 +233,51 @@ typedef struct s_rtdata
 
 typedef struct s_terms
 {
-	vec	D;
-	vec	X;
-	vec	N;
-	float	d_v;
-	float	x_v;
-	float	t;
-	vec	normal;
-	vec	intr;
-	float	a;
-	float	b;
-	float	c;
-	float	r;
-	float	discriminant;
-	float	t1;
-	float	t2;
-	vec		point;
+	vec				D;
+	vec				V;
+	vec				C;
+	vec				X;
+	vec				N;
+	float			d_v;
+	float			x_v;
+	float			t;
+	vec				normal;
+	vec				intr;
+	float			a;
+	float			b;
+	float			c;
+	float			r;
+	float			discriminant;
+	float			t1;
+	float			t2;
+	vec				point;
+	t_intersection	inter;
+	t_intersection	inter2;
+	float			dist;
+	float			dist_;
+	float			d1;
+	float			d2;
+	float			m1;
+	float			m2;
+	float			tmp;
+	vec				y_axis;
+	vec				x_axis;
+	vec				z_axis;
+	float			x_dist;
+	float			y_dist;
+	float			z_dist;
+	vec			x;
+	vec			y;
+	vec			z;
 }	t_terms;
+
+typedef struct s_vecfour
+{
+	vec	p1;
+	vec	p2;
+	vec	p3;
+	vec	p4;
+}	t_vecfour;
 
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
@@ -306,7 +337,7 @@ unsigned int	item_color_hex(t_item item);
 
 // UTIL6.C
 t_light	light(enum e_LightType type, vec color, vec pos);
-t_intersection	intersection(vec pos, vec normal, t_line ray, t_item item);
+t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item);
 vec	map_point_to_physical(t_camera camera, vec point, float physical_width, float physical_height);
 vec	map_physical_to_camera(t_camera camera, vec point, float physical_width, float physical_height);
 vec	v3_scale(vec a, float scale);
@@ -357,7 +388,7 @@ void	animate(t_rtdata data);
 void	draw(t_rtdata data);
 
 // UTIL13.C
-vec	color_from_int(int color);
+vec		color_from_int(int color);
 void	sphere_vertices(vec pos, vec scale, t_item *item);
 void	pyramid_vertices(vec pos, vec scale, t_item *item);
 void	cube_vertices(vec pos, vec scale, t_item *item);
@@ -381,5 +412,44 @@ void	gen_rays(t_camera camera, double resolution, t_line rays[S_WIDTH * S_HEIGHT
 t_intersection	int_null();
 int	int_is_null(t_intersection intersection);
 t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
+
+// UTIL.17.C
+t_intersection	intersect_ray_plane_item(t_line ray, t_item *plane);
+t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere);
+int	point_inside_square(t_vecfour sqr, vec point);
+void	get_cube_squares(const t_item cube, vec square_buffer[6][4]);
+t_intersection	intersect_ray_cube(t_line ray, t_item *cube);
+
+//UTIL18.C
+t_intersection	int_create(vec pos, vec norm, t_line ray, t_item *item);
+t_vecfour	get_vecfour(vec p1, vec p2, vec p3, vec p4);
+int	point_inside_triangle(vec s1, vec s2, vec s3, vec point);
+t_vecfour	get_pyramid_base_square(t_item pyramid);
+void	get_pyramid_triangles(const t_item pyramid, vec tri_buffer[4][3]);
+
+//UTIL19.C
+t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid);
+t_intersection	ray_intersection(t_line ray, t_item *object);
+vec	compute_lighting(t_intersection intr, t_list *lights);
+
+// UTIL20.C
+t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder);
+
+// UTIL21.C
+vec	compute_specular(t_intersection intr, t_list *lights);
+vec	uv_at_chekers(vec color1, vec color2, vec checkers_wh, vec u_v);
+vec	spherical_map(vec point, t_item sphere);
+vec	uv_at_image(t_image *rt_image, float u, float v);
+
+// UTIL22.C
+vec	cylindrical_map(vec point, t_item cylinder);
+
+// UTIL23.C
+vec	get_item_color_image(t_intersection intr);
+vec	get_item_color(t_intersection intr);
+
+// UTIL24.C
+vec	normalize_plane_point(vec point, vec origin, vec normal);
+vec	cartesian_to_sphere(vec point, t_item sphere);
 
 #endif // RT_HEAD_H
