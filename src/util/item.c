@@ -14,7 +14,7 @@
 
 static int	get_id()
 {
-	int	starting_id;
+	static int	starting_id;
 
 	starting_id ++;
 	return (starting_id);
@@ -31,6 +31,7 @@ t_item	create_item(enum e_ObjectType type, vec pos, vec scale, vec color)
 	res.specular = -1;
 	res.z_ref_point = v3_add(v3(0, 1, 0), pos);
 	res.id = get_id();
+	return (res);
 }
 
 vec	item_get_axis(t_item item)

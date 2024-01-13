@@ -87,13 +87,13 @@ t_intersection	ray_intersection(t_line ray, t_item *object)
 	return (int_null());
 }
 
-static void	cmpt_lt(t_light light, vec *res, t_intersection intr)
+static void	cmpt_lt(t_rtdata data, t_light light, vec *res, t_intersection intr)
 {
 	vec	L;
 	t_terms	ts;
 	float	n_dot_l;
 
-	ts.inter2 = cast_ray(line_c(light.pos, intr.pos), 0);
+	ts.inter2 = cast_ray(data, line_c(light.pos, intr.pos), 0);
 	if (!int_is_null(ts.inter2) && ts.inter2.item->id != intr.item->id)
 	{
 		if (v3_len(v3_sub(ts.inter2.pos, intr.pos)) < v3_len(v3_sub(intr.pos, light.pos))) {
@@ -108,7 +108,7 @@ static void	cmpt_lt(t_light light, vec *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-vec	compute_lighting(t_intersection intr, t_list *lights)
+vec	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights)
 {
 	vec	res;
 	t_list	*list;
@@ -123,7 +123,7 @@ vec	compute_lighting(t_intersection intr, t_list *lights)
 		}
 		else
 		{
-			cmpt_lt(*((t_light *)list->content), &res, intr);
+			cmpt_lt(data, *((t_light *)list->content), &res, intr);
 		}
 		list = list->next;
 	}

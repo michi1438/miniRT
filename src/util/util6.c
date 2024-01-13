@@ -30,6 +30,7 @@ t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item)
 	res.normal = normal;
 	res.ray = ray;
 	res.item = item;
+	return (res);
 }
 
 vec	map_point_to_physical(t_camera camera, vec point, float physical_width, float physical_height)

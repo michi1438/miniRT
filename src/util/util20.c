@@ -54,7 +54,7 @@ static void	test_cap2(t_terms *terms, t_item cylinder, t_line ray)
 	}
 }
 
-static int	cyl1(t_terms *terms, t_item cylinder, t_line ray)
+static int	cyl1(t_terms *terms, t_item cylinder)
 {
 	t_terms			ts;
 
@@ -75,7 +75,7 @@ static int	cyl1(t_terms *terms, t_item cylinder, t_line ray)
 	return (1);
 }
 
-static int	cyl2(t_terms *terms, t_item cylinder, t_line ray)
+static int	cyl2(t_terms *terms, t_item cylinder)
 {
 	t_terms			ts;
 
@@ -112,9 +112,9 @@ t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder)
 	ts.X = v3_sub(ray.p1, ts.C);
 	test_cap1(&ts, *cylinder, ray);
 	test_cap2(&ts, *cylinder, ray);
-	if (!cyl1(&ts, *cylinder, ray))
+	if (!cyl1(&ts, *cylinder))
 		return (ts.inter);
-	if (!cyl2(&ts, *cylinder, ray))
+	if (!cyl2(&ts, *cylinder))
 		return (ts.inter);
 	if (ts.t != FLT_MAX && ts.t >= 0 && (!int_is_null(ts.inter) || v3_len(v3_scale(ts.D, ts.t)) < ts.dist)) {
 		ts.point = v3_add(ray.p1, v3_scale(ts.D, ts.t));

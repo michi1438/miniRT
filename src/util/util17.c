@@ -25,7 +25,6 @@ t_intersection	intersect_ray_plane_item(t_line ray, t_item *plane)
 t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
 {
 	t_terms	terms;
-	t_intersection	res;
 
 	terms.D = v3_norm(v3_sub(ray.p2, ray.p1));
 	terms.X = v3_sub(ray.p1, sphere->pos);

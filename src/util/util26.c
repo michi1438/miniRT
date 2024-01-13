@@ -39,55 +39,61 @@ vec	get_item_color_checkerboard(t_intersection intr)
 	}
 }
 
-function cast_ray(ray, do_draw = true) {
-	let intersection = null;
-	let dist = 0;
-	for (var j = 0; j < items.length; j++) {
-		let int_ = ray_intersection(ray, items[j]);
-		if (int_ != null) {
-			let dist_ = v3_len(v3_sub(int_.pos, ray.p1));
-			if (intersection == null || dist_ < dist) {
-				intersection = int_;
-				dist = dist_;
+t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
+{
+	t_terms	ts;
+	t_list	*list;
+
+	ts.inter = int_null();
+	ts.dist = 0;
+	list = data.items;
+	while (list != NULL)
+	{
+		ts.inter2 = ray_intersection(ray, (t_item *)list->content);
+		if (!int_is_null(ts.inter2))
+		{
+			ts.dist_ =  v3_len(v3_sub(ts.inter2.pos, ray.p1));
+			if (int_is_null(ts.inter) || ts.dist_ < ts.dist)
+			{
+				ts.inter = ts.inter2;
+				ts.dist = ts.dist_;
 			}
 		}
+		list = list->next;
 	}
-	if (do_draw && intersection != null) {
-		let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
-		let light_color = compute_lighting(intersection);
-		let specular_coefficient = 0.7;
-		let specular_color = modify_color_intensity(compute_specular(intersection), specular_coefficient);
-		let color;
-		if (1) {
-			let diffuse_color = mult_colors(get_item_color(intersection), light_color);
-			color = rgbToHexV3(add_colors(diffuse_color, specular_color)); //rgbToHexV3(mult_colors(get_item_color(intersection), light_color));
-		} else {
-			color = rgbToHexV3(get_item_color(intersection));
-		}
-		draw_circle(mapped_pointr.x, mapped_pointr.y, 1, color, 2);
+	if (do_draw && !int_is_null(ts.inter)) {
+		ts.point = map_point_to_physical(data.camera, ts.inter.ray.p2, S_WIDTH, S_HEIGHT);
+		ts.light_color = compute_lighting(data, ts.inter, data.lights);
+		ts.specular_color = modify_color_intensity(compute_specular(data, ts.inter, data.lights), SPECULAR);
+		ts.diffuse_color = mult_colors(get_item_color(ts.inter), ts.light_color);
+		ts.color = add_colors(ts.diffuse_color, ts.specular_color);
+
+		mlx_pp(data.scrn, ts.point.x, ts.point.y, vec_color_to_int(ts.color));
 	}
-	return (intersection);
+	return (ts.inter);
 }
 
-function raytrace() {
-	if (parseFloat(document.getElementById('rt_precision').value < TOLERANCE)) {
+void	raytrace(t_rtdata data)
+{
+	t_line	*rays;
+	int		i;
+
+	rays = gen_rays(data.camera, RESOLUTION);
+	if (!rays)
 		return ;
+	i = 0;
+	while (i < S_WIDTH * S_HEIGHT)
+	{
+		cast_ray(data, rays[i], 1);
+		i ++;
 	}
-
-	console.log("raytracing...");
-	let rays = gen_rays(camera, parseFloat(document.getElementById('rt_precision').value));
-
-	console.log(rays.length)
-	console.log(rays);
-	for (var i = 0; i < rays.length; i++) {
-		cast_ray(rays[i]);
-	}
-	console.log("done!");
-	draw_lights();
+	free(rays);
 }
 
-function cast_ray_for_screen_coords(x, y) {
-	console.log(`casting for ${x}, ${y}`);
-	let mapped = map_physical_to_camera(camera, v3(x, y), htmlcanvas.width, htmlcanvas.height);
-	cast_ray(new Line(camera.eye, mapped), true);
+void	cast_ray_for_screen_coords(t_rtdata data, float x, float y)
+{
+	vec	mapped;
+
+	mapped = map_physical_to_camera(data.camera, v3(x, y, 0), S_WIDTH, S_HEIGHT);
+	cast_ray(data, line_c(data.camera.eye, mapped), 1);
 }

@@ -19,11 +19,15 @@ float	new_image_height(t_image *img, float new_width)
 
 vec	**getPixelsFromImage(t_image img, float target_width)
 {
+	(void) img;
+	(void) target_width;
 	// TODO: resize the image and return new alloced one
+	return (NULL);
 }
 
 void	free_pixel_cache(vec **cache)
 {
+	(void) cache;
 	// TODO: free cache
 }
 
@@ -36,3 +40,11 @@ t_v3_tuple	tuple(vec v1,vec v2)
 	return (res);
 }
 
+t_line line_c(vec p1, vec p2)
+{
+	t_line	line;
+
+	line.p1 = p1;
+	line.p2 = p2;
+	return (line);
+}

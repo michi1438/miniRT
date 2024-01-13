@@ -12,15 +12,14 @@
 
 #include "../rt_head.h"
 
-static void	cmpt_sp(t_light light, vec *res, t_intersection intr)
+static void	cmpt_sp(t_rtdata data, t_light light, vec *res, t_intersection intr)
 {
 	vec	L;
 	t_terms	ts;
-	float	n_dot_l;
 	vec		R;
 	float	r_dot_v;
 
-	ts.inter2 = cast_ray(line_c(light.pos, intr.pos), 0);
+	ts.inter2 = cast_ray(data, line_c(light.pos, intr.pos), 0);
 	if (!int_is_null(ts.inter2) && ts.inter2.item->id != intr.item->id)
 	{
 		if (v3_len(v3_sub(ts.inter2.pos, intr.pos)) < v3_len(v3_sub(intr.pos, light.pos))) {
@@ -28,8 +27,6 @@ static void	cmpt_sp(t_light light, vec *res, t_intersection intr)
 		}
 	}
 	L = v3_sub(light.pos, intr.pos);
-	n_dot_l = v3_dot(intr.normal, L);
-
 	R = v3_sub(v3_scale(intr.normal, 2 * v3_dot(intr.normal, L)), L);
 	ts.V = v3_invert(v3_norm(v3_sub(intr.ray.p2, intr.ray.p1)));
 	r_dot_v = v3_dot(R, ts.V);
@@ -39,7 +36,7 @@ static void	cmpt_sp(t_light light, vec *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-vec	compute_specular(t_intersection intr, t_list *lights)
+vec	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
 {
 	vec	res;
 	t_list	*list;
@@ -51,9 +48,10 @@ vec	compute_specular(t_intersection intr, t_list *lights)
 	while (list != NULL)
 	{
 		if (((t_light *)list->content)->type == Point)
-			cmpt_sp(*((t_light *)list->content), &res, intr);
+			cmpt_sp(data, *((t_light *)list->content), &res, intr);
 		list = list->next;
 	}
+	return (res);
 }
 
 /* http://raytracerchallenge.com/bonus/texture-mapping.html */

@@ -13,8 +13,8 @@
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
-# define S_WIDTH (1368)
-# define S_HEIGHT (912)
+# define S_WIDTH (1000)
+# define S_HEIGHT (1000)
 
 # include <stdio.h>
 # include <float.h>
@@ -26,6 +26,8 @@
 # include "../libft/src_libft.h"
 # include <math.h>
 
+# define RESOLUTION 0.006
+# define SPECULAR 0.7
 # define TOLERANCE 0.000001
 # define ROT_SPEED 0.003
 
@@ -236,6 +238,7 @@ typedef struct s_rtdata
 	t_camera	camera;
 	t_scData	*scrn;
 	t_list		*items;
+	t_list		*lights;
 }	t_rtdata;
 
 typedef struct s_terms
@@ -276,6 +279,10 @@ typedef struct s_terms
 	vec			x;
 	vec			y;
 	vec			z;
+	vec				light_color;
+	vec				specular_color;
+	vec				diffuse_color;
+	vec				color;
 }	t_terms;
 
 typedef struct s_vecfour
@@ -301,7 +308,7 @@ t_plane	plane_c(vec p1, vec p2, vec p3);
 vec	plane_normal(t_plane plane);
 
 // UTIL3.C
-int	colinear_check(vec v1, vec v2);
+int	colinear_check(vec v1);
 t_plane	plane_from_normal(vec point, vec normal);
 t_line	line_c(vec p1, vec p2);
 t_matrix3d	matrix3d_c(vec v1, vec v2, vec v3);
@@ -321,7 +328,7 @@ int	v3_is_null(vec v);
 vec	project_point(vec point, t_camera camera);
 
 // CAMERA.C
-t_camera	camera_(float eye_canv_dist, float screen_width, float screen_height);
+t_camera	camera_c(vec pos, float eye_canv_dist, float fov);
 vec	camera_get_AC(t_camera camera);
 vec	camera_get_AB(t_camera camera);
 t_plane	camera_get_canvas_plane(t_camera camera);
@@ -415,7 +422,7 @@ void	outline_item(t_rtdata data, t_item item);
 
 // UTIL16.C
 void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34]);
-void	gen_rays(t_camera camera, double resolution, t_line rays[S_WIDTH * S_HEIGHT]);
+t_line	*gen_rays(t_camera camera, double resolution);
 t_intersection	int_null();
 int	int_is_null(t_intersection intersection);
 t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
@@ -437,13 +444,13 @@ void	get_pyramid_triangles(const t_item pyramid, vec tri_buffer[4][3]);
 //UTIL19.C
 t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid);
 t_intersection	ray_intersection(t_line ray, t_item *object);
-vec	compute_lighting(t_intersection intr, t_list *lights);
+vec	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights);
 
 // UTIL20.C
 t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder);
 
 // UTIL21.C
-vec	compute_specular(t_intersection intr, t_list *lights);
+vec	compute_specular(t_rtdata data, t_intersection intr, t_list *lights);
 vec	uv_at_chekers(vec color1, vec color2, vec checkers_wh, vec u_v);
 vec	spherical_map(vec point, t_item sphere);
 vec	uv_at_image(t_image *rt_image, float u, float v);
@@ -469,5 +476,8 @@ t_v3_tuple	tuple(vec v1,vec v2);
 
 // UTIL 26.C
 vec	get_item_color_checkerboard(t_intersection intr);
+t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw);
+void	raytrace(t_rtdata data);
+void	cast_ray_for_screen_coords(t_rtdata data, float x, float y);
 
 #endif // RT_HEAD_H

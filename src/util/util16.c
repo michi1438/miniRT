@@ -24,14 +24,18 @@ void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34])
 		draw_cylinder_mappings(data.scrn, mappings, item);
 }
 
-void	gen_rays(t_camera camera, double resolution, t_line rays[S_WIDTH * S_HEIGHT])
+t_line	*gen_rays(t_camera camera, double resolution)
 {
 	vec	x_axis;
 	vec	y_axis;
 	int	i;
 	int	j;
 	int	k;
+	t_line	*res;
 
+	res = malloc(sizeof(*res) * S_WIDTH * S_HEIGHT);
+	if (!res)
+		return (NULL);
 	x_axis = v3_norm(camera_get_AB(camera));
 	y_axis = v3_norm(camera_get_AC(camera));
 	i = 0;
@@ -41,12 +45,13 @@ void	gen_rays(t_camera camera, double resolution, t_line rays[S_WIDTH * S_HEIGHT
 		j = 0;
 		while (j < S_HEIGHT)
 		{
-			rays[k] = line_c(camera.eye, v3_add(v3_add(camera.A, v3_scale(x_axis, (float)i)), v3_scale(y_axis, (float)j)));
+			res[k] = line_c(camera.eye, v3_add(v3_add(camera.A, v3_scale(x_axis, (float)i)), v3_scale(y_axis, (float)j)));
 			k ++;
 			j ++;
 		}
 		i += (int)resolution;
 	}
+	return (res);
 }
 
 t_intersection	int_null()

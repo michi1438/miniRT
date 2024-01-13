@@ -12,16 +12,18 @@
 
 #include "../rt_head.h"
 
-t_camera	camera_create(float eye_canv_dist, float screen_width, float screen_height)
+t_camera	camera_c(vec pos, float eye_canv_dist, float fov)
 {
 	t_camera	res;
 
-	res.canvas_width = screen_width;
-	res.canvas_height = screen_height;
-	res.eye = v3(0, 0, 0);
-	res.A = v3(-screen_width / 2, screen_height / 2, -eye_canv_dist);
-	res.B = v3(screen_width / 2, screen_height / 2, -eye_canv_dist);
-	res.C = v3(-screen_width / 2, -screen_height / 2, -eye_canv_dist);
+
+	res.canvas_width = 2 * eye_canv_dist * tanf(fov);
+	res.canvas_height = S_HEIGHT / (S_WIDTH / res.canvas_width);
+	res.eye = pos;
+	res.A = v3(-res.canvas_width / 2, res.canvas_height / 2, -eye_canv_dist);
+	res.B = v3(res.canvas_width / 2, res.canvas_height / 2, -eye_canv_dist);
+	res.C = v3(-res.canvas_width / 2, -res.canvas_height / 2, -eye_canv_dist);
+	return (res);
 }
 
 vec	camera_get_AC(t_camera camera)

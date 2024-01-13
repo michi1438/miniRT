@@ -34,7 +34,7 @@ static vec	img_clr_plane(t_intersection intr)
 	if (new_pos.y > 0) {
 		new_pos.y = new_image_height(intr.item->image, intr.item->image->target_width) - new_pos.y;
 	}
-	pixel = intr.item->image->pixels[abs(floorf(new_pos.y))][abs(floorf(new_pos.x))];
+	pixel = intr.item->image->pixels[(int)fabs(floorf(new_pos.y))][(int)fabs(floorf(new_pos.x))];
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 
@@ -42,7 +42,6 @@ static vec	img_clr_sphere(t_intersection intr)
 {
 	vec	coords;
 	vec	**new_pixels;
-	t_terms	ts;
 	int		x;
 	int		y;
 

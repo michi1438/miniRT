@@ -50,8 +50,10 @@ void	rotate_item(t_item *item, vec rot)
 	it.z_ref_point = rotate_point(it.z_ref_point, rot, it.pos);
 }
 
-static void	scale_item(t_item *item, vec scale)
+void	scale_item(t_item *item, vec scale)
 {
+	(void) item;
+	(void) scale;
 	/*vec	rot_backup;
 	t_item	it;
 

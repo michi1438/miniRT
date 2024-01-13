@@ -37,13 +37,14 @@ int	same_sign(float a, float b)
 	return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
 }
 
-t_plane	plane_(vec p1, vec p2, vec p3)
+t_plane	plane_c(vec p1, vec p2, vec p3)
 {
 	t_plane	res;
 
 	res.p1 = p1;
 	res.p2 = p2;
 	res.p3 = p3;
+	return (res);
 }
 
 vec	plane_normal(t_plane plane)

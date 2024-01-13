@@ -49,6 +49,7 @@ void	draw_segment(t_rtdata data, vec p1, vec p2, vec color)
 
 void	add_item(t_item item)
 {
+	(void) item;
 	//items.push(item); TODO
 }
 
@@ -60,7 +61,7 @@ void	animate(t_rtdata data)
 	list = data.items;
 	while (list != NULL)
 	{
-		rotate_item(list, v3_scale(v3(1, 2, 4), ROT_SPEED));
+		rotate_item(list->content, v3_scale(v3(1, 2, 4), ROT_SPEED));
 		iter += 0.05f;
 		iter = fmod(iter, M_PI);
 		list = list->next;

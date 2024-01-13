@@ -12,11 +12,8 @@
 
 #include "../rt_head.h"
 
-int	colinear_check(vec v1, vec v2)
+int	colinear_check(vec v1)
 {
-	vec	cross;
-
-	cross = v3_cross(v1, v2);
 	return (equals_with_tolerance(v1.x, 0) &&
 		equals_with_tolerance(v1.y, 0) && equals_with_tolerance(v1.z, 0));
 }

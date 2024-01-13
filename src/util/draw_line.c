@@ -21,10 +21,10 @@ void	draw_line_dda(t_scData *scrn, vec p1, vec p2, int color)
 	float	incs[2];
 	int		i;
 
-	if (abs(p2.x - p1.x) > abs(p2.y - p1.y))
-		steps = abs(p2.x - p1.x);
+	if (fabs(p2.x - p1.x) > fabs(p2.y - p1.y))
+		steps = fabs(p2.x - p1.x);
 	else
-		steps = abs(p2.y - p1.y);
+		steps = fabs(p2.y - p1.y);
 	incs[0] = (p2.x - p1.x) / (float)steps;
 	incs[1] = (p2.y - p1.y) / (float)steps;
 	pos[0] = p1.x;
