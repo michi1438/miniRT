@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util7.c                                            :+:      :+:    :+:   */
+/*   util24.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,27 +12,27 @@
 
 #include "../rt_head.h"
 
-vec	v3_invert(vec a)
+float	new_image_height(t_image *img, float new_width)
 {
-	return (v3_scale(a, -1));
+	return (img->height / (img->width / new_width));
 }
 
-vec	v3_abs(vec a)
+vec	**getPixelsFromImage(t_image img, float target_width)
 {
-	return (v3(fabs(a.x), fabs(a.y), fabs(a.z)));
+	// TODO: resize the image and return new alloced one
 }
 
-float	v3_len(vec a)
+void	free_pixel_cache(vec **cache)
 {
-	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
+	// TODO: free cache
 }
 
-vec	v3_norm(vec v)
+t_v3_tuple	tuple(vec v1,vec v2)
 {
-	return (v3_scale(v, 1/v3_len(v)));
+	t_v3_tuple	res;
+
+	res.v1 = v1;
+	res.v2 = v2;
+	return (res);
 }
 
-float	v3_norm_squared(vec v)
-{
-	return (v.x * v.x + v.y * v.y + v.z * v.z);
-}

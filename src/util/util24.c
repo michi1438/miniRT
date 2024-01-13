@@ -31,13 +31,13 @@ vec	normalize_plane_point(vec point, vec origin, vec normal)
 		new_y_axis = v3_norm(v3_cross(ts.z_axis, normal));
 		new_x_axis = v3_norm(v3_cross(normal, new_y_axis));
 		origin_to_point = v3_sub(point, origin);
-		return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis)));
+		return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis), 0));
 	}
 	ts.x_axis = v3(1, 0, 0);
 	new_y_axis = v3_norm(v3_cross(ts.x_axis, normal));
 	new_x_axis = v3_norm(v3_cross(normal, new_y_axis));
 	origin_to_point = v3_sub(point, origin);
-	return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis)));
+	return (v3(v3_dot(origin_to_point, new_x_axis), v3_dot(origin_to_point, new_y_axis), 0));
 }
 
 vec	cartesian_to_sphere(vec point, t_item sphere)
@@ -50,57 +50,73 @@ vec	cartesian_to_sphere(vec point, t_item sphere)
 	return (v3(v3_len(v3_sub(point, sphere.pos)), vect_angle(v3_sub(plane.p2, sphere.pos), v3_sub(project_point_onto_plane(point, plane), sphere.pos)), vect_angle(ts.z_axis, v3_sub(point, sphere.pos))));
 }
 
-vec	checker_pixel_for_plane(point, origin, normal, step, color1, color2) {
-	let new_pos = normalize_plane_point(point, origin, normal);
-	if (new_pos.x < 0) {
+vec	checker_pixel_for_plane(t_v3_tuple pt_orig, vec normal, float step, t_v3_tuple colors)
+{
+	vec	new_pos;
+	int	parity_x;
+	int	parity_y;
+
+	new_pos = normalize_plane_point(pt_orig.v1, pt_orig.v2, normal);
+	if (new_pos.x < 0)
 		new_pos.x -= step;
-	}
-	if (new_pos.y < 0) {
+	if (new_pos.y < 0)
 		new_pos.y -= step;
-	}
-	const checkerX = Math.floor(Math.abs(new_pos.x) / step);
-	const checkerY = Math.floor(Math.abs(new_pos.y) / step);
-	const parityX = checkerX % 2;
-	const parityY = checkerY % 2;
-	if (parityX === parityY) {
-		return (color1);
+	parity_x = fmodf(floorf(fabs(new_pos.x) / step), 2);
+	parity_y = fmodf(floorf(fabs(new_pos.y) / step), 2);
+	if (parity_x == parity_y) {
+		return (colors.v1);
 	} else {
-		return (color2);
+		return (colors.v2);
 	}
 }
 
-static void	int_pl_cb(t_plane *nearest_plane, float *nearest_plane_dist, t_intersection intr)
+static void	int_pl_py(t_plane *nearest_plane, t_intersection intr, t_terms *ts)
 {
-	let squares = get_cube_squares(int.item);
-	for (var i = 0; i < squares.length; i++) {
-		let plane = new Plane(squares[i][0], squares[i][1], squares[i][2]);
-		let dist_ = point_plane_dist(int.pos, plane);
-		if (!nearest_plane || dist_ < nearest_plane_dist) {
-			nearest_plane = plane;
-			nearest_plane_dist = dist_;
+	vec		tr[5][3];
+	int		i;
+
+	get_pyramid_triangles(*intr.item, tr);
+	tr[4][0] = get_pyramid_base_square(*intr.item).p1;
+	tr[4][1] = get_pyramid_base_square(*intr.item).p2;
+	tr[4][2] = get_pyramid_base_square(*intr.item).p3;
+	i = 0;
+	while (i < 5)
+	{
+		ts->dist_ = point_plane_dist(intr.pos, plane_c(tr[i][0], tr[i][1], tr[i][2]));
+		if (ts->a == 0 || ts->dist_ < ts->dist)
+		{
+			*nearest_plane = plane_c(tr[i][0], tr[i][1], tr[i][2]);
+			ts->dist = ts->dist_;
+			ts->a = 1;
 		}
+		i++;
 	}
 }
 
 t_plane	get_intersection_plane(t_intersection intr)
 {
 	t_plane	nearest_plane;
-	float	nearest_plane_dist;
+	t_terms	ts;
+	vec		sq[6][4];
+	int		i;
 
+	ts.a = 0;
+	ts.dist = 0;
 	if (intr.item->type == Cube)
-		int_pl_cb(&nearest_plane, &nearest_plane_dist, intr);
-	else
 	{
-		let triangles = get_pyramid_triangles(int.item);
-		triangles.push(get_pyramid_base_square(int.item));
-		for (var i = 0; i < triangles.length; i++) {
-			let plane = new Plane(triangles[i][0], triangles[i][1], triangles[i][2]);
-			let dist_ = point_plane_dist(int.pos, plane);
-			if (!nearest_plane || dist_ < nearest_plane_dist) {
-				nearest_plane = plane;
-				nearest_plane_dist = dist_;
+		get_cube_squares(*intr.item, sq);
+		i = 0;
+		while (i < 6) {
+			ts.dist_ = point_plane_dist(intr.pos, plane_c(sq[i][0], sq[i][1], sq[i][2]));
+			if (ts.a == 0 || ts.dist_ < ts.dist) {
+				nearest_plane = plane_c(sq[i][0], sq[i][1], sq[i][2]);
+				ts.dist = ts.dist_;
+				ts.a = 1;
 			}
+			i ++;
 		}
 	}
+	else
+		int_pl_py(&nearest_plane, intr,&ts);
 	return (nearest_plane);
 }

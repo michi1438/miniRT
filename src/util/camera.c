@@ -36,7 +36,7 @@ vec	camera_get_AB(t_camera camera)
 
 t_plane	camera_get_canvas_plane(t_camera camera)
 {
-	return (plane_(camera.A, camera.B, camera.C));
+	return (plane_c(camera.A, camera.B, camera.C));
 }
 
 vec	camera_get_center(t_camera camera)

@@ -32,6 +32,7 @@
 # define RED 0x00FF0000
 # define GREEN 0x0000FF00
 # define BLUE 0x000000FF
+# define WHITE 0x00000000
 
 //typedef float vec[3];
 
@@ -43,6 +44,12 @@ typedef struct s_v3
 }	t_v3;
 
 typedef t_v3	vec;
+
+typedef struct s_v3_tuple
+{
+	vec	v1;
+	vec	v2;
+}	t_v3_tuple;
 
 typedef struct s_elem
 {
@@ -451,5 +458,16 @@ vec	get_item_color(t_intersection intr);
 // UTIL24.C
 vec	normalize_plane_point(vec point, vec origin, vec normal);
 vec	cartesian_to_sphere(vec point, t_item sphere);
+vec	checker_pixel_for_plane(t_v3_tuple pt_orig, vec normal, float step, t_v3_tuple colors);
+t_plane	get_intersection_plane(t_intersection intr);
+
+// UTIL25.C
+float	new_image_height(t_image *img, float new_width);
+vec	**getPixelsFromImage(t_image img, float target_width);
+void	free_pixel_cache(vec **cache);
+t_v3_tuple	tuple(vec v1,vec v2);
+
+// UTIL 26.C
+vec	get_item_color_checkerboard(t_intersection intr);
 
 #endif // RT_HEAD_H

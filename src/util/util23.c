@@ -26,11 +26,11 @@ static vec	img_clr_plane(t_intersection intr)
 	{
 		new_pos = v3(intr.pos.x, intr.pos.z, 0);
 	}
-	new_pos.x = trunc(new_pos.x % intr.item->image->target_width);
+	new_pos.x = trunc(fmodf(new_pos.x, intr.item->image->target_width));
 	if (new_pos.x < 0) {
 		new_pos.x = intr.item->image->target_width + new_pos.x;
 	}
-	new_pos.y = trunc(new_pos.y % new_image_height(intr.item->image, intr.item->image->target_width));
+	new_pos.y = trunc(fmodf(new_pos.y, new_image_height(intr.item->image, intr.item->image->target_width)));
 	if (new_pos.y > 0) {
 		new_pos.y = new_image_height(intr.item->image, intr.item->image->target_width) - new_pos.y;
 	}
@@ -43,18 +43,18 @@ static vec	img_clr_sphere(t_intersection intr)
 	vec	coords;
 	vec	**new_pixels;
 	t_terms	ts;
-	float	x;
-	float	y;
+	int		x;
+	int		y;
 
 	if (intr.item->cache_width == intr.item->image->width) {
-		new_pixels = int.item.pixel_cache;
+		new_pixels = intr.item->pixel_cache;
 	} else {
 		intr.item->cache_width = intr.item->image->width;
-		new_pixels = getPixelsFromImage(intr.item->image, intr.item->image->width);
+		new_pixels = getPixelsFromImage(*intr.item->image, intr.item->image->width);
 		free_pixel_cache(intr.item->pixel_cache);
 		intr.item->pixel_cache = new_pixels;
 	}
-	coords = cartesian_to_sphere(intr.pos, intr.item);
+	coords = cartesian_to_sphere(intr.pos, *intr.item);
 	x = floorf((coords.y / (2 * M_PI)) * (intr.item->image->width - 1));
 	y = floorf((coords.z / M_PI) * (new_image_height(intr.item->image, intr.item->image->width) - 1));
 	return (v3(new_pixels[y][x].x, new_pixels[y][x].y, new_pixels[y][x].z));
@@ -77,7 +77,7 @@ static vec	img_clr_cb_pyr(t_intersection intr)
 	ts.y_dist = v3_len(v3_sub(plane.p1, y_proj));
 	ts.x_dist = fmodf(ts.x_dist, intr.item->image->target_width - 1);
 	ts.y_dist = fmodf(ts.y_dist, new_image_height(intr.item->image, intr.item->image->target_width) - 1);
-	pixel = intr.item->image->pixels[floor(ts.y_dist * 1000)][floor(ts.x_dist * 1000)];
+	pixel = intr.item->image->pixels[(int)floor(ts.y_dist * 1000)][(int)floor(ts.x_dist * 1000)];
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 

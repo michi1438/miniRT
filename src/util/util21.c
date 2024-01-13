@@ -78,7 +78,7 @@ vec	uv_at_image(t_image *rt_image, float u, float v)
 	int		x;
 	int		y;
 
-	target_height = floorf(new_image_height(rt_image, rt_image.target_width));
+	target_height = floorf(new_image_height(rt_image, rt_image->target_width));
 	v = fmodf((1 - v), 1);
 	x = floor(u * (rt_image->target_width - 1));
 	y = floor(v * (target_height - 1));

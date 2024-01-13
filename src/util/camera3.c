@@ -21,16 +21,16 @@ vec	get_point_canvas_rel(t_camera camera, vec p)
 	vec A_AC_proj;
 	int	xy_mult[2];
 
-	AB_proj = project_point_onto_line(line_(camera.A, camera.B), p);
-	AC_proj = project_point_onto_line(line(camera.A, camera.C), p);
+	AB_proj = project_point_onto_line(line_c(camera.A, camera.B), p);
+	AC_proj = project_point_onto_line(line_c(camera.A, camera.C), p);
 	A_AB_proj = v3_sub(AB_proj, camera.A);
 	A_AC_proj = v3_sub(AC_proj, camera.A);
 	xy_mult[0] = 1;
 	xy_mult[1] = 1;
-	if (!same_side_of_line(line(camera.A, camera.B), camera.C, p)) {
+	if (!same_side_of_line(line_c(camera.A, camera.B), camera.C, p)) {
 		xy_mult[1] = -1;
 	}
-	if (!same_side_of_line(line(camera.A, camera.C), camera.B, p)) {
+	if (!same_side_of_line(line_c(camera.A, camera.C), camera.B, p)) {
 		xy_mult[0] = -1;
 	}
 	return (v3(v3_len(A_AB_proj) * xy_mult[0], v3_len(A_AC_proj) * xy_mult[1], 0));
