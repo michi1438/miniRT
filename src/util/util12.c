@@ -85,4 +85,5 @@ void	draw(t_rtdata data)
 		outline_item(data, *((t_item *)(list->content)));
 		list = list->next;
 	}
+	mlx_put_image_to_window(data.scrn->mlx, data.scrn->win, data.scrn->img, 0, 0);
 }

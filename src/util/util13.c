@@ -85,10 +85,10 @@ void	cylinder_vertices(vec pos, vec scale, t_item *it)
 		i ++;
 	}
 	second = v3_add(v3_add(pos, v3(0, scale.y / 2, 0)), v3(scale.x / 2, 0, 0));
-	i = 0;
-	while (i < 10)
+	i = 10;
+	while (i - 10 < 10)
 	{
-		it->vertices[i - 10] = rotate_point(second,v3(0, i * M_PI / (10 /2), 0),pos);
+		it->vertices[i] = rotate_point(second,v3(0, (i - 10) * M_PI / (10 /2), 0),pos);
 		i ++;
 	}
 	it->vertices_len = 20;

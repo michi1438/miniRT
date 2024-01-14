@@ -53,7 +53,7 @@ void	fill_camera(t_elem *elem, char **splited)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
 	norm_xyz_split = ft_split(splited[2], ',');
-	elem->fov = tan(ft_atof(splited[3]) / 2 * M_PI / 180);
+	elem->fov = ft_atof(splited[3]);//tan(ft_atof(splited[3]) / 2 * M_PI / 180);
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && norm_xyz_split[i] != NULL)
 	{

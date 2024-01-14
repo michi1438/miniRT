@@ -20,17 +20,22 @@ static int	get_id()
 	return (starting_id);
 }
 
-t_item	create_item(enum e_ObjectType type, vec pos, vec scale, vec color)
+t_item	*create_item(enum e_ObjectType type, vec pos, vec scale, vec color)
 {
-	t_item	res;
+	t_item	*res;
 
-	res.type = type;
-	res.pos = pos;
-	res.scale = scale;
-	res.color = color;
-	res.specular = -1;
-	res.z_ref_point = v3_add(v3(0, 1, 0), pos);
-	res.id = get_id();
+	res = malloc(sizeof(*res));
+	if (!res)
+		return (NULL);
+	res->type = type;
+	res->pos = pos;
+	res->scale = scale;
+	res->color = color;
+	res->specular = -1;
+	res->z_ref_point = v3_add(v3(0, 1, 0), pos);
+	res->id = get_id();
+	res->image = NULL;
+	res->is_checker = 0;
 	return (res);
 }
 

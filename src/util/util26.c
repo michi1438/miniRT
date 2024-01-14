@@ -39,6 +39,7 @@ vec	get_item_color_checkerboard(t_intersection intr)
 	}
 }
 
+int count = 0;
 t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
 {
 	t_terms	ts;
@@ -62,6 +63,7 @@ t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
 		list = list->next;
 	}
 	if (do_draw && !int_is_null(ts.inter)) {
+		count ++;
 		ts.point = map_point_to_physical(data.camera, ts.inter.ray.p2, S_WIDTH, S_HEIGHT);
 		ts.light_color = compute_lighting(data, ts.inter, data.lights);
 		ts.specular_color = modify_color_intensity(compute_specular(data, ts.inter, data.lights), SPECULAR);
@@ -73,21 +75,57 @@ t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
 	return (ts.inter);
 }
 
+static int	get_rays_size(t_camera camera, double resolution)
+{
+	double	i;
+	double	j;
+	int	k;
+
+	i = 0;
+	k = 0;
+	while (i < camera.canvas_width)
+	{
+		j = 0;
+		while (j < camera.canvas_height)
+		{
+			k ++;
+			j += resolution;
+		}
+		i += resolution;
+	}
+	return (k);
+}
+
 void	raytrace(t_rtdata data)
 {
 	t_line	*rays;
 	int		i;
+	int		sz;
 
-	rays = gen_rays(data.camera, RESOLUTION);
+	double resolution = RESOLUTION;
+	if (getenv("RESOLUTION"))
+	{
+		resolution = atof(getenv("RESOLUTION"));
+		printf("picked up resolution from env: %f\n", resolution);
+	} else {
+		printf("using hardcoded resolution: %f\n", resolution);
+	}
+	sz = get_rays_size(data.camera, resolution);
+	printf("got ray size: %d\n", sz);
+	rays = gen_rays(data.camera, sz, resolution);
+	printf("finished calculating rays\n");
 	if (!rays)
 		return ;
 	i = 0;
-	while (i < S_WIDTH * S_HEIGHT)
+	count = 0;
+	while (i < sz)
 	{
 		cast_ray(data, rays[i], 1);
 		i ++;
 	}
 	free(rays);
+	mlx_put_image_to_window(data.scrn->mlx, data.scrn->win, data.scrn->img, 0, 0);
+	printf("painted %d pixels\n", count);
 }
 
 void	cast_ray_for_screen_coords(t_rtdata data, float x, float y)

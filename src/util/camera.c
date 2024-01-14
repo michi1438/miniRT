@@ -17,7 +17,7 @@ t_camera	camera_c(vec pos, float eye_canv_dist, float fov)
 	t_camera	res;
 
 
-	res.canvas_width = 2 * eye_canv_dist * tanf(fov);
+	res.canvas_width = 2 * eye_canv_dist * tanf(degree_to_radian(fov / 2));
 	res.canvas_height = S_HEIGHT / (S_WIDTH / res.canvas_width);
 	res.eye = pos;
 	res.A = v3(-res.canvas_width / 2, res.canvas_height / 2, -eye_canv_dist);

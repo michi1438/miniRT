@@ -12,43 +12,39 @@
 
 #include "../rt_head.h"
 
-void	cyl_m1(t_terms *terms, vec point, t_item cylinder)
+void	cyl_m1(t_terms *ts, vec point, t_item cylinder)
 {
-	t_terms	ts;
 	t_plane	xy_plane;
 	vec		xy_proj;
 	vec		x_proj;
 	vec		y_proj;
 
-	ts = *terms;
-	xy_plane = plane_c(cylinder.pos, ts.x, ts.y);
+	xy_plane = plane_c(cylinder.pos, ts->x, ts->y);
 	xy_proj = project_point_onto_plane(point, xy_plane);
-	x_proj = project_point_onto_line(line_c(cylinder.pos, ts.x), xy_proj);
-	ts.x_dist = v3_len(v3_sub(cylinder.pos, x_proj));
-	if (v3_dot(ts.x_axis, v3_sub(x_proj, cylinder.pos)) < 0) {
-		ts.x_dist *= -1;
+	x_proj = project_point_onto_line(line_c(cylinder.pos, ts->x), xy_proj);
+	ts->x_dist = v3_len(v3_sub(cylinder.pos, x_proj));
+	if (v3_dot(ts->x_axis, v3_sub(x_proj, cylinder.pos)) < 0) {
+		ts->x_dist *= -1;
 	}
-	y_proj = project_point_onto_line(line_c(cylinder.pos, ts.y), xy_proj);
-	ts.y_dist = v3_len(v3_sub(cylinder.pos, y_proj));
-	if (v3_dot(ts.y_axis, v3_sub(y_proj, cylinder.pos)) < 0) {
-		ts.y_dist *= -1;
+	y_proj = project_point_onto_line(line_c(cylinder.pos, ts->y), xy_proj);
+	ts->y_dist = v3_len(v3_sub(cylinder.pos, y_proj));
+	if (v3_dot(ts->y_axis, v3_sub(y_proj, cylinder.pos)) < 0) {
+		ts->y_dist *= -1;
 	}
 }
 
-void	cyl_m2(t_terms *terms, vec point, t_item cylinder)
+void	cyl_m2(t_terms *ts, vec point, t_item cylinder)
 {
-	t_terms	ts;
 	t_plane	zy_plane;
 	vec		zy_proj;
 	vec		z_proj;
 
-	ts = *terms;
-	zy_plane = plane_c(cylinder.pos, ts.z, ts.y);
+	zy_plane = plane_c(cylinder.pos, ts->z, ts->y);
 	zy_proj = project_point_onto_plane(point, zy_plane);
-	z_proj = project_point_onto_line(line_c(cylinder.pos, ts.z), zy_proj);
-	ts.z_dist = v3_len(v3_sub(cylinder.pos, z_proj));
-	if (v3_dot(ts.z_axis, v3_sub(z_proj, cylinder.pos)) < 0) {
-		ts.z_dist *= -1;
+	z_proj = project_point_onto_line(line_c(cylinder.pos, ts->z), zy_proj);
+	ts->z_dist = v3_len(v3_sub(cylinder.pos, z_proj));
+	if (v3_dot(ts->z_axis, v3_sub(z_proj, cylinder.pos)) < 0) {
+		ts->z_dist *= -1;
 	}
 }
 

@@ -24,32 +24,32 @@ void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34])
 		draw_cylinder_mappings(data.scrn, mappings, item);
 }
 
-t_line	*gen_rays(t_camera camera, double resolution)
+t_line	*gen_rays(t_camera camera, int size, double resolution)
 {
 	vec	x_axis;
 	vec	y_axis;
-	int	i;
-	int	j;
+	double	i;
+	double	j;
 	int	k;
 	t_line	*res;
 
-	res = malloc(sizeof(*res) * S_WIDTH * S_HEIGHT);
+	res = malloc(sizeof(*res) * size);
 	if (!res)
 		return (NULL);
 	x_axis = v3_norm(camera_get_AB(camera));
 	y_axis = v3_norm(camera_get_AC(camera));
 	i = 0;
 	k = 0;
-	while (i < S_WIDTH)
+	while (i < camera.canvas_width)
 	{
 		j = 0;
-		while (j < S_HEIGHT)
+		while (j < camera.canvas_height)
 		{
 			res[k] = line_c(camera.eye, v3_add(v3_add(camera.A, v3_scale(x_axis, (float)i)), v3_scale(y_axis, (float)j)));
 			k ++;
-			j ++;
+			j += resolution;
 		}
-		i += (int)resolution;
+		i += resolution;
 	}
 	return (res);
 }

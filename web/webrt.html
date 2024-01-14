@@ -1402,7 +1402,7 @@
 	add_item(sphere);
 	//add_item(sphere2);
 	//add_item(sphere3);
-	//add_item(cylinder);
+	add_item(cylinder);
 	//add_item(test_plane);
 	//add_item(bottom_plane);
 
@@ -2372,6 +2372,7 @@
 			}
 		}
 		if (do_draw && intersection != null) {
+			console.log('drawing pixel');
 			let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
 			let light_color = compute_lighting(intersection);
 			let specular_coefficient = 0.7;

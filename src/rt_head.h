@@ -26,7 +26,7 @@
 # include "../libft/src_libft.h"
 # include <math.h>
 
-# define RESOLUTION 0.006
+# define RESOLUTION 0.03
 # define SPECULAR 0.7
 # define TOLERANCE 0.000001
 # define ROT_SPEED 0.003
@@ -35,6 +35,64 @@
 # define GREEN 0x0000FF00
 # define BLUE 0x000000FF
 # define WHITE 0x00000000
+
+# ifdef __linux__
+#  define K_ENTER 65293
+#  define K_ESC 65307
+#  define K_UP 65362
+#  define K_DOWN 65364
+#  define K_LEFT 65361
+#  define K_RIGHT 65363
+#  define K_W 119
+#  define K_S 115
+#  define K_A 97
+#  define K_D 100
+#  define K_P 112
+#  define K_MINUS 61
+#  define K_PLUS 10
+#  define K_R 114
+#  define K_U 117
+#  define K_J 106
+#  define K_I 105
+#  define K_K 107
+#  define K_O 111
+#  define K_L 108
+
+#  define K_NUM_4 65430
+#  define K_NUM_6 65432
+#  define K_NUM_8 65431
+#  define K_NUM_2 65433
+#  define K_NUM_MINUS 65453
+#  define K_NUM_PLUS 65451
+# else
+#  define K_ENTER ?
+#  define K_ESC 53
+#  define K_UP 126
+#  define K_DOWN 125
+#  define K_LEFT 123
+#  define K_RIGHT 124
+#  define K_W 13
+#  define K_S 1
+#  define K_A 0
+#  define K_D 2
+#  define K_P 35
+#  define K_MINUS 27
+#  define K_PLUS 24
+#  define K_R 15
+#  define K_U 32
+#  define K_J 38
+#  define K_I 34
+#  define K_K 40
+#  define K_O 31
+#  define K_L 37
+
+#  define K_NUM_4 86
+#  define K_NUM_6 88
+#  define K_NUM_8 91
+#  define K_NUM_2 84
+#  define K_NUM_MINUS 78
+#  define K_NUM_PLUS 69
+# endif
 
 //typedef float vec[3];
 
@@ -120,7 +178,6 @@ void	fill_sphere(t_elem *elem, char **split);
 void	fill_plane(t_elem *elem, char **split);
 
 // DISPLAY.C
-int		kb_mlx(int keycd, t_scData *scrn);
 int		put_to_screen(t_list **e_list);
 void	mlx_pp(t_scData *img, int x, int y, int color);
 
@@ -241,6 +298,8 @@ typedef struct s_rtdata
 	t_list		*lights;
 }	t_rtdata;
 
+int		kb_mlx(int keycd,  t_rtdata *data);
+
 typedef struct s_terms
 {
 	vec				D;
@@ -344,7 +403,7 @@ vec	get_point_canvas_rel(t_camera camera, vec p);
 vec	camera_get_D(t_camera camera);
 
 // ITEM.C
-t_item	create_item(enum e_ObjectType type, vec pos, vec scale, vec color);
+t_item	*create_item(enum e_ObjectType type, vec pos, vec scale, vec color);
 vec	item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
 unsigned int	item_color_hex(t_item item);
@@ -422,7 +481,7 @@ void	outline_item(t_rtdata data, t_item item);
 
 // UTIL16.C
 void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34]);
-t_line	*gen_rays(t_camera camera, double resolution);
+t_line	*gen_rays(t_camera camera, int size, double resolution);
 t_intersection	int_null();
 int	int_is_null(t_intersection intersection);
 t_intersection	intersect_ray_plane(t_line ray, t_plane plane);

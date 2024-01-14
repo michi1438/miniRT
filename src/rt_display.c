@@ -37,13 +37,16 @@ void	mlx_pp(t_scData *scrn, int x, int y, int color)
 	*(unsigned int *)(scrn->addr + (offset)) = color;
 }
 
-int	kb_mlx(int keycd, t_scData *scrn)
+int	kb_mlx(int keycd, t_rtdata *data)
 {
-	if (keycd == 65307 || keycd == 53)
+	//printf("%d\n", keycd);
+	if (keycd == K_ESC)
 	{
 		//ft_lstclear(scrn->e_list_displayed, free);
-		mlx_destroy_window(scrn->mlx, scrn->win);
+		mlx_destroy_window(data->scrn->mlx, data->scrn->win);
 		exit(0);
 	}
+	if (keycd == K_ENTER)
+		raytrace(*data);
 	return (0);
 }
