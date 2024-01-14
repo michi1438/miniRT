@@ -32,12 +32,12 @@ void	sphere_vertices(vec pos, vec scale, t_item *it)
 
 	top_point = v3_add(pos, v3(0, scale.x / 2, 0));
 	i = 1;
-	while (i <= (int)scale.y)
+	while (i <= 8)
 	{
 		j = 1;
-		while (j <= (int)scale.x)
+		while (j <= 4)
 		{
-			it->vertices[(i - 1) + (j - 1)] = rotate_point(rotate_point(top_point, v3(0, 0, j * M_PI / (4 + 1)), pos), v3(0, i * M_PI / (8 / 2), 0), pos);
+			it->vertices[(i - 1) * 4 + (j - 1)] = rotate_point(rotate_point(top_point, v3(0, 0, j * M_PI / (4 + 1)), pos), v3(0, i * M_PI / (8 / 2), 0), pos);
 			j ++;
 		}
 		i ++;

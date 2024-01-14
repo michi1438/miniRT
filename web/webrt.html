@@ -1389,7 +1389,7 @@
 	
 	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, null, sphere_vertices, draw_sphere_mappings);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, null, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(0, -2, -2), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, null, cylinder_vertices, draw_cylinder_mappings);
 
 	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
 	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, null, null, null);
@@ -1399,7 +1399,7 @@
 	//add_item(cube);
 	//add_item(cube2);
 	//add_item(pyramid);
-	add_item(sphere);
+	//add_item(sphere);
 	//add_item(sphere2);
 	//add_item(sphere3);
 	add_item(cylinder);
@@ -2372,7 +2372,7 @@
 			}
 		}
 		if (do_draw && intersection != null) {
-			console.log('drawing pixel');
+			//console.log('drawing pixel');
 			let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
 			let light_color = compute_lighting(intersection);
 			let specular_coefficient = 0.7;

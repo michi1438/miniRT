@@ -26,7 +26,7 @@
 # include "../libft/src_libft.h"
 # include <math.h>
 
-# define RESOLUTION 0.03
+# define RESOLUTION 0.006
 # define SPECULAR 0.7
 # define TOLERANCE 0.000001
 # define ROT_SPEED 0.003
@@ -38,6 +38,8 @@
 
 # ifdef __linux__
 #  define K_ENTER 65293
+#  define K_SPACE 32
+#  define K_TAB 65289
 #  define K_ESC 65307
 #  define K_UP 65362
 #  define K_DOWN 65364
@@ -66,6 +68,8 @@
 #  define K_NUM_PLUS 65451
 # else
 #  define K_ENTER ?
+#  define K_SPACE ?
+#  define K_TAB ?
 #  define K_ESC 53
 #  define K_UP 126
 #  define K_DOWN 125
@@ -395,8 +399,8 @@ vec	camera_get_center(t_camera camera);
 
 // CAMERA2.C
 vec	camera_get_norm(t_camera camera);
-void	camera_rotate(t_camera camera, enum e_Direction direction, float amount);
-void	camera_move(t_camera camera, enum e_Direction direction, float amount);
+void	camera_rotate(t_camera *camera, enum e_Direction direction, float amount);
+void	camera_move(t_camera *camera, enum e_Direction direction, float amount);
 
 // CAMERA3.C
 vec	get_point_canvas_rel(t_camera camera, vec p);

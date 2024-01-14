@@ -111,5 +111,6 @@ t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder)
 		ts.normal = v3_norm(v3_sub(v3_sub(ts.point, ts.C), v3_scale(ts.V, ts.m2)));
 		return (int_create(ts.point, ts.normal, ray, cylinder));
 	}
-	return (int_null());
+	ts.inter.item = cylinder;
+	return (ts.inter);
 }

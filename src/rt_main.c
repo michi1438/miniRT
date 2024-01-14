@@ -83,7 +83,7 @@ int	main(int ac, char **av)
 
 	//raytrace(rtdata);
 
-	//cast_ray_for_screen_coords(rtdata, 846, 508);
+	cast_ray_for_screen_coords(rtdata, 470, 765);
 
 	draw(rtdata);
 
