@@ -33,16 +33,16 @@ void	mlx_pp(t_scData *scrn, int x, int y, int color)
 {
 	int	offset;
 
+	if (x < 0 || x >= S_WIDTH || y < 0 || y >= S_HEIGHT)
+		return ;
 	offset = y * scrn->line_len + x * scrn->bits_pp / 8;
 	*(unsigned int *)(scrn->addr + (offset)) = color;
 }
 
 int	kb_mlx(int keycd, t_rtdata *data)
 {
-	printf("%d\n", keycd);
 	if (keycd == K_ESC)
 	{
-		//ft_lstclear(scrn->e_list_displayed, free);
 		mlx_destroy_window(data->scrn->mlx, data->scrn->win);
 		exit(0);
 	}

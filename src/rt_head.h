@@ -67,9 +67,9 @@
 #  define K_NUM_MINUS 65453
 #  define K_NUM_PLUS 65451
 # else
-#  define K_ENTER ?
-#  define K_SPACE ?
-#  define K_TAB ?
+#  define K_ENTER 36
+#  define K_SPACE 49
+#  define K_TAB 48
 #  define K_ESC 53
 #  define K_UP 126
 #  define K_DOWN 125
