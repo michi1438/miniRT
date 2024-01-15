@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/04 16:22:19 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 19:45:18 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,28 @@
 # endif
 # include "../libft/src_libft.h"
 # include <math.h>
+# include <unistd.h>
+
+/*
+typedef struct s_v3
+{
+	float	x;
+	float	y;
+	float	z;
+}	t_v3;
+
+typedef t_v3	t_v;
+
+t_v	v3(float x, float y, float z)
+{
+	t_v	res;
+
+	res.x = x;
+	res.y = y;
+	res.z = z;
+	return (res);
+}
+*/
 
 # define RESOLUTION 0.006
 # define SPECULAR 0.7
@@ -118,6 +140,9 @@ typedef struct s_v3_tuple
 typedef struct s_elem
 {
 	char	type;
+	float	specular;
+	int		is_checker;
+	char 	*path_to_img;
 	int		rgb[3];
 	float	xyz[3];
 	float	norm_xyz[3];
@@ -127,6 +152,7 @@ typedef struct s_elem
 	float	height;
 	float	light_ratio;
 	int		status;
+//	v3		**img;
 }	t_elem;
 
 typedef struct s_scData
@@ -180,6 +206,11 @@ void	fill_arrays(t_elem *elem, char **xyz, char **rgb, char **norm);
 void	fill_cylinder(t_elem *elem, char **split);
 void	fill_sphere(t_elem *elem, char **split);
 void	fill_plane(t_elem *elem, char **split);
+
+// FILL_SHAPES2_& COMPL.c
+void	fill_pyramid(t_elem *elem, char **split);
+void	fill_cube(t_elem *elem, char **split);
+void	fill_compl(t_elem *elem, char **split, int split_seg);
 
 // DISPLAY.C
 int		put_to_screen(t_list **e_list);

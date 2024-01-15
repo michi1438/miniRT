@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/08 11:10:21 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 18:24:24 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@ void	fill_sphere(t_elem *elem, char **split)
 	char	**rgb_split;
 	int		i;
 
-	if (split[1] == NULL || split[2] == NULL || split[3] == NULL)
+	if (!split[1] || !split[2] || !split[3])
 		fill_err(elem->type);
 	xyz_split = ft_split(split[1], ',');
 	elem->radius = ft_atof(split[2]) / 2;
 	rgb_split = ft_split(split[3], ',');
+	fill_compl(elem, split, 4);
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && rgb_split[i] != NULL)
 	{
@@ -56,6 +57,7 @@ void	fill_plane(t_elem *elem, char **split)
 	xyz_split = ft_split(split[1], ',');
 	norm_xyz_split = ft_split(split[2], ',');
 	rgb_split = ft_split(split[3], ',');
+	fill_compl(elem, split, 4);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
 	i = -1;
 	while (++i < 3)
@@ -90,6 +92,7 @@ void	fill_cylinder(t_elem *elem, char **split)
 	elem->radius = ft_atof(split[3]) / 2;
 	elem->height = ft_atof(split[4]);
 	rgb_split = ft_split(split[5], ',');
+	fill_compl(elem, split, 6);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
 	i = -1;
 	while (++i < 3)
