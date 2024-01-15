@@ -16,14 +16,25 @@ NAME = minirt.out
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra# -O3 #-g3 -fsanitize=leak
+CFLAGS = -Werror -Wall -Wextra -ggdb -O0 -fsanitize=address # -O3 #-g3 -fsanitize=leak
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c \
 			 rt_scene.c rt_vecmath.c rt_intersect.c rt_matrices.c \
 			 rt_fetch_elem.c rt_fill_control.c
 
-SOURCES = $(addprefix src/, $(SRC_MINIRT))
+SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
+			util8.c util9.c util10.c draw_line.c util11.c util12.c util13.c util14.c util15.c util16.c\
+			util17.c util18.c util19.c util20.c util21.c util22.c util23.c util24.c util25.c util26.c\
+			util27.c
+
+SOURCES_UTIL = $(addprefix src/util/, $(SRC_UTIL))
+
+SOURCES_ = $(addprefix src/, $(SRC_MINIRT))
+
+SOURCES = $(SOURCES_UTIL) $(SOURCES_)
+
+INCLUDES = src/rt_head.h
 
 OBJS = $(SOURCES:c=o)
 
@@ -39,9 +50,10 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(INCLUDES)
 	make -C libft/
-	$(CC) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
+	make -C minilibx-linux/
+	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
 	rm -f $(OBJS) 
