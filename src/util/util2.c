@@ -12,9 +12,9 @@
 
 #include "../rt_head.h"
 
-vec	modify_color_intensity(vec color, float scalar)
+t_v	modify_color_intensity(t_v color, float scalar)
 {
-	vec	res;
+	t_v	res;
 
 	res = v3_scale(color, scalar);
 	res.x = clamp(res.x, 0, 255);
@@ -24,7 +24,7 @@ vec	modify_color_intensity(vec color, float scalar)
 }
 
 /* Takes an intensity from 0 to 1 and returns a corresponding v3 white light color */
-vec	intensity_to_color(float intensity)
+t_v	intensity_to_color(float intensity)
 {
 	float	mult;
 
@@ -37,7 +37,7 @@ int	same_sign(float a, float b)
 	return ((a >= 0 && b >= 0) || (a <= 0 && b <= 0));
 }
 
-t_plane	plane_c(vec p1, vec p2, vec p3)
+t_plane	plane_c(t_v p1, t_v p2, t_v p3)
 {
 	t_plane	res;
 
@@ -47,7 +47,7 @@ t_plane	plane_c(vec p1, vec p2, vec p3)
 	return (res);
 }
 
-vec	plane_normal(t_plane plane)
+t_v	plane_normal(t_plane plane)
 {
 	return(v3_norm(v3_cross(v3_sub(plane.p2, plane.p1), v3_sub(plane.p3, plane.p1))));
 }

@@ -107,12 +107,12 @@ typedef struct s_v3
 	float	z;
 }	t_v3;
 
-typedef t_v3	vec;
+typedef t_v3	t_v;
 
 typedef struct s_v3_tuple
 {
-	vec	v1;
-	vec	v2;
+	t_v	v1;
+	t_v	v2;
 }	t_v3_tuple;
 
 typedef struct s_elem
@@ -220,32 +220,32 @@ enum	e_ObjectType {
 
 typedef struct s_plane
 {
-	vec	p1;
-	vec	p2;
-	vec	p3;
+	t_v	p1;
+	t_v	p2;
+	t_v	p3;
 }	t_plane;
 
 typedef struct s_line
 {
-	vec	p1;
-	vec	p2;
+	t_v	p1;
+	t_v	p2;
 }	t_line;
 
 typedef struct s_matrix3d
 {
-	vec	v1;
-	vec	v2;
-	vec	v3;
+	t_v	v1;
+	t_v	v2;
+	t_v	v3;
 }	t_matrix3d;
 
 typedef struct s_camera
 {
 	float	canvas_width;
 	float	canvas_height;
-	vec		eye;
-	vec		A;
-	vec		B;
-	vec		C;
+	t_v		eye;
+	t_v		A;
+	t_v		B;
+	t_v		C;
 }	t_camera;
 
 enum	e_LightType {
@@ -256,13 +256,13 @@ enum	e_LightType {
 typedef struct s_light
 {
 	enum e_LightType	type;
-	vec					color;
-	vec					pos;
+	t_v					color;
+	t_v					pos;
 }	t_light;
 
 typedef struct s_image
 {
-	vec		**pixels;
+	t_v		**pixels;
 	float	target_width;
 	float	width;
 	float	height;
@@ -271,16 +271,16 @@ typedef struct s_image
 typedef struct s_item
 {
 	enum e_ObjectType	type;
-	vec					pos;
-	vec					scale;
-	vec					color;
+	t_v					pos;
+	t_v					scale;
+	t_v					color;
 	float				specular;
 	int					is_checker;
-	vec					z_ref_point;
-	vec					vertices[34];
+	t_v					z_ref_point;
+	t_v					vertices[34];
 	int					vertices_len;
 	int					id;
-	vec					**pixel_cache;
+	t_v					**pixel_cache;
 	int					cache_width;
 	int					cache_length;
 	t_image				*image;
@@ -288,8 +288,8 @@ typedef struct s_item
 
 typedef struct s_intersection
 {
-	vec	pos;
-	vec	normal;
+	t_v	pos;
+	t_v	normal;
 	t_line	ray;
 	t_item	*item;
 }	t_intersection;
@@ -300,22 +300,23 @@ typedef struct s_rtdata
 	t_scData	*scrn;
 	t_list		*items;
 	t_list		*lights;
+
 }	t_rtdata;
 
 int		kb_mlx(int keycd,  t_rtdata *data);
 
 typedef struct s_terms
 {
-	vec				D;
-	vec				V;
-	vec				C;
-	vec				X;
-	vec				N;
+	t_v				D;
+	t_v				V;
+	t_v				C;
+	t_v				X;
+	t_v				N;
 	float			d_v;
 	float			x_v;
 	float			t;
-	vec				normal;
-	vec				intr;
+	t_v				normal;
+	t_v				intr;
 	float			a;
 	float			b;
 	float			c;
@@ -323,7 +324,7 @@ typedef struct s_terms
 	float			discriminant;
 	float			t1;
 	float			t2;
-	vec				point;
+	t_v				point;
 	t_intersection	inter;
 	t_intersection	inter2;
 	float			dist;
@@ -333,158 +334,158 @@ typedef struct s_terms
 	float			m1;
 	float			m2;
 	float			tmp;
-	vec				y_axis;
-	vec				x_axis;
-	vec				z_axis;
+	t_v				y_axis;
+	t_v				x_axis;
+	t_v				z_axis;
 	float			x_dist;
 	float			y_dist;
 	float			z_dist;
-	vec			x;
-	vec			y;
-	vec			z;
-	vec				light_color;
-	vec				specular_color;
-	vec				diffuse_color;
-	vec				color;
+	t_v			x;
+	t_v			y;
+	t_v			z;
+	t_v				light_color;
+	t_v				specular_color;
+	t_v				diffuse_color;
+	t_v				color;
 }	t_terms;
 
 typedef struct s_vecfour
 {
-	vec	p1;
-	vec	p2;
-	vec	p3;
-	vec	p4;
+	t_v	p1;
+	t_v	p2;
+	t_v	p3;
+	t_v	p4;
 }	t_vecfour;
 
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
-vec		v3_add(vec a, vec b);
+t_v		v3_add(t_v a, t_v b);
 float	clamp (float val, float min, float max);
-vec		add_colors(vec c1, vec c2);
-vec		mult_colors(vec c1, vec c2);
+t_v		add_colors(t_v c1, t_v c2);
+t_v		mult_colors(t_v c1, t_v c2);
 
 // UTIL2.C
-vec	modify_color_intensity(vec color, float scalar);
-vec	intensity_to_color(float intensity);
+t_v	modify_color_intensity(t_v color, float scalar);
+t_v	intensity_to_color(float intensity);
 int	same_sign(float a, float b);
-t_plane	plane_c(vec p1, vec p2, vec p3);
-vec	plane_normal(t_plane plane);
+t_plane	plane_c(t_v p1, t_v p2, t_v p3);
+t_v	plane_normal(t_plane plane);
 
 // UTIL3.C
-int	colinear_check(vec v1);
-t_plane	plane_from_normal(vec point, vec normal);
-t_line	line_c(vec p1, vec p2);
-t_matrix3d	matrix3d_c(vec v1, vec v2, vec v3);
-int	same_side_of_line(t_line line, vec A, vec B);
+int	colinear_check(t_v v1);
+t_plane	plane_from_normal(t_v point, t_v normal);
+t_line	line_c(t_v p1, t_v p2);
+t_matrix3d	matrix3d_c(t_v v1, t_v v2, t_v v3);
+int	same_side_of_line(t_line line, t_v A, t_v B);
 
 // UTIL4.C
-int	same_side_of_plane(t_plane plane, vec A, vec B);
-vec	rotate_point(vec p, vec v, vec r);
-float	vect_angle(vec v1, vec v2);
+int	same_side_of_plane(t_plane plane, t_v A, t_v B);
+t_v	rotate_point(t_v p, t_v v, t_v r);
+float	vect_angle(t_v v1, t_v v2);
 float	degree_to_radian(float angle);
 
 // UTIL5.C
-vec	v3_sub(vec a, vec b);
-vec	v3_clone(vec v);
-vec	v3_null();
-int	v3_is_null(vec v);
-vec	project_point(vec point, t_camera camera);
+t_v	v3_sub(t_v a, t_v b);
+t_v	v3_clone(t_v v);
+t_v	v3_null();
+int	v3_is_null(t_v v);
+t_v	project_point(t_v point, t_camera camera);
 
 // CAMERA.C
-t_camera	camera_c(vec pos, float eye_canv_dist, float fov);
-vec	camera_get_AC(t_camera camera);
-vec	camera_get_AB(t_camera camera);
+t_camera	camera_c(t_v pos, float eye_canv_dist, float fov);
+t_v	camera_get_AC(t_camera camera);
+t_v	camera_get_AB(t_camera camera);
 t_plane	camera_get_canvas_plane(t_camera camera);
-vec	camera_get_center(t_camera camera);
+t_v	camera_get_center(t_camera camera);
 
 // CAMERA2.C
-vec	camera_get_norm(t_camera camera);
+t_v	camera_get_norm(t_camera camera);
 void	camera_rotate(t_camera *camera, enum e_Direction direction, float amount);
 void	camera_move(t_camera *camera, enum e_Direction direction, float amount);
 
 // CAMERA3.C
-vec	get_point_canvas_rel(t_camera camera, vec p);
-vec	camera_get_D(t_camera camera);
+t_v	get_point_canvas_rel(t_camera camera, t_v p);
+t_v	camera_get_D(t_camera camera);
 
 // ITEM.C
-t_item	*create_item(enum e_ObjectType type, vec pos, vec scale, vec color);
-vec	item_get_axis(t_item item);
+t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color);
+t_v	item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
 unsigned int	item_color_hex(t_item item);
 
 // UTIL6.C
-t_light	light(enum e_LightType type, vec color, vec pos);
-t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item);
-vec	map_point_to_physical(t_camera camera, vec point, float physical_width, float physical_height);
-vec	map_physical_to_camera(t_camera camera, vec point, float physical_width, float physical_height);
-vec	v3_scale(vec a, float scale);
+t_light	light(enum e_LightType type, t_v color, t_v pos);
+t_intersection	intersection(t_v pos, t_v normal, t_line ray, t_item *item);
+t_v	map_point_to_physical(t_camera camera, t_v point, float physical_width, float physical_height);
+t_v	map_physical_to_camera(t_camera camera, t_v point, float physical_width, float physical_height);
+t_v	v3_scale(t_v a, float scale);
 
 // UTIL7.C
-vec	v3_invert(vec a);
-vec	v3_abs(vec a);
-float	v3_len(vec a);
-vec	v3_norm(vec v);
-float	v3_norm_squared(vec v);
+t_v	v3_invert(t_v a);
+t_v	v3_abs(t_v a);
+float	v3_len(t_v a);
+t_v	v3_norm(t_v v);
+float	v3_norm_squared(t_v v);
 
 // UTIL8.C
-vec	v3_cross(vec a, vec b);
-float	v3_dot(vec a, vec b);
-vec	project_point_onto_line(t_line line, vec point);
-float	point_plane_dist(vec point, t_plane plane);
-float	signed_point_plane_dist(vec point, t_plane plane);
+t_v	v3_cross(t_v a, t_v b);
+float	v3_dot(t_v a, t_v b);
+t_v	project_point_onto_line(t_line line, t_v point);
+float	point_plane_dist(t_v point, t_plane plane);
+float	signed_point_plane_dist(t_v point, t_plane plane);
 
 // UTIL9.C
-vec	project_point_onto_plane(vec point, t_plane plane);
-vec	matrix_mult_vec(t_matrix3d matrix, vec v);
+t_v	project_point_onto_plane(t_v point, t_plane plane);
+t_v	matrix_mult_vec(t_matrix3d matrix, t_v v);
 t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar);
 t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2);
 t_matrix3d	matrix_sub(t_matrix3d m1, t_matrix3d m2);
 
 // UTIL 10.C
 t_matrix3d	get_identity_matrix(void);
-vec	get_cylinder_top(t_item cylinder);
-vec	get_cylinder_bottom(t_item cylinder);
-vec	intersect(t_line line, t_plane plane);
+t_v	get_cylinder_top(t_item cylinder);
+t_v	get_cylinder_bottom(t_item cylinder);
+t_v	intersect(t_line line, t_plane plane);
 int	equals_with_tolerance(float val1, float val2);
 
 // UTIL 11.C
-int		vec_color_to_int(vec color);
-void	draw_line(t_scData *scrn, vec p1, vec p2, vec color);
-void	draw_square(t_scData *scrn, vec pos, float size, vec color);
-void	draw_vect(t_scData *scrn, vec v, vec color);
-void	connect_points(t_scData *scrn, vec p1, vec p2, t_item item);
+int		vec_color_to_int(t_v color);
+void	draw_line(t_scData *scrn, t_v p1, t_v p2, t_v color);
+void	draw_square(t_scData *scrn, t_v pos, float size, t_v color);
+void	draw_vect(t_scData *scrn, t_v v, t_v color);
+void	connect_points(t_scData *scrn, t_v p1, t_v p2, t_item item);
 
 // DRAW_LINE.C
-void	draw_line_dda(t_scData *scrn, vec p1, vec p2, int color);
+void	draw_line_dda(t_scData *scrn, t_v p1, t_v p2, int color);
 
 // UTIL12.C
-void	fill_screen(t_scData *scrn, vec color);
-void	draw_segment(t_rtdata data, vec p1, vec p2, vec color);
+void	fill_screen(t_scData *scrn, t_v color);
+void	draw_segment(t_rtdata data, t_v p1, t_v p2, t_v color);
 void	add_item(t_item item);
 void	animate(t_rtdata data);
 void	draw(t_rtdata data);
 
 // UTIL13.C
-vec		color_from_int(int color);
-void	sphere_vertices(vec pos, vec scale, t_item *item);
-void	pyramid_vertices(vec pos, vec scale, t_item *item);
-void	cube_vertices(vec pos, vec scale, t_item *item);
-void	cylinder_vertices(vec pos, vec scale, t_item *item);
+t_v		color_from_int(int color);
+void	sphere_vertices(t_v pos, t_v scale, t_item *item);
+void	pyramid_vertices(t_v pos, t_v scale, t_item *item);
+void	cube_vertices(t_v pos, t_v scale, t_item *item);
+void	cylinder_vertices(t_v pos, t_v scale, t_item *item);
 
 // UTIL14.C
-void	draw_cube_mappings(t_scData *scrn, vec mappings[34], t_item item);
-void	draw_pyramid_mappings(t_scData *scrn, vec mappings[34], t_item item);
-void	draw_sphere_mappings(t_scData *scrn, vec mappings[34], t_item item);
-void	draw_cylinder_mappings(t_scData *scrn, vec mappings[34], t_item item);
+void	draw_cube_mappings(t_scData *scrn, t_v mappings[34], t_item item);
+void	draw_pyramid_mappings(t_scData *scrn, t_v mappings[34], t_item item);
+void	draw_sphere_mappings(t_scData *scrn, t_v mappings[34], t_item item);
+void	draw_cylinder_mappings(t_scData *scrn, t_v mappings[34], t_item item);
 
 // UTIL15.C
-void	move_item(t_item *item, vec pos);
-void	move_item_to(t_item *item, vec pos);
-void	rotate_item(t_item *item, vec rot);
+void	move_item(t_item *item, t_v pos);
+void	move_item_to(t_item *item, t_v pos);
+void	rotate_item(t_item *item, t_v rot);
 void	outline_item(t_rtdata data, t_item item);
 
 // UTIL16.C
-void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34]);
+void	draw_mappings(t_rtdata data, t_item  item, t_v mappings[34]);
 t_line	*gen_rays(t_camera camera, int size, double resolution);
 t_intersection	int_null();
 int	int_is_null(t_intersection intersection);
@@ -493,54 +494,57 @@ t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
 // UTIL.17.C
 t_intersection	intersect_ray_plane_item(t_line ray, t_item *plane);
 t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere);
-int	point_inside_square(t_vecfour sqr, vec point);
-void	get_cube_squares(const t_item cube, vec square_buffer[6][4]);
+int	point_inside_square(t_vecfour sqr, t_v point);
+void	get_cube_squares(const t_item cube, t_v square_buffer[6][4]);
 t_intersection	intersect_ray_cube(t_line ray, t_item *cube);
 
 //UTIL18.C
-t_intersection	int_create(vec pos, vec norm, t_line ray, t_item *item);
-t_vecfour	get_vecfour(vec p1, vec p2, vec p3, vec p4);
-int	point_inside_triangle(vec s1, vec s2, vec s3, vec point);
+t_intersection	int_create(t_v pos, t_v norm, t_line ray, t_item *item);
+t_vecfour	get_vecfour(t_v p1, t_v p2, t_v p3, t_v p4);
+int	point_inside_triangle(t_v s1, t_v s2, t_v s3, t_v point);
 t_vecfour	get_pyramid_base_square(t_item pyramid);
-void	get_pyramid_triangles(const t_item pyramid, vec tri_buffer[4][3]);
+void	get_pyramid_triangles(const t_item pyramid, t_v tri_buffer[4][3]);
 
 //UTIL19.C
 t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid);
 t_intersection	ray_intersection(t_line ray, t_item *object);
-vec	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights);
+t_v	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights);
 
 // UTIL20.C
 t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder);
 
 // UTIL21.C
-vec	compute_specular(t_rtdata data, t_intersection intr, t_list *lights);
-vec	uv_at_chekers(vec color1, vec color2, vec checkers_wh, vec u_v);
-vec	spherical_map(vec point, t_item sphere);
-vec	uv_at_image(t_image *rt_image, float u, float v);
+t_v	compute_specular(t_rtdata data, t_intersection intr, t_list *lights);
+t_v	uv_at_chekers(t_v color1, t_v color2, t_v checkers_wh, t_v u_v);
+t_v	spherical_map(t_v point, t_item sphere);
+t_v	uv_at_image(t_image *rt_image, float u, float v);
 
 // UTIL22.C
-vec	cylindrical_map(vec point, t_item cylinder);
+t_v	cylindrical_map(t_v point, t_item cylinder);
 
 // UTIL23.C
-vec	get_item_color_image(t_intersection intr);
-vec	get_item_color(t_intersection intr);
+t_v	get_item_color_image(t_intersection intr);
+t_v	get_item_color(t_intersection intr);
 
 // UTIL24.C
-vec	normalize_plane_point(vec point, vec origin, vec normal);
-vec	cartesian_to_sphere(vec point, t_item sphere);
-vec	checker_pixel_for_plane(t_v3_tuple pt_orig, vec normal, float step, t_v3_tuple colors);
+t_v	normalize_plane_point(t_v point, t_v origin, t_v normal);
+t_v	cartesian_to_sphere(t_v point, t_item sphere);
+t_v	checker_pixel_for_plane(t_v3_tuple pt_orig, t_v normal, float step, t_v3_tuple colors);
 t_plane	get_intersection_plane(t_intersection intr);
 
 // UTIL25.C
 float	new_image_height(t_image *img, float new_width);
-vec	**getPixelsFromImage(t_image img, float target_width);
-void	free_pixel_cache(vec **cache);
-t_v3_tuple	tuple(vec v1,vec v2);
+t_v	**getPixelsFromImage(t_image img, float target_width);
+void	free_pixel_cache(t_v **cache);
+t_v3_tuple	tuple(t_v v1, t_v v2);
 
 // UTIL 26.C
-vec	get_item_color_checkerboard(t_intersection intr);
+t_v	get_item_color_checkerboard(t_intersection intr);
 t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw);
 void	raytrace(t_rtdata data);
 void	cast_ray_for_screen_coords(t_rtdata data, float x, float y);
+
+// UTIL27.C
+void	rotate_to_normal(t_item *item);
 
 #endif // RT_HEAD_H

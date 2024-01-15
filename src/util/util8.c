@@ -12,23 +12,23 @@
 
 #include "../rt_head.h"
 
-vec	v3_cross(vec a, vec b)
+t_v	v3_cross(t_v a, t_v b)
 {
 	return (v3(a.y * b.z - a.z * b.y,a.z * b.x - a.x * b.z,a.x * b.y - a.y * b.x));
 }
 
-float	v3_dot(vec a, vec b)
+float	v3_dot(t_v a, t_v b)
 {
 	return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
 /* https://stackoverflow.com/a/12499474 */
-vec	project_point_onto_line(t_line line, vec point)
+t_v	project_point_onto_line(t_line line, t_v point)
 {
-	vec		v1;
-	vec		v2;
-	vec		v3_;
-	vec		p;
+	t_v		v1;
+	t_v		v2;
+	t_v		v3_;
+	t_v		p;
 	float	u;
 
 	v1 = v3(line.p1.x, line.p1.y, line.p1.z);
@@ -40,12 +40,12 @@ vec	project_point_onto_line(t_line line, vec point)
 }
 
 /* https://stackoverflow.com/a/3863777 */
-float	point_plane_dist(vec point, t_plane plane)
+float	point_plane_dist(t_v point, t_plane plane)
 {
 	return (fabs(v3_dot(plane_normal(plane), (v3_sub(point, plane.p1)))));
 }
 
-float	signed_point_plane_dist(vec point, t_plane plane)
+float	signed_point_plane_dist(t_v point, t_plane plane)
 {
 	return (v3_dot(plane_normal(plane), (v3_sub(point, plane.p1))));
 }

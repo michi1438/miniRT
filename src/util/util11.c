@@ -17,17 +17,17 @@
 		return ("#" + (1 << 24 | v.x << 16 | v.y << 8 | v.z).toString(16).slice(1));
 	}
  * */
-int	vec_color_to_int(vec color)
+int	vec_color_to_int(t_v color)
 {
 	return (((int)color.x << 16) | ((int)color.y << 8) | (int)color.z);
 }
 
-void	draw_line(t_scData *scrn, vec p1, vec p2, vec color)
+void	draw_line(t_scData *scrn, t_v p1, t_v p2, t_v color)
 {
 	draw_line_dda(scrn, p1, p2, vec_color_to_int(color));
 }
 
-void	draw_square(t_scData *scrn, vec pos, float size, vec color)
+void	draw_square(t_scData *scrn, t_v pos, float size, t_v color)
 {
 	int	clr;
 	int	i;
@@ -47,7 +47,7 @@ void	draw_square(t_scData *scrn, vec pos, float size, vec color)
 	}
 }
 
-void	draw_vect(t_scData *scrn, vec v, vec color)
+void	draw_vect(t_scData *scrn, t_v v, t_v color)
 {
 	float	radius;
 
@@ -60,7 +60,7 @@ void	draw_vect(t_scData *scrn, vec v, vec color)
 	draw_square(scrn, v, radius, color);
 }
 
-void	connect_points(t_scData *scrn, vec p1, vec p2, t_item item)
+void	connect_points(t_scData *scrn, t_v p1, t_v p2, t_item item)
 {
 	if (v3_is_null(p1) || v3_is_null(p2))
 	{

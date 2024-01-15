@@ -12,9 +12,9 @@
 
 #include "../rt_head.h"
 
-vec	color_from_int(int color)
+t_v	color_from_int(int color)
 {
-	vec	res;
+	t_v	res;
 
 	res.x = (color << 8) / 16777216;
 	res.y = (color << 16) / 16777216;
@@ -24,9 +24,9 @@ vec	color_from_int(int color)
 
 /* scale.x: radius ; scale.y: amount of vertices around axis y ; scale.z: amount of vertices around axis z */
 /* scale.y and scale.z are hardcoded to 8 and 4 */
-void	sphere_vertices(vec pos, vec scale, t_item *it)
+void	sphere_vertices(t_v pos, t_v scale, t_item *it)
 {
-	vec		top_point;
+	t_v		top_point;
 	int		i;
 	int		j;
 
@@ -47,7 +47,7 @@ void	sphere_vertices(vec pos, vec scale, t_item *it)
 	it->vertices_len = 34;
 }
 
-void	pyramid_vertices(vec pos, vec scale, t_item *it)
+void	pyramid_vertices(t_v pos, t_v scale, t_item *it)
 {
 	it->vertices[0] = v3_add(pos, v3(0, scale.y / 2, 0));
 	it->vertices[1] = v3_add(pos,v3_add(v3(-scale.x / 2, 0, 0),v3_add(v3(0, -scale.y / 2, 0),v3(0, 0, -scale.z / 2))));
@@ -57,7 +57,7 @@ void	pyramid_vertices(vec pos, vec scale, t_item *it)
 	it->vertices_len = 5;
 }
 
-void	cube_vertices(vec pos, vec scale, t_item *it)
+void	cube_vertices(t_v pos, t_v scale, t_item *it)
 {
 	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
 	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, -scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
@@ -71,10 +71,10 @@ void	cube_vertices(vec pos, vec scale, t_item *it)
 }
 
 /* returns list of cube vertices */
-void	cylinder_vertices(vec pos, vec scale, t_item *it)
+void	cylinder_vertices(t_v pos, t_v scale, t_item *it)
 {
-	vec		first;
-	vec		second;
+	t_v		first;
+	t_v		second;
 	int		i;
 
 	first = v3_add(v3_add(pos, v3(0, -scale.y / 2, 0)), v3(scale.x / 2, 0, 0));

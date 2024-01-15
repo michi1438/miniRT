@@ -12,11 +12,11 @@
 
 #include "../rt_head.h"
 
-vec	get_item_color_checkerboard(t_intersection intr)
+t_v	get_item_color_checkerboard(t_intersection intr)
 {
-	vec	inverse_color;
+	t_v	inverse_color;
 	t_plane	nearest_plane;
-	vec		u_v;
+	t_v		u_v;
 
 	inverse_color = v3_sub(color_from_int(WHITE), intr.item->color);
 	if (intr.item->type == Plane) {
@@ -114,6 +114,7 @@ void	raytrace(t_rtdata data)
 	printf("got ray size: %d\n", sz);
 	rays = gen_rays(data.camera, sz, resolution);
 	printf("finished calculating rays\n");
+	fill_screen(data.scrn, v3(0, 0, 0));
 	if (!rays)
 		return ;
 	i = 0;
@@ -130,7 +131,7 @@ void	raytrace(t_rtdata data)
 
 void	cast_ray_for_screen_coords(t_rtdata data, float x, float y)
 {
-	vec	mapped;
+	t_v	mapped;
 
 	mapped = map_physical_to_camera(data.camera, v3(x, y, 0), S_WIDTH, S_HEIGHT);
 	cast_ray(data, line_c(data.camera.eye, mapped), 1);

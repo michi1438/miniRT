@@ -17,27 +17,27 @@ t_matrix3d	get_identity_matrix(void)
 	return (matrix3d_c(v3(1, 0, 0), v3(0, 1, 0), v3(0, 0, 1)));
 }
 
-vec	get_cylinder_top(t_item cylinder)
+t_v	get_cylinder_top(t_item cylinder)
 {
-	vec	V;
+	t_v	V;
 
 	V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices_len/2]));
 	return (v3_add(cylinder.pos, v3_scale(V, -cylinder.scale.y / 2)));
 }
 
-vec	get_cylinder_bottom(t_item cylinder)
+t_v	get_cylinder_bottom(t_item cylinder)
 {
-	vec	V;
+	t_v	V;
 
 	V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices_len/2]));
 	return(v3_add(cylinder.pos, v3_scale(V, cylinder.scale.y / 2)));
 }
 
-vec	intersect(t_line line, t_plane plane)
+t_v	intersect(t_line line, t_plane plane)
 {
-	vec		n;
+	t_v		n;
 	float	d;
-	vec		lv;
+	t_v		lv;
 	float	divisor;
 	float	dividend;
 

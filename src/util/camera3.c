@@ -13,12 +13,12 @@
 #include "../rt_head.h"
 
 /* expresses a 3d point relatively to point A */
-vec	get_point_canvas_rel(t_camera camera, vec p)
+t_v	get_point_canvas_rel(t_camera camera, t_v p)
 {
-	vec AB_proj;
-	vec AC_proj;
-	vec A_AB_proj;
-	vec A_AC_proj;
+	t_v AB_proj;
+	t_v AC_proj;
+	t_v A_AB_proj;
+	t_v A_AC_proj;
 	int	xy_mult[2];
 
 	AB_proj = project_point_onto_line(line_c(camera.A, camera.B), p);
@@ -36,7 +36,7 @@ vec	get_point_canvas_rel(t_camera camera, vec p)
 	return (v3(v3_len(A_AB_proj) * xy_mult[0], v3_len(A_AC_proj) * xy_mult[1], 0));
 }
 
-vec	camera_get_D(t_camera camera)
+t_v	camera_get_D(t_camera camera)
 {
 	return (v3_add(camera.B, camera_get_AC(camera)));
 }

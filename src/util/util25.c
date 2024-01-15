@@ -17,7 +17,7 @@ float	new_image_height(t_image *img, float new_width)
 	return (img->height / (img->width / new_width));
 }
 
-vec	**getPixelsFromImage(t_image img, float target_width)
+t_v	**getPixelsFromImage(t_image img, float target_width)
 {
 	(void) img;
 	(void) target_width;
@@ -25,13 +25,13 @@ vec	**getPixelsFromImage(t_image img, float target_width)
 	return (NULL);
 }
 
-void	free_pixel_cache(vec **cache)
+void	free_pixel_cache(t_v **cache)
 {
 	(void) cache;
 	// TODO: free cache
 }
 
-t_v3_tuple	tuple(vec v1,vec v2)
+t_v3_tuple	tuple(t_v v1, t_v v2)
 {
 	t_v3_tuple	res;
 
@@ -40,7 +40,7 @@ t_v3_tuple	tuple(vec v1,vec v2)
 	return (res);
 }
 
-t_line line_c(vec p1, vec p2)
+t_line line_c(t_v p1, t_v p2)
 {
 	t_line	line;
 

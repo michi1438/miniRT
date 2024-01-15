@@ -12,12 +12,12 @@
 
 #include "../rt_head.h"
 
-static vec	img_clr_plane(t_intersection intr)
+static t_v	img_clr_plane(t_intersection intr)
 {
-	vec		new_pos;
+	t_v		new_pos;
 	float	angle;
-	vec		n_;
-	vec		pixel;
+	t_v		n_;
+	t_v		pixel;
 
 	n_ = v3(0, 0, 1);
 	angle = vect_angle(intr.normal, n_);
@@ -38,10 +38,10 @@ static vec	img_clr_plane(t_intersection intr)
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 
-static vec	img_clr_sphere(t_intersection intr)
+static t_v	img_clr_sphere(t_intersection intr)
 {
-	vec	coords;
-	vec	**new_pixels;
+	t_v	coords;
+	t_v	**new_pixels;
 	int		x;
 	int		y;
 
@@ -59,13 +59,13 @@ static vec	img_clr_sphere(t_intersection intr)
 	return (v3(new_pixels[y][x].x, new_pixels[y][x].y, new_pixels[y][x].z));
 }
 
-static vec	img_clr_cb_pyr(t_intersection intr)
+static t_v	img_clr_cb_pyr(t_intersection intr)
 {
 	t_plane	plane;
 	t_terms	ts;
-	vec		pixel;
-	vec		x_proj;
-	vec		y_proj;
+	t_v		pixel;
+	t_v		x_proj;
+	t_v		y_proj;
 
 	plane = get_intersection_plane(intr);
 	ts.x_axis = v3_norm(v3_sub(plane.p2, plane.p1));
@@ -80,10 +80,10 @@ static vec	img_clr_cb_pyr(t_intersection intr)
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 
-vec	get_item_color_image(t_intersection intr)
+t_v	get_item_color_image(t_intersection intr)
 {
-	vec	u_v;
-	vec	img_color;
+	t_v	u_v;
+	t_v	img_color;
 
 	if (intr.item->type == Plane) {
 		return (img_clr_plane(intr));
@@ -99,7 +99,7 @@ vec	get_item_color_image(t_intersection intr)
 	return (v3(0, 0, 0));
 }
 
-vec	get_item_color(t_intersection intr)
+t_v	get_item_color(t_intersection intr)
 {
 	if (intr.item->image != NULL)
 	{

@@ -14,7 +14,7 @@
 
 /* Source: https://www.geeksforgeeks.org/dda-line
  * -generation-algorithm-computer-graphics/ */
-void	draw_line_dda(t_scData *scrn, vec p1, vec p2, int color)
+void	draw_line_dda(t_scData *scrn, t_v p1, t_v p2, int color)
 {
 	int		steps;
 	float	pos[2];

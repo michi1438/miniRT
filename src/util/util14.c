@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-void	draw_cube_mappings(t_scData *scrn, vec mappings[34], t_item item)
+void	draw_cube_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 {
 	connect_points(scrn, mappings[0], mappings[1], item);
 	connect_points(scrn, mappings[1], mappings[2], item);
@@ -28,7 +28,7 @@ void	draw_cube_mappings(t_scData *scrn, vec mappings[34], t_item item)
 	connect_points(scrn, mappings[7], mappings[4], item);
 }
 
-void	draw_pyramid_mappings(t_scData *scrn, vec mappings[34], t_item item)
+void	draw_pyramid_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 {
 	connect_points(scrn, mappings[0], mappings[1], item);
 	connect_points(scrn, mappings[0], mappings[2], item);
@@ -41,12 +41,12 @@ void	draw_pyramid_mappings(t_scData *scrn, vec mappings[34], t_item item)
 }
 
 /* scale.y and scale.z are hardcoded to 8 and 4 */
-void	draw_sphere_mappings(t_scData *scrn, vec mappings[34], t_item item)
+void	draw_sphere_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 {
 	int	i;
 	int	j;
-	vec	top_point;
-	vec	bottom_point;
+	t_v	top_point;
+	t_v	bottom_point;
 
 	top_point = mappings[item.vertices_len - 2];
 	bottom_point = mappings[item.vertices_len - 1];
@@ -65,7 +65,7 @@ void	draw_sphere_mappings(t_scData *scrn, vec mappings[34], t_item item)
 	}
 }
 
-void	draw_cylinder_mappings(t_scData *scrn, vec mappings[34], t_item item)
+void	draw_cylinder_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 {
 	int	i;
 

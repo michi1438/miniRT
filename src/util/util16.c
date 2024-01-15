@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34])
+void	draw_mappings(t_rtdata data, t_item  item, t_v mappings[34])
 {
 	if (item.type == Cube)
 		draw_cube_mappings(data.scrn, mappings, item);
@@ -26,8 +26,8 @@ void	draw_mappings(t_rtdata data, t_item  item, vec mappings[34])
 
 t_line	*gen_rays(t_camera camera, int size, double resolution)
 {
-	vec	x_axis;
-	vec	y_axis;
+	t_v	x_axis;
+	t_v	y_axis;
 	double	i;
 	double	j;
 	int	k;

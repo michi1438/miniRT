@@ -12,11 +12,11 @@
 
 #include "../rt_head.h"
 
-static void	cmpt_sp(t_rtdata data, t_light light, vec *res, t_intersection intr)
+static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intersection intr)
 {
-	vec	L;
+	t_v	L;
 	t_terms	ts;
-	vec		R;
+	t_v		R;
 	float	r_dot_v;
 
 	ts.inter2 = cast_ray(data, line_c(light.pos, intr.pos), 0);
@@ -36,9 +36,9 @@ static void	cmpt_sp(t_rtdata data, t_light light, vec *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-vec	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
+t_v	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
 {
-	vec	res;
+	t_v	res;
 	t_list	*list;
 
 	if (intr.item->specular == -1)
@@ -56,7 +56,7 @@ vec	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
 
 /* http://raytracerchallenge.com/bonus/texture-mapping.html */
 /* archive: https://archive.md/c96z4 */
-vec	uv_at_chekers(vec color1, vec color2, vec checkers_wh, vec u_v)
+t_v	uv_at_chekers(t_v color1, t_v color2, t_v checkers_wh, t_v u_v)
 {
 	float	u2;
 	float	v2;
@@ -70,7 +70,7 @@ vec	uv_at_chekers(vec color1, vec color2, vec checkers_wh, vec u_v)
 	}
 }
 
-vec	uv_at_image(t_image *rt_image, float u, float v)
+t_v	uv_at_image(t_image *rt_image, float u, float v)
 {
 	float	target_height;
 	int		x;
@@ -83,7 +83,7 @@ vec	uv_at_image(t_image *rt_image, float u, float v)
 	return (rt_image->pixels[y][x]);
 }
 
-vec	spherical_map(vec point, t_item sphere)
+t_v	spherical_map(t_v point, t_item sphere)
 {
 	float	u;
 	float	v;

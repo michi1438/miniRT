@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-t_light	light(enum e_LightType type, vec color, vec pos)
+t_light	light(enum e_LightType type, t_v color, t_v pos)
 {
 	t_light	res;
 
@@ -22,7 +22,7 @@ t_light	light(enum e_LightType type, vec color, vec pos)
 	return (res);
 }
 
-t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item)
+t_intersection	intersection(t_v pos, t_v normal, t_line ray, t_item *item)
 {
 	t_intersection	res;
 
@@ -33,11 +33,11 @@ t_intersection	intersection(vec pos, vec normal, t_line ray, t_item *item)
 	return (res);
 }
 
-vec	map_point_to_physical(t_camera camera, vec point, float physical_width, float physical_height)
+t_v	map_point_to_physical(t_camera camera, t_v point, float physical_width, float physical_height)
 {
 	float	x_ratio;
 	float	y_ratio;
-	vec		rel;
+	t_v		rel;
 
 	if (v3_is_null(point)) {
 		return (v3_null());
@@ -48,7 +48,7 @@ vec	map_point_to_physical(t_camera camera, vec point, float physical_width, floa
 	return (v3(rel.x * x_ratio, rel.y * y_ratio, 0));
 }
 
-vec	map_physical_to_camera(t_camera camera, vec point, float physical_width, float physical_height)
+t_v	map_physical_to_camera(t_camera camera, t_v point, float physical_width, float physical_height)
 {
 	float	x_ratio;
 	float	y_ratio;
@@ -67,7 +67,7 @@ vec	map_physical_to_camera(t_camera camera, vec point, float physical_width, flo
 	return (v3(new_x, new_y, camera.A.z));
 }
 
-vec	v3_scale(vec a, float scale)
+t_v	v3_scale(t_v a, float scale)
 {
 	return (v3(a.x * scale, a.y * scale, a.z * scale));
 }

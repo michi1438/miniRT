@@ -12,45 +12,41 @@
 
 #include "../rt_head.h"
 
-void	move_item(t_item *item, vec pos)
+void	move_item(t_item *it, t_v pos)
 {
-	t_item	it;
 	int		i;
 
-	it = *item;
-	it.pos = v3_add(it.pos, pos);
+	it->pos = v3_add(it->pos, pos);
 	i = 0;
-	while (i < it.vertices_len)
+	while (i < it->vertices_len)
 	{
-		it.vertices[i] = v3_add(it.vertices[i], pos);
+		it->vertices[i] = v3_add(it->vertices[i], pos);
 		i ++;
 	}
 }
 
-void	move_item_to(t_item *item, vec pos)
+void	move_item_to(t_item *item, t_v pos)
 {
 	move_item(item, v3_sub(pos, item->pos));
 }
 
-void	rotate_item(t_item *item, vec rot)
+void	rotate_item(t_item *it, t_v rot)
 {
 	int	i;
-	t_item	it;
 
-	it = *item;
-	if (item->type == Plane) {
+	if (it->type == Plane) {
 		return ;
 	}
 	i = 0;
-	while (i < item->vertices_len)
+	while (i < it->vertices_len)
 	{
-		it.vertices[i] = rotate_point(it.vertices[i], rot, it.pos);
+		it->vertices[i] = rotate_point(it->vertices[i], rot, it->pos);
 		i ++;
 	}
-	it.z_ref_point = rotate_point(it.z_ref_point, rot, it.pos);
+	it->z_ref_point = rotate_point(it->z_ref_point, rot, it->pos);
 }
 
-void	scale_item(t_item *item, vec scale)
+void	scale_item(t_item *item, t_v scale)
 {
 	(void) item;
 	(void) scale;
@@ -68,7 +64,7 @@ void	scale_item(t_item *item, vec scale)
 
 void	outline_item(t_rtdata data, t_item item)
 {
-	vec	mappings[34];
+	t_v	mappings[34];
 	int	i;
 
 	if (item.type == Plane)

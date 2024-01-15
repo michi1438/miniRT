@@ -22,7 +22,7 @@ t_v3	v3(float x, float y, float z)
 	return (res);
 }
 
-vec	v3_add(vec a, vec b)
+t_v	v3_add(t_v a, t_v b)
 {
 	return (v3(a.x + b.x, a.y + b.y, a.z + b.z));
 }
@@ -32,9 +32,9 @@ float	clamp(float val, float min, float max)
 	return (fmin(fmax(val, min), max));
 }
 
-vec	add_colors(vec c1, vec c2)
+t_v	add_colors(t_v c1, t_v c2)
 {
-	vec	res;
+	t_v	res;
 
 	res = v3_add(c1, c2);
 	res.x = clamp(res.x, 0, 255);
@@ -43,9 +43,9 @@ vec	add_colors(vec c1, vec c2)
 	return (res);
 }
 
-vec	mult_colors(vec c1, vec c2)
+t_v	mult_colors(t_v c1, t_v c2)
 {
-	vec	res;
+	t_v	res;
 
 	res = v3(c1.x * c2.x, c1.y * c2.y, c1.z * c2.z);
 	return (res);

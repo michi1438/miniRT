@@ -35,7 +35,7 @@ static void	int_ray_pyr_1(t_terms *ts, t_item pyramid, t_line ray)
 
 static void	int_ray_pyr_2(t_terms *ts, t_item pyramid, t_line ray)
 {
-	vec		triangles[4][3];
+	t_v		triangles[4][3];
 	t_plane	plane;
 	int		i;
 
@@ -87,9 +87,9 @@ t_intersection	ray_intersection(t_line ray, t_item *object)
 	return (int_null());
 }
 
-static void	cmpt_lt(t_rtdata data, t_light light, vec *res, t_intersection intr)
+static void	cmpt_lt(t_rtdata data, t_light light, t_v *res, t_intersection intr)
 {
-	vec	L;
+	t_v	L;
 	t_terms	ts;
 	float	n_dot_l;
 
@@ -108,9 +108,9 @@ static void	cmpt_lt(t_rtdata data, t_light light, vec *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-vec	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights)
+t_v	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights)
 {
-	vec	res;
+	t_v	res;
 	t_list	*list;
 
 	res = v3(0, 0, 0);

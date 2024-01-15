@@ -52,10 +52,10 @@ t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
 	return (int_null());
 }
 
-int	point_inside_square(t_vecfour sqr, vec point)
+int	point_inside_square(t_vecfour sqr, t_v point)
 {
 	t_plane	plane;
-	vec		norm;
+	t_v		norm;
 
 	plane = plane_c(sqr.p1, sqr.p2, sqr.p3);
 	norm = plane_normal(plane);
@@ -77,7 +77,7 @@ int	point_inside_square(t_vecfour sqr, vec point)
 	return (1);
 }
 
-void	get_cube_squares(const t_item cube, vec square_buffer[6][4])
+void	get_cube_squares(const t_item cube, t_v square_buffer[6][4])
 {
 	square_buffer[0][0] = cube.vertices[0];
 	square_buffer[0][1] = cube.vertices[1];
@@ -108,7 +108,7 @@ void	get_cube_squares(const t_item cube, vec square_buffer[6][4])
 t_intersection	intersect_ray_cube(t_line ray, t_item *cube)
 {
 	t_terms	ts;
-	vec		cube_squares[6][4];
+	t_v		cube_squares[6][4];
 	int		i;
 	t_plane	plane;
 

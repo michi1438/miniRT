@@ -12,12 +12,12 @@
 
 #include "../rt_head.h"
 
-void	cyl_m1(t_terms *ts, vec point, t_item cylinder)
+void	cyl_m1(t_terms *ts, t_v point, t_item cylinder)
 {
 	t_plane	xy_plane;
-	vec		xy_proj;
-	vec		x_proj;
-	vec		y_proj;
+	t_v		xy_proj;
+	t_v		x_proj;
+	t_v		y_proj;
 
 	xy_plane = plane_c(cylinder.pos, ts->x, ts->y);
 	xy_proj = project_point_onto_plane(point, xy_plane);
@@ -33,11 +33,11 @@ void	cyl_m1(t_terms *ts, vec point, t_item cylinder)
 	}
 }
 
-void	cyl_m2(t_terms *ts, vec point, t_item cylinder)
+void	cyl_m2(t_terms *ts, t_v point, t_item cylinder)
 {
 	t_plane	zy_plane;
-	vec		zy_proj;
-	vec		z_proj;
+	t_v		zy_proj;
+	t_v		z_proj;
 
 	zy_plane = plane_c(cylinder.pos, ts->z, ts->y);
 	zy_proj = project_point_onto_plane(point, zy_plane);
@@ -48,7 +48,7 @@ void	cyl_m2(t_terms *ts, vec point, t_item cylinder)
 	}
 }
 
-vec	cylindrical_map(vec point, t_item cylinder)
+t_v	cylindrical_map(t_v point, t_item cylinder)
 {
 	float	u;
 	float	v;

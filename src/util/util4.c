@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-int	same_side_of_plane(t_plane plane, vec A, vec B)
+int	same_side_of_plane(t_plane plane, t_v A, t_v B)
 {
 	float	dot1;
 	float	dot2;
@@ -22,7 +22,7 @@ int	same_side_of_plane(t_plane plane, vec A, vec B)
 	return (same_sign(dot1, dot2));
 }
 
-static t_matrix3d	get_rot_matrix(vec v)
+static t_matrix3d	get_rot_matrix(t_v v)
 {
 	t_matrix3d 	rot_matrix_x;
 	t_matrix3d 	rot_matrix_y;
@@ -35,11 +35,11 @@ static t_matrix3d	get_rot_matrix(vec v)
 }
 
 /* rotate point p, by a vector v, around a point r */
-vec	rotate_point(vec p, vec v, vec r)
+t_v	rotate_point(t_v p, t_v v, t_v r)
 {
 	t_matrix3d	rot_matrix;
-	vec			p_translate;
-	vec			p_rotated1;
+	t_v			p_translate;
+	t_v			p_rotated1;
 
 	rot_matrix = get_rot_matrix(v);
 	p_translate = v3_sub(p, r);
@@ -47,9 +47,9 @@ vec	rotate_point(vec p, vec v, vec r)
 	return (v3_add(p_rotated1, r));
 }
 
-float	vect_angle(vec v1, vec v2)
+float	vect_angle(t_v v1, t_v v2)
 {
-	return (acos(v3_dot(v1, v2) / (v3_len(v1) * v3_len(v2))));
+	return (acosf(fmin(1, v3_dot(v1, v2) / (v3_len(v1) * v3_len(v2)))));
 }
 
 float	degree_to_radian(float angle)

@@ -127,10 +127,10 @@
 	}
 
 	/* Multiplying a 3D matrix with a 3D vector */
-	function matrix_mult_vec(matrix, vec) {
-		let v1 = v3_scale(matrix.v1, vec.x);
-		let v2 = v3_scale(matrix.v2, vec.y);
-		let v3 = v3_scale(matrix.v3, vec.z);
+	function matrix_mult_vec(matrix, t_v) {
+		let v1 = v3_scale(matrix.v1, t_v.x);
+		let v2 = v3_scale(matrix.v2, t_v.y);
+		let v3 = v3_scale(matrix.v3, t_v.z);
 		return (v3_add(v1, v3_add(v2, v3)));
 	}
 

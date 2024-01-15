@@ -12,33 +12,33 @@
 
 #include "../rt_head.h"
 
-vec	v3_sub(vec a, vec b)
+t_v	v3_sub(t_v a, t_v b)
 {
 	return (v3(a.x - b.x, a.y - b.y, a.z - b.z));
 }
 
-vec	v3_clone(vec v)
+t_v	v3_clone(t_v v)
 {
 	return v3(v.x, v.y, v.z);
 }
 
-vec	v3_null()
+t_v	v3_null()
 {
 	return (v3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
 
-int	v3_is_null(vec v)
+int	v3_is_null(t_v v)
 {
 	return (v.x == FLT_MAX && v.y == FLT_MAX && v.z == FLT_MAX);
 }
 
 /* projects a point on the camera plane */
 /* returns v3(FT_MAX) if the line between eye and point doesn't intersect plane or is behind screen */
-vec	project_point(vec point, t_camera camera)
+t_v	project_point(t_v point, t_camera camera)
 {
 	t_line	line_;
 	t_plane	canvas;
-	vec	intersection_;
+	t_v	intersection_;
 
 	if (!same_side_of_plane(plane_c(camera.eye, camera.A, camera.C), camera.B, point)) {
 		return (v3_null());

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util7.c                                            :+:      :+:    :+:   */
+/*   util19.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,27 +12,16 @@
 
 #include "../rt_head.h"
 
-t_v	v3_invert(t_v a)
+void	rotate_to_normal(t_item *item)
 {
-	return (v3_scale(a, -1));
-}
+	t_v rot = item_get_axis(*item);
+	item->z_ref_point = v3_add(item->pos, v3(0, 1, 0));
+	t_v p = v3_add(item->pos, rot);
 
-t_v	v3_abs(t_v a)
-{
-	return (v3(fabs(a.x), fabs(a.y), fabs(a.z)));
-}
+	float angle1 = vect_angle(v3(item->z_ref_point.x, item->z_ref_point.y, 0), v3(p.x, p.y, 0));
+	float angle2 = vect_angle(v3(item->z_ref_point.x, 0, item->z_ref_point.z), v3(p.x, 0, p.z));
+	float angle3 = vect_angle(v3(0, item->z_ref_point.y, item->z_ref_point.z), v3(0, p.y, p.z));
 
-float	v3_len(t_v a)
-{
-	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
-}
-
-t_v	v3_norm(t_v v)
-{
-	return (v3_scale(v, 1/v3_len(v)));
-}
-
-float	v3_norm_squared(t_v v)
-{
-	return (v.x * v.x + v.y * v.y + v.z * v.z);
+	printf("angles: %f, %f, %f", angle1, angle2, angle3);
+	rotate_item(item, v3(angle1 * 5.899659289, angle2 * 5.899659289, angle3 * 5.899659289));
 }
