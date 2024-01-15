@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 13:35:49 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/04 17:02:03 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 16:42:19 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ size_t	mantislen(char *str, int neg)
 	int	i;
 
 	i = 0;
-	while (str[i] != '\0' && str[i] != '.')
+	while (str[i] != '\0' && str[i] != '.' && str[i] != '\n')
 		i++;
 	if (neg == -1)
 		i += neg;
@@ -41,7 +41,7 @@ float	ft_atof(char *str)
 		neg = -1;
 	}
 	len = mantislen(str, neg);
-	while (str[i] != '\0' && str[i] != '.')
+	while (str[i] != '\0' && str[i] != '.' && str[i] != '\n')
 		res += (str[i++] - '0') * pow(10, --len);
 	if (str[i++] == '\0')
 		return (res * neg);

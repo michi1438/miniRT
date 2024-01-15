@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/15 14:06:34 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 19:45:18 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,28 @@
 //# include "../minilibx_opengl_20191021/mlx.h"
 # include "../libft/src_libft.h"
 # include <math.h>
+# include <unistd.h>
+
+/*
+typedef struct s_v3
+{
+	float	x;
+	float	y;
+	float	z;
+}	t_v3;
+
+typedef t_v3	t_v;
+
+t_v	v3(float x, float y, float z)
+{
+	t_v	res;
+
+	res.x = x;
+	res.y = y;
+	res.z = z;
+	return (res);
+}
+*/
 
 typedef struct s_elem
 {
@@ -38,6 +60,7 @@ typedef struct s_elem
 	float	height;
 	float	light_ratio;
 	int		status;
+//	v3		**img;
 }	t_elem;
 
 typedef struct s_scData

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/15 14:22:57 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 18:24:24 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	fill_plane(t_elem *elem, char **split)
 	xyz_split = ft_split(split[1], ',');
 	norm_xyz_split = ft_split(split[2], ',');
 	rgb_split = ft_split(split[3], ',');
+	fill_compl(elem, split, 4);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
 	i = -1;
 	while (++i < 3)
@@ -91,6 +92,7 @@ void	fill_cylinder(t_elem *elem, char **split)
 	elem->radius = ft_atof(split[3]) / 2;
 	elem->height = ft_atof(split[4]);
 	rgb_split = ft_split(split[5], ',');
+	fill_compl(elem, split, 6);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
 	i = -1;
 	while (++i < 3)
