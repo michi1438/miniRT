@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 22:04:41 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/08 10:22:19 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/15 13:46:12 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@ void	set_uvalue(t_elem *elem)
 
 	i = -1;
 	elem->type = 'U';
+	elem->specular = 0;
+	elem->is_checker = 0;
+	elem->path_to_img = NULL;
 	elem->fov = -2;
 	elem->light_ratio = -2;
 	elem->sratio = (float)S_WIDTH / S_HEIGHT;
@@ -52,6 +55,10 @@ void	init_elem(t_elem *elem, char *str)
 		fill_plane(elem, splited);
 	else if (elem->type == 'c')
 		fill_cylinder(elem, splited);
+	else if (elem->type == 'b')
+		fill_cube(elem, splited);
+	else if (elem->type == 'y')
+		fill_pyramid(elem, splited);
 	i = 0;
 	while (splited[i] != NULL)
 		free(splited[i++]);
