@@ -1,35 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_vecmath.c                                       :+:      :+:    :+:   */
+/*   util24.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
 /*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rt_head.h"
+#include "../rt_head.h"
 
-void	normalize(float *xyz)
+float	new_image_height(t_image *img, float new_width)
 {
-	float	vec_len;
-
-	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2));
-	xyz[0] = xyz[0] / vec_len;
-	xyz[1] = xyz[1] / vec_len;
-	xyz[2] = xyz[2] / vec_len;
+	return (img->height / (img->width / new_width));
 }
 
-float	dotprod(float * vec1, float * vec2)
+t_v	**getPixelsFromImage(t_image img, float target_width)
 {
-	return (vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]);
+	(void) img;
+	(void) target_width;
+	// TODO: resize the image and return new alloced one
+	return (NULL);
 }
 
-void	vec_substract(float * res_vec, float * vec1, float * vec2)
+void	free_pixel_cache(t_v **cache)
 {
-	res_vec[0] = vec1[0] - vec2[0];
-	res_vec[1] = vec1[1] - vec2[1];
-	res_vec[2] = vec1[2] - vec2[2];
+	(void) cache;
+	// TODO: free cache
+}
+
+t_v3_tuple	tuple(t_v v1, t_v v2)
+{
+	t_v3_tuple	res;
+
+	res.v1 = v1;
+	res.v2 = v2;
+	return (res);
+}
+
+t_line line_c(t_v p1, t_v p2)
+{
+	t_line	line;
+
+	line.p1 = p1;
+	line.p2 = p2;
+	return (line);
 }

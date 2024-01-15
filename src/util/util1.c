@@ -1,35 +1,52 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_vecmath.c                                       :+:      :+:    :+:   */
+/*   util1.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
 /*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rt_head.h"
+#include "../rt_head.h"
 
-void	normalize(float *xyz)
+t_v3	v3(float x, float y, float z)
 {
-	float	vec_len;
+	t_v3	res;
 
-	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2));
-	xyz[0] = xyz[0] / vec_len;
-	xyz[1] = xyz[1] / vec_len;
-	xyz[2] = xyz[2] / vec_len;
+	res.x = x;
+	res.y = y;
+	res.z = z;
+	return (res);
 }
 
-float	dotprod(float * vec1, float * vec2)
+t_v	v3_add(t_v a, t_v b)
 {
-	return (vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]);
+	return (v3(a.x + b.x, a.y + b.y, a.z + b.z));
 }
 
-void	vec_substract(float * res_vec, float * vec1, float * vec2)
+float	clamp(float val, float min, float max)
 {
-	res_vec[0] = vec1[0] - vec2[0];
-	res_vec[1] = vec1[1] - vec2[1];
-	res_vec[2] = vec1[2] - vec2[2];
+	return (fmin(fmax(val, min), max));
+}
+
+t_v	add_colors(t_v c1, t_v c2)
+{
+	t_v	res;
+
+	res = v3_add(c1, c2);
+	res.x = clamp(res.x, 0, 255);
+	res.y = clamp(res.y, 0, 255);
+	res.z = clamp(res.z, 0, 255);
+	return (res);
+}
+
+t_v	mult_colors(t_v c1, t_v c2)
+{
+	t_v	res;
+
+	res = v3(c1.x * c2.x, c1.y * c2.y, c1.z * c2.z);
+	return (res);
 }

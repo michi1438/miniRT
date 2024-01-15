@@ -1,35 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_vecmath.c                                       :+:      :+:    :+:   */
+/*   util7.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
 /*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rt_head.h"
+#include "../rt_head.h"
 
-void	normalize(float *xyz)
+t_v	v3_invert(t_v a)
 {
-	float	vec_len;
-
-	vec_len = sqrt(pow(xyz[0], 2) + pow(xyz[1], 2) + pow(xyz[2], 2));
-	xyz[0] = xyz[0] / vec_len;
-	xyz[1] = xyz[1] / vec_len;
-	xyz[2] = xyz[2] / vec_len;
+	return (v3_scale(a, -1));
 }
 
-float	dotprod(float * vec1, float * vec2)
+t_v	v3_abs(t_v a)
 {
-	return (vec1[0] * vec2[0] + vec1[1] * vec2[1] + vec1[2] * vec2[2]);
+	return (v3(fabs(a.x), fabs(a.y), fabs(a.z)));
 }
 
-void	vec_substract(float * res_vec, float * vec1, float * vec2)
+float	v3_len(t_v a)
 {
-	res_vec[0] = vec1[0] - vec2[0];
-	res_vec[1] = vec1[1] - vec2[1];
-	res_vec[2] = vec1[2] - vec2[2];
+	return (sqrt(a.x * a.x + a.y * a.y + a.z * a.z));
+}
+
+t_v	v3_norm(t_v v)
+{
+	return (v3_scale(v, 1/v3_len(v)));
+}
+
+float	v3_norm_squared(t_v v)
+{
+	return (v.x * v.x + v.y * v.y + v.z * v.z);
 }

@@ -38,7 +38,7 @@ CC = gcc
 
 AR = ar rc
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -ggdb -O0
 
 all: $(NAME) 
 

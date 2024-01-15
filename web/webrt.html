@@ -313,6 +313,7 @@
 		return (matrix_mult_vec(matrix, point));
 	}
 
+	/* TOTRANSLATE */
 	/* projects a point on the camera plane */
 	/* returns null if the line between eye and point doesn't intersect plane or is behind screen */
 	var count = 4;
@@ -657,10 +658,10 @@
 	}
 
 	/* Multiplying a 3D matrix with a 3D vector (M x V) */
-	function matrix_mult_vec(matrix, vec) {
-		let v1 = v3_scale(matrix.v1, vec.x);
-		let v2 = v3_scale(matrix.v2, vec.y);
-		let v3_ = v3_scale(matrix.v3, vec.z);
+	function matrix_mult_vec(matrix, t_v) {
+		let v1 = v3_scale(matrix.v1, t_v.x);
+		let v2 = v3_scale(matrix.v2, t_v.y);
+		let v3_ = v3_scale(matrix.v3, t_v.z);
 		return (v3_add(v1, v3_add(v2, v3_)));
 	}
 
@@ -802,16 +803,6 @@
 	var animationToggleCheckbox = document.getElementById('animationToggleCheckbox');
 	var rotate_items_toggle = animationToggleCheckbox.checked;
 	var items_rotation_speed = 0.003;
-
-	/*camera.A = v3(6.123958580496993, 1.4816940220588317, -1.6054972595099892);
-	camera.B = v3(6.071201285349139,  1.3819623198616062,  -3.602312287344451);
-	camera.C = v3( 6.075187559442211, -0.515157480914275, -1.5044751699487897);
-	camera.eye = v3(7.0725489710061655,0.4077233294835535,-2.5785148454369);*/
-
-	/*camera.A = v3(0.30116867893975824, 1, -1.2817732906760417);
-	camera.B = v3(1.3817732906760416, 1, 0.4011686789397584);
-	camera.C = v3(0.30116867893975824, -1, -1.2817732906760417);
-	camera.eye = v3(0, 0, 0.1);*/
 
 	var items = [];
 
@@ -1392,28 +1383,28 @@
 
 	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, null, pyramid_vertices, draw_pyramid_mappings);
 
-	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), v3(255, 1, 1), 500, false, earth_image, sphere_vertices, draw_sphere_mappings);
+	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), RED, 500, false, null, sphere_vertices, draw_sphere_mappings);
 
 	let sphere2 = new Item(ObjectType.Sphere, v3(0, 0, -8), v3(1, 8, 4), v3(), GREEN, -1, true, null, sphere_vertices, draw_sphere_mappings);
 	
 	let sphere3 = new Item(ObjectType.Sphere, v3(3, 0, -5), v3(1, 8, 4), v3(), BLUE, -1, true, null, sphere_vertices, draw_sphere_mappings);
 
-	let cylinder = new Item(ObjectType.Cylinder, v3(2, 0, -3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, test_image, cylinder_vertices, draw_cylinder_mappings);
+	let cylinder = new Item(ObjectType.Cylinder, v3(2,1,-3), v3(1, 2, 10), /*v3(0.5850000000000004, 1.1700000000000008, 2.3400000000000016)*/ v3(), GREEN, -1, true, null, cylinder_vertices, draw_cylinder_mappings);
 
 	/* In the case of the plane first v3 is a point and second is normal. Third is unused. */
-	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, test_image, null, null);
+	let test_plane = new Item(ObjectType.Plane, v3(0, 0, -15), v3(0, 0, 1), v3(), GREEN, -1, false, null, null, null);
 
 	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, false, null, null, null);
 
-	add_item(cube);
+	//add_item(cube);
 	//add_item(cube2);
-	add_item(pyramid);
-	add_item(sphere);
+	//add_item(pyramid);
+	//add_item(sphere);
 	//add_item(sphere2);
-	add_item(sphere3);
+	//add_item(sphere3);
 	add_item(cylinder);
-	add_item(test_plane);
-	add_item(bottom_plane);
+	//add_item(test_plane);
+	//add_item(bottom_plane);
 
 	var shift_pressed = false;
 	var two_pressed = false;
@@ -1939,7 +1930,7 @@
 			t = d2;
 		}
 
-		if (t != null && t >= 0 && (res == null || v3_len(D, t) < dist)) {
+		if (t != null && t >= 0 && (res == null || v3_len(v3_scale(D, t)) < dist)) { //TODO: check whether it's actually v3_scale
 			let pos = v3_add(ray.p1, v3_scale(D, t));
 			let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
 			res = new RtIntersection(pos, normal, ray, cylinder);
@@ -2114,7 +2105,7 @@
 
 	function spherical_map(point, sphere) {
 		point = v3_add(point, v3_sub(v3(), sphere.pos));
-		let theta = Math.atan(point.x, point.z);
+		let theta = Math.atan2(point.x, point.z);
 		let radius = v3_len(point);
 		let phi = Math.acos(point.y / radius);
 		let raw_u = theta / (2 * Math.PI);
@@ -2381,6 +2372,7 @@
 			}
 		}
 		if (do_draw && intersection != null) {
+			//console.log('drawing pixel');
 			let mapped_point = map_point_to_physical(camera, intersection.ray.p2, htmlcanvas.width, htmlcanvas.height);
 			let light_color = compute_lighting(intersection);
 			let specular_coefficient = 0.7;
