@@ -42,17 +42,19 @@ OTHERLIBS = -Llibft/ -lft -lm
 
 ifeq ($(OS), Darwin)
 MINILIBX = -Lminilibx_opengl_20191021/ -lmlx -framework OpenGL -framework Appkit
+MLX_FOLDER = minilibx_opengl_20191021
 endif
 
 ifeq ($(OS), Linux)
 MINILIBX = -Lminilibx-linux/ -lmlx -lX11 -lXext
+MLX_FOLDER = minilibx-linux
 endif
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(INCLUDES)
 	make -C libft/
-	make -C minilibx-linux/
+	make -C $(MLX_FOLDER)
 	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
