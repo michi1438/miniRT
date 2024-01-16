@@ -24,13 +24,16 @@ int	same_side_of_plane(t_plane plane, t_v A, t_v B)
 
 static t_matrix3d	get_rot_matrix(t_v v)
 {
-	t_matrix3d 	rot_matrix_x;
-	t_matrix3d 	rot_matrix_y;
-	t_matrix3d 	rot_matrix_z;
+	t_matrix3d	rot_matrix_x;
+	t_matrix3d	rot_matrix_y;
+	t_matrix3d	rot_matrix_z;
 
-	rot_matrix_x = matrix3d_c(v3(1, 0, 0),v3(0, cos(v.x), sin(v.x)),v3(0, -sin(v.x), cos(v.x)));
-	rot_matrix_y = matrix3d_c(v3(cos(v.y), 0, -sin(v.y)),v3(0, 1, 0),v3(sin(v.y), 0, cos(v.y)));
-	rot_matrix_z = matrix3d_c(v3(cos(v.z), sin(v.z), 0),v3(-sin(v.z), cos(v.z), 0),v3(0, 0, 1));
+	rot_matrix_x = matrix3d_c(v3(1, 0, 0), v3(0, cos(v.x), sin(v.x)),
+			v3(0, -sin(v.x), cos(v.x)));
+	rot_matrix_y = matrix3d_c(v3(cos(v.y), 0, -sin(v.y)), v3(0, 1, 0),
+			v3(sin(v.y), 0, cos(v.y)));
+	rot_matrix_z = matrix3d_c(v3(cos(v.z), sin(v.z), 0),
+			v3(-sin(v.z), cos(v.z), 0), v3(0, 0, 1));
 	return (matrix_mult(rot_matrix_x, matrix_mult(rot_matrix_y, rot_matrix_z)));
 }
 

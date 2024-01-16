@@ -19,23 +19,24 @@ t_v	project_point_onto_plane(t_v point, t_plane plane)
 
 	dist = signed_point_plane_dist(point, plane);
 	n = v3_scale(plane_normal(plane), dist);
-	if (dist > 0) {
+	if (dist > 0)
 		return (v3_sub(point, n));
-	} else {
+	else
 		return (v3_add(point, n));
-	}
 }
 
 /* Multiplying a 3D matrix with a 3D vector (M x V) */
 t_v	matrix_mult_vec(t_matrix3d matrix, t_v v)
 {
-	return (v3_add(v3_scale(matrix.v1, v.x), v3_add(v3_scale(matrix.v2, v.y), v3_scale(matrix.v3, v.z))));
+	return (v3_add(v3_scale(matrix.v1, v.x), v3_add(v3_scale(matrix.v2, v.y),
+				v3_scale(matrix.v3, v.z))));
 }
 
 /* Multiplying each term of a 3D matrix by a scalar */
 t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar)
 {
-	return (matrix3d_c(v3_scale(matrix.v1, scalar), v3_scale(matrix.v2, scalar), v3_scale(matrix.v3, scalar)));
+	return (matrix3d_c(v3_scale(matrix.v1, scalar), v3_scale(matrix.v2, scalar),
+			v3_scale(matrix.v3, scalar)));
 }
 
 /* Multiplying two 3D matrices */

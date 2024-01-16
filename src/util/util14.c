@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util11.c                                            :+:      :+:    :+:   */
+/*   util11.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -58,7 +58,8 @@ void	draw_sphere_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 		j = 0;
 		while (j < 4)
 		{
-			connect_points(scrn, mappings[i * 4 + j], mappings[i * 4 + j + 1], item);
+			connect_points(scrn, mappings[i * 4 + j],
+				mappings[i * 4 + j + 1], item);
 			j ++;
 		}
 		i ++;
@@ -75,18 +76,21 @@ void	draw_cylinder_mappings(t_scData *scrn, t_v mappings[34], t_item item)
 		connect_points(scrn, mappings[i], mappings[i + 1], item);
 		i ++;
 	}
-	connect_points(scrn, mappings[item.vertices_len / 2 - 1], mappings[0], item);
+	connect_points(scrn, mappings[item.vertices_len / 2 - 1],
+		mappings[0], item);
 	i = item.vertices_len / 2;
 	while (i < item.vertices_len - 1)
 	{
 		connect_points(scrn, mappings[i], mappings[i + 1], item);
 		i ++;
 	}
-	connect_points(scrn, mappings[item.vertices_len - 1], mappings[item.vertices_len / 2], item);
+	connect_points(scrn, mappings[item.vertices_len - 1],
+		mappings[item.vertices_len / 2], item);
 	i = 0;
 	while (i < item.vertices_len / 2)
 	{
-		connect_points(scrn, mappings[i], mappings[i + item.vertices_len / 2], item);
+		connect_points(scrn, mappings[i],
+			mappings[i + item.vertices_len / 2], item);
 		i ++;
 	}
 }

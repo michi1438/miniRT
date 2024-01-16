@@ -424,8 +424,8 @@ t_v	project_point(t_v point, t_camera camera);
 
 // CAMERA.C
 t_camera	camera_c(t_v pos, float eye_canv_dist, float fov);
-t_v	camera_get_AC(t_camera camera);
-t_v	camera_get_AB(t_camera camera);
+t_v	camera_get_ac(t_camera camera);
+t_v	camera_get_ab(t_camera camera);
 t_plane	camera_get_canvas_plane(t_camera camera);
 t_v	camera_get_center(t_camera camera);
 
@@ -436,7 +436,7 @@ void	camera_move(t_camera *camera, enum e_Direction direction, float amount);
 
 // CAMERA3.C
 t_v	get_point_canvas_rel(t_camera camera, t_v p);
-t_v	camera_get_D(t_camera camera);
+t_v	camera_get_d(t_camera camera);
 
 // ITEM.C
 t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color);
@@ -565,7 +565,7 @@ t_plane	get_intersection_plane(t_intersection intr);
 
 // UTIL25.C
 float	new_image_height(t_image *img, float new_width);
-t_v	**getPixelsFromImage(t_image img, float target_width);
+t_v	**get_pixels_from_image(t_image img, float target_width);
 void	free_pixel_cache(t_v **cache);
 t_v3_tuple	tuple(t_v v1, t_v v2);
 
@@ -577,5 +577,14 @@ void	cast_ray_for_screen_coords(t_rtdata data, float x, float y);
 
 // UTIL27.C
 void	rotate_to_normal(t_item *item);
+
+// UTIL28.C
+t_line	gen_single_ray(t_camera camera, t_terms ts, double i, double j);
+void	intersect_ray_cube2(t_terms *ts, t_line ray, t_v cube_squares[6][4], int i);
+void	get_intersection_plane2(t_plane *nearest_plane, t_v sq[6][4], int i, t_terms *ts);
+void	cast_ray2(t_terms ts, t_rtdata data);
+
+// UTIL29.C
+double	get_resolution();
 
 #endif // RT_HEAD_H

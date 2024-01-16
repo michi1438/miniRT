@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util11.c                                            :+:      :+:    :+:   */
+/*   util11.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -22,7 +22,8 @@ t_v	color_from_int(int color)
 	return (res);
 }
 
-/* scale.x: radius ; scale.y: amount of vertices around axis y ; scale.z: amount of vertices around axis z */
+/* scale.x: radius ; scale.y: amount of vertices around axis y ;
+ * scale.z: amount of vertices around axis z */
 /* scale.y and scale.z are hardcoded to 8 and 4 */
 void	sphere_vertices(t_v pos, t_v scale, t_item *it)
 {
@@ -37,7 +38,10 @@ void	sphere_vertices(t_v pos, t_v scale, t_item *it)
 		j = 1;
 		while (j <= 4)
 		{
-			it->vertices[(i - 1) * 4 + (j - 1)] = rotate_point(rotate_point(top_point, v3(0, 0, j * M_PI / (4 + 1)), pos), v3(0, i * M_PI / (8 / 2), 0), pos);
+			it->vertices[(i - 1) * 4 + (j - 1)] = rotate_point(
+					rotate_point(top_point,
+						v3(0, 0, j * M_PI / (4 + 1)), pos),
+					v3(0, i * M_PI / (8 / 2), 0), pos);
 			j ++;
 		}
 		i ++;
@@ -50,23 +54,35 @@ void	sphere_vertices(t_v pos, t_v scale, t_item *it)
 void	pyramid_vertices(t_v pos, t_v scale, t_item *it)
 {
 	it->vertices[0] = v3_add(pos, v3(0, scale.y / 2, 0));
-	it->vertices[1] = v3_add(pos,v3_add(v3(-scale.x / 2, 0, 0),v3_add(v3(0, -scale.y / 2, 0),v3(0, 0, -scale.z / 2))));
-	it->vertices[2] = v3_add(pos,v3_add(v3(scale.x / 2, 0 ,0),v3_add(v3(0, -scale.y / 2, 0),v3(0, 0, -scale.z / 2))));
-	it->vertices[3] = v3_add(pos,v3_add(v3(scale.x / 2, 0, 0),v3_add(v3(0, -scale.y / 2, 0),v3(0, 0, scale.z / 2))));
-	it->vertices[4] = v3_add(pos,v3_add(v3(-scale.x / 2, 0, 0),v3_add(v3(0, -scale.y / 2, 0),v3(0, 0, scale.z / 2))));
+	it->vertices[1] = v3_add(pos, v3_add(v3(-scale.x / 2, 0, 0),
+				v3_add(v3(0, -scale.y / 2, 0), v3(0, 0, -scale.z / 2))));
+	it->vertices[2] = v3_add(pos, v3_add(v3(scale.x / 2, 0, 0),
+				v3_add(v3(0, -scale.y / 2, 0), v3(0, 0, -scale.z / 2))));
+	it->vertices[3] = v3_add(pos, v3_add(v3(scale.x / 2, 0, 0),
+				v3_add(v3(0, -scale.y / 2, 0), v3(0, 0, scale.z / 2))));
+	it->vertices[4] = v3_add(pos, v3_add(v3(-scale.x / 2, 0, 0),
+				v3_add(v3(0, -scale.y / 2, 0), v3(0, 0, scale.z / 2))));
 	it->vertices_len = 5;
 }
 
 void	cube_vertices(t_v pos, t_v scale, t_item *it)
 {
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, -scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, -scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, scale.z / 2),v3_add(v3(0, scale.y / 2, 0),v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, scale.z / 2),v3_add(v3(0, -scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, -scale.z / 2),v3_add(v3(0, -scale.y / 2, 0),v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, -scale.z / 2),v3_add(v3(0, -scale.y / 2, 0),v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos,v3_add(v3(0, 0, scale.z / 2),v3_add(v3(0, -scale.y / 2, 0),v3(scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+				v3_add(v3(0, scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+				v3_add(v3(0, scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+				v3_add(v3(0, scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+				v3_add(v3(0, scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+				v3_add(v3(0, -scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+				v3_add(v3(0, -scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+				v3_add(v3(0, -scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
+	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+				v3_add(v3(0, -scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
 	it->vertices_len = 8;
 }
 
@@ -81,14 +97,16 @@ void	cylinder_vertices(t_v pos, t_v scale, t_item *it)
 	i = 0;
 	while (i < 10)
 	{
-		it->vertices[i] = rotate_point(first,v3(0, i * M_PI / (10 / 2), 0),pos);
+		it->vertices[i] = rotate_point(first, v3(0,
+					i * M_PI / (10 / 2), 0), pos);
 		i ++;
 	}
 	second = v3_add(v3_add(pos, v3(0, scale.y / 2, 0)), v3(scale.x / 2, 0, 0));
 	i = 10;
 	while (i - 10 < 10)
 	{
-		it->vertices[i] = rotate_point(second,v3(0, (i - 10) * M_PI / (10 /2), 0),pos);
+		it->vertices[i] = rotate_point(second, v3(0,
+					(i - 10) * M_PI / (10 / 2), 0), pos);
 		i ++;
 	}
 	it->vertices_len = 20;

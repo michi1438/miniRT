@@ -17,18 +17,18 @@ float	new_image_height(t_image *img, float new_width)
 	return (img->height / (img->width / new_width));
 }
 
-t_v	**getPixelsFromImage(t_image img, float target_width)
+// TODO: resize the image and return new alloced one
+t_v	**get_pixels_from_image(t_image img, float target_width)
 {
 	(void) img;
 	(void) target_width;
-	// TODO: resize the image and return new alloced one
 	return (NULL);
 }
 
+// TODO: free cache
 void	free_pixel_cache(t_v **cache)
 {
 	(void) cache;
-	// TODO: free cache
 }
 
 t_v3_tuple	tuple(t_v v1, t_v v2)
@@ -40,7 +40,7 @@ t_v3_tuple	tuple(t_v v1, t_v v2)
 	return (res);
 }
 
-t_line line_c(t_v p1, t_v p2)
+t_line	line_c(t_v p1, t_v p2)
 {
 	t_line	line;
 

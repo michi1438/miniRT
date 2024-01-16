@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util11.c                                            :+:      :+:    :+:   */
+/*   util11.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -34,9 +34,8 @@ void	rotate_item(t_item *it, t_v rot)
 {
 	int	i;
 
-	if (it->type == Plane) {
+	if (it->type == Plane)
 		return ;
-	}
 	i = 0;
 	while (i < it->vertices_len)
 	{
@@ -46,11 +45,8 @@ void	rotate_item(t_item *it, t_v rot)
 	it->z_ref_point = rotate_point(it->z_ref_point, rot, it->pos);
 }
 
-void	scale_item(t_item *item, t_v scale)
-{
-	(void) item;
-	(void) scale;
-	/*vec	rot_backup;
+/*
+ vec	rot_backup;
 	t_item	it;
 
 	it = *item;
@@ -58,8 +54,13 @@ void	scale_item(t_item *item, t_v scale)
 	rotate_item(item, v3_invert(item.rot));
 	item.scale = v3(scale.x, scale.y, scale.z);
 	item.vertices = item.vertex_func(item.pos, item.scale);
-	rotate_item(item, rot_backup);*/
+	rotate_item(item, rot_backup);
 	// optional TODO
+ * */
+void	scale_item(t_item *item, t_v scale)
+{
+	(void) item;
+	(void) scale;
 }
 
 void	outline_item(t_rtdata data, t_item item)
@@ -74,7 +75,9 @@ void	outline_item(t_rtdata data, t_item item)
 	i = 0;
 	while (i < item.vertices_len)
 	{
-		mappings[i] = map_point_to_physical(data.camera, project_point(item.vertices[i], data.camera), S_WIDTH, S_HEIGHT);
+		mappings[i] = map_point_to_physical(data.camera,
+				project_point(item.vertices[i], data.camera),
+				S_WIDTH, S_HEIGHT);
 		i ++;
 	}
 	draw_mappings(data, item, mappings);

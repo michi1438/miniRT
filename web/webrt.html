@@ -47,7 +47,7 @@
 			this.pixels;
 			this.img.parentRtImage = this;
 			this.img.onload = function () {
-				this.parentRtImage.pixels = getPixelsFromImage(this.parentRtImage.img, this.parentRtImage.target_width);
+				this.parentRtImage.pixels = get_pixels_from_image(this.parentRtImage.img, this.parentRtImage.target_width);
 			}
 		}
 	}
@@ -73,7 +73,7 @@
 		return (img.height / (img.width / new_width));
 	}
 	
-	function getPixelsFromImage(imgElement, target_width) {
+	function get_pixels_from_image(imgElement, target_width) {
 		// Create a canvas element
 		let canvas = document.createElement('canvas');
 		let context = canvas.getContext('2d');
@@ -2200,7 +2200,7 @@
 				new_pixels = int.item.pixel_cache;
 			} else {
 				int.item.cache_width = int.item.image.img.width;
-				new_pixels = getPixelsFromImage(int.item.image.img, int.item.image.img.width);
+				new_pixels = get_pixels_from_image(int.item.image.img, int.item.image.img.width);
 				int.item.pixel_cache = new_pixels;
 			}
 			let coords = cartesian_to_sphere(int.pos, int.item);

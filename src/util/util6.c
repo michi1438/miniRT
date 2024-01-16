@@ -33,37 +33,39 @@ t_intersection	intersection(t_v pos, t_v normal, t_line ray, t_item *item)
 	return (res);
 }
 
-t_v	map_point_to_physical(t_camera camera, t_v point, float physical_width, float physical_height)
+t_v	map_point_to_physical(t_camera camera, t_v point,
+				float physical_width, float physical_height)
 {
 	float	x_ratio;
 	float	y_ratio;
 	t_v		rel;
 
-	if (v3_is_null(point)) {
+	if (v3_is_null(point))
 		return (v3_null());
-	}
 	x_ratio = physical_width / camera.canvas_width;
 	y_ratio = physical_height / camera.canvas_height;
 	rel = get_point_canvas_rel(camera, point);
 	return (v3(rel.x * x_ratio, rel.y * y_ratio, 0));
 }
 
-t_v	map_physical_to_camera(t_camera camera, t_v point, float physical_width, float physical_height)
+t_v	map_physical_to_camera(t_camera camera, t_v point,
+				float physical_width, float physical_height)
 {
 	float	x_ratio;
 	float	y_ratio;
 	float	new_x;
 	float	new_y;
 
-	if (v3_is_null(point)) {
+	if (v3_is_null(point))
 		return (v3_null());
-	}
 	x_ratio = camera.canvas_width / physical_width;
 	y_ratio = camera.canvas_height / physical_height;
 	point.x *= x_ratio;
 	point.y *= y_ratio;
-	new_x = v3_add(camera.A, v3_scale(v3_norm(camera_get_AB(camera)), point.x)).x;
-	new_y = v3_add(camera.A, v3_scale(v3_norm(camera_get_AC(camera)), point.y)).y;
+	new_x = v3_add(camera.A,
+			v3_scale(v3_norm(camera_get_ab(camera)), point.x)).x;
+	new_y = v3_add(camera.A,
+			v3_scale(v3_norm(camera_get_ac(camera)), point.y)).y;
 	return (v3(new_x, new_y, camera.A.z));
 }
 

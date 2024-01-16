@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util11.c                                            :+:      :+:    :+:   */
+/*   util11.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -34,28 +34,28 @@ void	fill_screen(t_scData *scrn, t_v color)
 
 void	draw_segment(t_rtdata data, t_v p1, t_v p2, t_v color)
 {
-	p1 = map_point_to_physical(data.camera, project_point(p1, data.camera), S_WIDTH, S_HEIGHT);
-	if (v3_is_null(p1)) {
+	p1 = map_point_to_physical(data.camera,
+			project_point(p1, data.camera), S_WIDTH, S_HEIGHT);
+	if (v3_is_null(p1))
 		return ;
-	}
-	p2 = map_point_to_physical(data.camera, project_point(p2, data.camera), S_WIDTH, S_HEIGHT);
-	if (v3_is_null(p2)) {
+	p2 = map_point_to_physical(data.camera, project_point(p2, data.camera),
+			S_WIDTH, S_HEIGHT);
+	if (v3_is_null(p2))
 		return ;
-	}
 	draw_vect(data.scrn, p1, color);
 	draw_vect(data.scrn, p2, color);
 	draw_line(data.scrn, p1, p2, color);
 }
 
+/* TODO? */
 void	add_item(t_item item)
 {
 	(void) item;
-	//items.push(item); TODO
 }
 
 void	animate(t_rtdata data)
 {
-	t_list	*list;
+	t_list			*list;
 	static double	iter;
 
 	list = data.items;
@@ -85,5 +85,6 @@ void	draw(t_rtdata data)
 		outline_item(data, *((t_item *)(list->content)));
 		list = list->next;
 	}
-	mlx_put_image_to_window(data.scrn->mlx, data.scrn->win, data.scrn->img, 0, 0);
+	mlx_put_image_to_window(data.scrn->mlx, data.scrn->win,
+		data.scrn->img, 0, 0);
 }

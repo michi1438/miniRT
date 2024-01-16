@@ -14,31 +14,32 @@
 
 static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intersection intr)
 {
-	t_v	L;
+	t_v		l;
 	t_terms	ts;
-	t_v		R;
+	t_v		r;
 	float	r_dot_v;
 
 	ts.inter2 = cast_ray(data, line_c(light.pos, intr.pos), 0);
 	if (!int_is_null(ts.inter2) && ts.inter2.item->id != intr.item->id)
 	{
-		if (v3_len(v3_sub(ts.inter2.pos, intr.pos)) < v3_len(v3_sub(intr.pos, light.pos))) {
+		if (v3_len(v3_sub(ts.inter2.pos, intr.pos))
+			< v3_len(v3_sub(intr.pos, light.pos)))
 			return ;
-		}
 	}
-	L = v3_sub(light.pos, intr.pos);
-	R = v3_sub(v3_scale(intr.normal, 2 * v3_dot(intr.normal, L)), L);
+	l = v3_sub(light.pos, intr.pos);
+	r = v3_sub(v3_scale(intr.normal, 2 * v3_dot(intr.normal, l)), l);
 	ts.V = v3_invert(v3_norm(v3_sub(intr.ray.p2, intr.ray.p1)));
-	r_dot_v = v3_dot(R, ts.V);
-	if (r_dot_v > 0) {
-		*res = add_colors(*res, modify_color_intensity(light.color, powf(r_dot_v / (v3_len(R) * v3_len(ts.V)), intr.item->specular)));
-	}
+	r_dot_v = v3_dot(r, ts.V);
+	if (r_dot_v > 0)
+		*res = add_colors(*res, modify_color_intensity(light.color,
+					powf(r_dot_v / (v3_len(r) * v3_len(ts.V)),
+						intr.item->specular)));
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
 t_v	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
 {
-	t_v	res;
+	t_v		res;
 	t_list	*list;
 
 	if (intr.item->specular == -1)
@@ -63,11 +64,10 @@ t_v	uv_at_chekers(t_v color1, t_v color2, t_v checkers_wh, t_v u_v)
 
 	u2 = floorf(u_v.x * checkers_wh.x);
 	v2 = floorf(u_v.y * checkers_wh.y);
-	if (fmodf((u2 + v2), 2) == 0) {
+	if (fmodf((u2 + v2), 2) == 0)
 		return (color1);
-	} else {
+	else
 		return (color2);
-	}
 }
 
 t_v	uv_at_image(t_image *rt_image, float u, float v)

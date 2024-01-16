@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util11.c                                            :+:      :+:    :+:   */
+/*   util11.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,11 +12,6 @@
 
 #include "../rt_head.h"
 
-/*
- function rgbToHexV3(v) {
-		return ("#" + (1 << 24 | v.x << 16 | v.y << 8 | v.z).toString(16).slice(1));
-	}
- * */
 int	vec_color_to_int(t_v color)
 {
 	return (((int)color.x << 16) | ((int)color.y << 8) | (int)color.z);
@@ -52,9 +47,8 @@ void	draw_vect(t_scData *scrn, t_v v, t_v color)
 	float	radius;
 
 	radius = 5;
-	if (v3_is_null(v)) {
+	if (v3_is_null(v))
 		return ;
-	}
 	v.x -= radius / 2;
 	v.y -= radius / 2;
 	draw_square(scrn, v, radius, color);

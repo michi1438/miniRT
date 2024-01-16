@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util10.c                                            :+:      :+:    :+:   */
+/*   util10.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -19,18 +19,20 @@ t_matrix3d	get_identity_matrix(void)
 
 t_v	get_cylinder_top(t_item cylinder)
 {
-	t_v	V;
+	t_v	v;
 
-	V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices_len/2]));
-	return (v3_add(cylinder.pos, v3_scale(V, -cylinder.scale.y / 2)));
+	v = v3_norm(v3_sub(cylinder.vertices[0],
+				cylinder.vertices[cylinder.vertices_len / 2]));
+	return (v3_add(cylinder.pos, v3_scale(v, -cylinder.scale.y / 2)));
 }
 
 t_v	get_cylinder_bottom(t_item cylinder)
 {
-	t_v	V;
+	t_v	v;
 
-	V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices_len/2]));
-	return(v3_add(cylinder.pos, v3_scale(V, cylinder.scale.y / 2)));
+	v = v3_norm(v3_sub(cylinder.vertices[0],
+				cylinder.vertices[cylinder.vertices_len / 2]));
+	return (v3_add(cylinder.pos, v3_scale(v, cylinder.scale.y / 2)));
 }
 
 t_v	intersect(t_line line, t_plane plane)
@@ -41,10 +43,10 @@ t_v	intersect(t_line line, t_plane plane)
 	float	divisor;
 	float	dividend;
 
-	n = v3_norm(v3_cross(v3_sub(plane.p3, plane.p1), v3_sub(plane.p2, plane.p1)));
+	n = v3_norm(v3_cross(v3_sub(plane.p3, plane.p1),
+				v3_sub(plane.p2, plane.p1)));
 	d = -(n.x * plane.p1.x + n.y * plane.p1.y + n.z * plane.p1.z);
 	lv = v3_sub(line.p2, line.p1);
-
 	divisor = n.x * lv.x + n.y * lv.y + n.z * lv.z;
 	if (divisor == 0)
 	{
@@ -52,9 +54,7 @@ t_v	intersect(t_line line, t_plane plane)
 	}
 	dividend = -(n.x * line.p1.x + n.y * line.p1.y + n.z * line.p1.z + d);
 	if (dividend == 0)
-	{
 		return (v3_null());
-	}
 	return (v3_add(line.p1, v3_scale(lv, dividend / divisor)));
 }
 

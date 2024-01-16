@@ -40,14 +40,13 @@ t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
 		terms.t1 = (-terms.b + sqrt(terms.discriminant)) / (2 * terms.a);
 		terms.t2 = (-terms.b - sqrt(terms.discriminant)) / (2 * terms.a);
 		terms.point = v3_null();
-		if (terms.t1 >= 0 && terms.t1 < terms.t2) {
+		if (terms.t1 >= 0 && terms.t1 < terms.t2)
 			terms.point = v3_add(ray.p1, v3_scale(terms.D, terms.t1));
-		} else if (terms.t2 >= 0) {
+		else if (terms.t2 >= 0)
 			terms.point = v3_add(ray.p1, v3_scale(terms.D, terms.t2));
-		}
-		if (!v3_is_null(terms.point)) {
-			return (int_create(terms.point, v3_norm(v3_sub(terms.point, sphere->pos)),  ray, sphere));
-		}
+		if (!v3_is_null(terms.point))
+			return (int_create(terms.point,
+					v3_norm(v3_sub(terms.point, sphere->pos)), ray, sphere));
 	}
 	return (int_null());
 }
@@ -59,21 +58,16 @@ int	point_inside_square(t_vecfour sqr, t_v point)
 
 	plane = plane_c(sqr.p1, sqr.p2, sqr.p3);
 	norm = plane_normal(plane);
-	if (fabs(v3_dot(v3_sub(point, sqr.p1), norm)) >= TOLERANCE) {
+	if (fabs(v3_dot(v3_sub(point, sqr.p1), norm)) >= TOLERANCE)
 		return (0);
-	}
-	if (!same_side_of_line(line_c(sqr.p1, sqr.p2), sqr.p3, point)) {
+	if (!same_side_of_line(line_c(sqr.p1, sqr.p2), sqr.p3, point))
 		return (0);
-	}
-	if (!same_side_of_line(line_c(sqr.p2, sqr.p3), sqr.p1, point)) {
+	if (!same_side_of_line(line_c(sqr.p2, sqr.p3), sqr.p1, point))
 		return (0);
-	}
-	if (!same_side_of_line(line_c(sqr.p3, sqr.p4), sqr.p1, point)) {
+	if (!same_side_of_line(line_c(sqr.p3, sqr.p4), sqr.p1, point))
 		return (0);
-	}
-	if (!same_side_of_line(line_c(sqr.p4, sqr.p1), sqr.p3, point)) {
+	if (!same_side_of_line(line_c(sqr.p4, sqr.p1), sqr.p3, point))
 		return (0);
-	}
 	return (1);
 }
 
@@ -118,18 +112,12 @@ t_intersection	intersect_ray_cube(t_line ray, t_item *cube)
 	i = 0;
 	while (i < 6)
 	{
-		plane = plane_c(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2]);
+		plane = plane_c(cube_squares[i][0],
+				cube_squares[i][1], cube_squares[i][2]);
 		ts.inter2 = intersect_ray_plane(ray, plane);
 		if (!int_is_null(ts.inter2))
 		{
-			if (point_inside_square(get_vecfour(cube_squares[i][0], cube_squares[i][1], cube_squares[i][2], cube_squares[i][3]), ts.inter2.pos))
-			{
-				ts.dist_ = v3_len(v3_sub(ts.inter2.pos, ray.p1));
-				if (int_is_null(ts.inter) || ts.dist_ < ts.dist) {
-					ts.inter = ts.inter2;
-					ts.dist = ts.dist_;
-				}
-			}
+			intersect_ray_cube2(&ts, ray, cube_squares, i);
 		}
 		i ++;
 	}

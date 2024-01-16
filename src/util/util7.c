@@ -29,7 +29,7 @@ float	v3_len(t_v a)
 
 t_v	v3_norm(t_v v)
 {
-	return (v3_scale(v, 1/v3_len(v)));
+	return (v3_scale(v, 1 / v3_len(v)));
 }
 
 float	v3_norm_squared(t_v v)

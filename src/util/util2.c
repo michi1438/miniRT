@@ -23,7 +23,8 @@ t_v	modify_color_intensity(t_v color, float scalar)
 	return (res);
 }
 
-/* Takes an intensity from 0 to 1 and returns a corresponding v3 white light color */
+/* Takes an intensity from 0 to 1 and returns a
+ * corresponding v3 white light color */
 t_v	intensity_to_color(float intensity)
 {
 	float	mult;
@@ -49,5 +50,6 @@ t_plane	plane_c(t_v p1, t_v p2, t_v p3)
 
 t_v	plane_normal(t_plane plane)
 {
-	return(v3_norm(v3_cross(v3_sub(plane.p2, plane.p1), v3_sub(plane.p3, plane.p1))));
+	return (v3_norm(v3_cross(v3_sub(plane.p2, plane.p1),
+				v3_sub(plane.p3, plane.p1))));
 }

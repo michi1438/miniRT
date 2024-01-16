@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-static int	get_id()
+static int	get_id(void)
 {
 	static int	starting_id;
 
@@ -32,11 +32,11 @@ static void	set_vertices(t_item *item)
 		pyramid_vertices(item->pos, item->scale, item);
 	if (item->type == Plane)
 		return ;
-	//item->z_ref_point = v3_add(v3(0, 1, 0), item->pos);
 	rotate_to_normal(item);
 }
 
-t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color)
+t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale,
+		t_v3_tuple axe_color)
 {
 	t_item	*res;
 
@@ -65,16 +65,18 @@ t_v	item_get_axis(t_item item)
 
 void	item_draw_axes(t_rtdata data, t_item item)
 {
-	t_v	z_axis;
+	t_v		z_axis;
 	t_plane	plane;
-	t_v	y_axis;
-	t_v	x_axis;
-	
+	t_v		y_axis;
+	t_v		x_axis;
+
 	z_axis = v3_scale(item_get_axis(item), 0.5);
 	plane = plane_from_normal(item.pos, z_axis);
 	y_axis = v3_scale(v3_norm(v3_sub(plane.p2, item.pos)), 0.5);
 	x_axis = v3_scale(v3_norm(v3_sub(plane.p3, item.pos)), 0.5);
-	draw_segment(data, item.pos, v3_add(item.pos, z_axis), color_from_int(BLUE));
-	draw_segment(data, item.pos, v3_add(item.pos, y_axis), color_from_int(GREEN));
+	draw_segment(data, item.pos, v3_add(item.pos, z_axis),
+		color_from_int(BLUE));
+	draw_segment(data, item.pos, v3_add(item.pos, y_axis),
+		color_from_int(GREEN));
 	draw_segment(data, item.pos, v3_add(item.pos, x_axis), color_from_int(RED));
 }

@@ -12,12 +12,6 @@
 
 #include "../rt_head.h"
 
-int	colinear_check(t_v v1)
-{
-	return (equals_with_tolerance(v1.x, 0) &&
-		equals_with_tolerance(v1.y, 0) && equals_with_tolerance(v1.z, 0));
-}
-
 /* https://math.stackexchange.com/a/64528 */
 t_plane	plane_from_normal(t_v point, t_v normal)
 {
@@ -25,13 +19,13 @@ t_plane	plane_from_normal(t_v point, t_v normal)
 	t_v	u;
 	t_v	v;
 
-	if (fabs(normal.x) <= fabs(normal.y) && fabs(normal.x) <= fabs(normal.z)) {
+	if (fabs(normal.x) <= fabs(normal.y) && fabs(normal.x) <= fabs(normal.z))
 		w = v3(1, 0, 0);
-	} else if (fabs(normal.y) <= fabs(normal.x) && fabs(normal.y) <= fabs(normal.z)) {
+	else if (fabs(normal.y) <= fabs(normal.x)
+		&& fabs(normal.y) <= fabs(normal.z))
 		w = v3(0, 1, 0);
-	} else {
+	else
 		w = v3(0, 0, 1);
-	}
 	u = v3_cross(w, normal);
 	v = v3_cross(normal, u);
 	return (plane_c(point, v3_add(point, u), v3_add(point, v)));

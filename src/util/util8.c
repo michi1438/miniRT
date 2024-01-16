@@ -14,7 +14,8 @@
 
 t_v	v3_cross(t_v a, t_v b)
 {
-	return (v3(a.y * b.z - a.z * b.y,a.z * b.x - a.x * b.z,a.x * b.y - a.y * b.x));
+	return (v3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z,
+			a.x * b.y - a.y * b.x));
 }
 
 float	v3_dot(t_v a, t_v b)
@@ -35,7 +36,8 @@ t_v	project_point_onto_line(t_line line, t_v point)
 	v2 = v3(line.p2.x, line.p2.y, line.p2.z);
 	v3_ = v3(point.x, point.y, point.z);
 	p = v3(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-	u = ((v3_.x - v1.x) * p.x + (v3_.y - v1.y) * p.y + (v3_.z - v1.z) * p.z) / (p.x * p.x + p.y * p.y + p.z * p.z);
+	u = ((v3_.x - v1.x) * p.x + (v3_.y - v1.y) * p.y + (v3_.z - v1.z) * p.z)
+		/ (p.x * p.x + p.y * p.y + p.z * p.z);
 	return (v3(v1.x + u * p.x, v1.y + u * p.y, v1.z + u * p.z));
 }
 

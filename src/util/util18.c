@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util18.c                                            :+:      :+:    :+:   */
+/*   util18.c                                            :+:      :+:    :+:  */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,8 @@
 
 #include "../rt_head.h"
 
-//make a function that takes some params and returns an intersection struct based on them
+//make a function that takes some params and
+// returns an intersection struct based on them
 
 t_intersection	int_create(t_v pos, t_v norm, t_line ray, t_item *item)
 {
@@ -43,24 +44,21 @@ int	point_inside_triangle(t_v s1, t_v s2, t_v s3, t_v point)
 
 	plane = plane_c(s1, s2, s3);
 	norm = plane_normal(plane);
-	if (fabs(v3_dot(v3_sub(point, s1), norm)) >= TOLERANCE) {
+	if (fabs(v3_dot(v3_sub(point, s1), norm)) >= TOLERANCE)
 		return (0);
-	}
-	if (!same_side_of_line(line_c(s1, s2), s3, point)) {
+	if (!same_side_of_line(line_c(s1, s2), s3, point))
 		return (0);
-	}
-	if (!same_side_of_line(line_c(s1, s3), s2, point)) {
+	if (!same_side_of_line(line_c(s1, s3), s2, point))
 		return (0);
-	}
-	if (!same_side_of_line(line_c(s2, s3), s1, point)) {
+	if (!same_side_of_line(line_c(s2, s3), s1, point))
 		return (0);
-	}
 	return (1);
 }
 
 t_vecfour	get_pyramid_base_square(t_item pyramid)
 {
-	return (get_vecfour(pyramid.vertices[1], pyramid.vertices[2], pyramid.vertices[3], pyramid.vertices[4]));
+	return (get_vecfour(pyramid.vertices[1],
+			pyramid.vertices[2], pyramid.vertices[3], pyramid.vertices[4]));
 }
 
 void	get_pyramid_triangles(const t_item pyramid, t_v tri_buffer[4][3])
