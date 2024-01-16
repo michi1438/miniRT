@@ -6,13 +6,13 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2024/01/15 22:54:38 by mguerga          ###   ########.fr        #
+#    Updated: 2024/01/16 17:49:21 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 OS := $(shell uname)
 
-NAME = minirt.out
+NAME = miniRT
 
 CC = gcc
 
