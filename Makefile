@@ -6,17 +6,17 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2024/01/15 18:19:43 by mguerga          ###   ########.fr        #
+#    Updated: 2024/01/16 17:49:21 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 OS := $(shell uname)
 
-NAME = minirt.out
+NAME = miniRT
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra -ggdb -O0 -fsanitize=address # -O3 #-g3 -fsanitize=leak
+CFLAGS = -Werror -Wall -Wextra -O3# -O3 #-g3 -fsanitize=leak
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c \

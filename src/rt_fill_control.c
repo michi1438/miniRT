@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 22:04:41 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/15 16:45:07 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/16 15:40:11 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ void	set_uvalue(t_elem *elem)
 	elem->type = 'U';
 	elem->specular = -1;
 	elem->is_checker = 0;
-	elem->path_to_img = NULL;
 	elem->fov = -2;
 	elem->light_ratio = -2;
 	elem->sratio = (float)S_WIDTH / S_HEIGHT;
