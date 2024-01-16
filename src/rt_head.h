@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/16 15:45:18 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/16 17:47:05 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,13 +113,6 @@ typedef struct s_v3_tuple
 	t_v	v1;
 	t_v	v2;
 }	t_v3_tuple;
-
-typedef struct s_img
-{
-	void	*img;
-	int		width;
-	int		height;
-}	t_img;
 
 typedef struct s_elem
 {
