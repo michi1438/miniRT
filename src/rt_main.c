@@ -51,30 +51,13 @@ int	main(int ac, char **av)
 	while (iter != NULL && iter->content != NULL)
 	{
 		t_elem *elem = (iter)->content;
-		if (elem->type == 's')
+		if (elem->type != 'C' && elem->type != 'L' && elem->type != 'A' && elem->type != '#')
 		{
-			t_item	*item = create_item(Sphere, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, 0, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
-			ft_lstadd_back(&items, ft_lstnew(item));
-		}
-		else if (elem->type == 'p')
-		{
-			t_item	*item = create_item(Plane, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2])), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
-			ft_lstadd_back(&items, ft_lstnew(item));
-		}
-		else if (elem->type == 'c')
-		{
-			t_item	*item = create_item(Cylinder, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, elem->height, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
-			ft_lstadd_back(&items, ft_lstnew(item));
-		}
-		else if (elem->type == 'y')
-		{
-			t_item	*item = create_item(Pyramid, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, elem->height, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
-			ft_lstadd_back(&items, ft_lstnew(item));
-		}
-		else if (elem->type == 'b')
-		{
-			t_item	*item = create_item(Cube, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, 0, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
-			ft_lstadd_back(&items, ft_lstnew(item));
+			if (!add_item(&items, elem))
+			{
+				free_items(&items);
+				/* exit */
+			}
 		}
 		iter = iter->next;
 	}

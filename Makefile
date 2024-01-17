@@ -16,7 +16,7 @@ NAME = miniRT
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra -O3# -O3 #-g3 -fsanitize=leak
+CFLAGS = -Werror -Wall -Wextra -g3 -fsanitize=address
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
 			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c \

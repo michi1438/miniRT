@@ -114,6 +114,12 @@ typedef struct s_v3_tuple
 	t_v	v2;
 }	t_v3_tuple;
 
+typedef struct s_floatint_tuple
+{
+	float	f;
+	int		i;
+}	t_floatint_tuple;
+
 typedef struct s_elem
 {
 	char	type;
@@ -393,7 +399,7 @@ float	degree_to_radian(float angle);
 // UTIL5.C
 t_v	v3_sub(t_v a, t_v b);
 t_v	v3_clone(t_v v);
-t_v	v3_null();
+t_v	v3_null(void);
 int	v3_is_null(t_v v);
 t_v	project_point(t_v point, t_camera camera);
 
@@ -414,7 +420,7 @@ t_v	get_point_canvas_rel(t_camera camera, t_v p);
 t_v	camera_get_d(t_camera camera);
 
 // ITEM.C
-t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color);
+t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color, t_floatint_tuple sp_ch);
 t_v	item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
 unsigned int	item_color_hex(t_item item);
@@ -467,7 +473,7 @@ void	draw_line_dda(t_scData *scrn, t_v p1, t_v p2, int color);
 // UTIL12.C
 void	fill_screen(t_scData *scrn, t_v color);
 void	draw_segment(t_rtdata data, t_v p1, t_v p2, t_v color);
-void	add_item(t_item item);
+int		add_item(t_list **lst, t_elem *elem);
 void	animate(t_rtdata data);
 void	draw(t_rtdata data);
 
@@ -493,7 +499,7 @@ void	outline_item(t_rtdata data, t_item item);
 // UTIL16.C
 void	draw_mappings(t_rtdata data, t_item  item, t_v mappings[34]);
 t_line	*gen_rays(t_camera camera, int size, double resolution);
-t_intersection	int_null();
+t_intersection	int_null(void );
 int	int_is_null(t_intersection intersection);
 t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
 
@@ -560,6 +566,9 @@ void	get_intersection_plane2(t_plane *nearest_plane, t_v sq[6][4], int i, t_term
 void	cast_ray2(t_terms ts, t_rtdata data);
 
 // UTIL29.C
-double	get_resolution();
+double	get_resolution(void);
+t_floatint_tuple	floatint(float f, int i);
+enum e_ObjectType	get_item_type(t_elem *elem);
+void				free_items(t_list **lst);
 
 #endif // RT_HEAD_H

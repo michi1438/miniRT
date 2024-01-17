@@ -111,6 +111,7 @@ void	raytrace(t_rtdata data)
 	free(rays);
 	mlx_put_image_to_window(data.scrn->mlx,
 		data.scrn->win, data.scrn->img, 0, 0);
+	printf("done!\n");
 }
 
 void	cast_ray_for_screen_coords(t_rtdata data, float x, float y)

@@ -36,7 +36,7 @@ static void	set_vertices(t_item *item)
 }
 
 t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale,
-		t_v3_tuple axe_color)
+		t_v3_tuple axe_color, t_floatint_tuple sp_ch)
 {
 	t_item	*res;
 
@@ -48,13 +48,13 @@ t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale,
 	res->pos = pos_scale.v1;
 	res->scale = pos_scale.v2;
 	res->color = axe_color.v2;
-	res->specular = -1;
+	res->specular = sp_ch.f;
 	if (type == Sphere)
 		axe_color.v1 = v3(0, 1, 0);
 	res->z_ref_point = v3_add(axe_color.v1, pos_scale.v1);
 	res->id = get_id();
 	res->image = NULL;
-	res->is_checker = 0;
+	res->is_checker = sp_ch.i;
 	set_vertices(res);
 	return (res);
 }

@@ -69,19 +69,19 @@ void	cube_vertices(t_v pos, t_v scale, t_item *it)
 {
 	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
 				v3_add(v3(0, scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+	it->vertices[1] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
 				v3_add(v3(0, scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+	it->vertices[2] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
 				v3_add(v3(0, scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+	it->vertices[3] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
 				v3_add(v3(0, scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+	it->vertices[4] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
 				v3_add(v3(0, -scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+	it->vertices[5] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
 				v3_add(v3(0, -scale.y / 2, 0), v3(-scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
+	it->vertices[6] = v3_add(pos, v3_add(v3(0, 0, -scale.z / 2),
 				v3_add(v3(0, -scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
-	it->vertices[0] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
+	it->vertices[7] = v3_add(pos, v3_add(v3(0, 0, scale.z / 2),
 				v3_add(v3(0, -scale.y / 2, 0), v3(scale.x / 2, 0, 0))));
 	it->vertices_len = 8;
 }

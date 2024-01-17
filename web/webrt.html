@@ -1377,11 +1377,11 @@
 		item.draw_mapping_func(mappings, item);
 	}
 	
-	let cube = new Item(ObjectType.Cube, v3(0, 0, -5), v3(1, 1, 1), v3(), PINK, -1, true, null, cube_vertices, draw_cube_mappings);
+	let cube = new Item(ObjectType.Cube, v3(-2, 0, -5), v3(2, 2, 2), v3(), PINK, -1, true, null, cube_vertices, draw_cube_mappings);
 
 	let cube2 = new Item(ObjectType.Cube, v3(0, 0, -2), v3(1, 1, 1), v3(), YELLOW, -1, true, null, cube_vertices, draw_cube_mappings);
 
-	let pyramid = new Item(ObjectType.Pyramid, v3(-3, 0, -3), v3(1, 1, 1), v3(-0.45999999999999863, 1.080000000000001, 4.160000000000001), BLUE, -1, true, null, pyramid_vertices, draw_pyramid_mappings);
+	let pyramid = new Item(ObjectType.Pyramid, v3(2, 0, -5), v3(1, 2, 1), v3(), BLUE, -1, true, null, pyramid_vertices, draw_pyramid_mappings);
 
 	let sphere = new Item(ObjectType.Sphere, v3(0, 2, -4), v3(2, 8, 4), v3(), RED, 500, false, null, sphere_vertices, draw_sphere_mappings);
 
@@ -1396,13 +1396,13 @@
 
 	let bottom_plane = new Item(ObjectType.Plane, v3(0, -15, 0), v3(0, 1, 0), v3(), YELLOW, -1, false, null, null, null);
 
-	//add_item(cube);
+	add_item(cube);
 	//add_item(cube2);
 	//add_item(pyramid);
 	//add_item(sphere);
 	//add_item(sphere2);
 	//add_item(sphere3);
-	add_item(cylinder);
+	//add_item(cylinder);
 	//add_item(test_plane);
 	//add_item(bottom_plane);
 

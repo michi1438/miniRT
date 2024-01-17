@@ -28,3 +28,37 @@ double	get_resolution(void)
 	}
 	return (resolution);
 }
+
+t_floatint_tuple	floatint(float f, int i)
+{
+	t_floatint_tuple	res;
+
+	res.f = f;
+	res.i = i;
+	return (res);
+}
+
+enum e_ObjectType	get_item_type(t_elem *elem)
+{
+	if (elem->type == 's')
+		return (Sphere);
+	if (elem->type == 'p')
+		return (Plane);
+	if (elem->type == 'c')
+		return (Cylinder);
+	if (elem->type == 'y')
+		return (Pyramid);
+	if (elem->type == 'b')
+		return (Cube);
+	return (Sphere);
+}
+
+static void	ft_delnode(void *content)
+{
+	free(content);
+}
+
+void				free_items(t_list **lst)
+{
+	ft_lstclear(lst, ft_delnode);
+}

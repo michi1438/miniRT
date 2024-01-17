@@ -44,6 +44,7 @@ int	kb_mlx(int keycd, t_rtdata *data)
 	if (keycd == K_ESC)
 	{
 		mlx_destroy_window(data->scrn->mlx, data->scrn->win);
+		free_items(&data->items);
 		exit(0);
 	}
 	if (keycd == K_ENTER)
