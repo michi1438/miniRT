@@ -571,4 +571,7 @@ t_floatint_tuple	floatint(float f, int i);
 enum e_ObjectType	get_item_type(t_elem *elem);
 void				free_items(t_list **lst);
 
+// MORE_KEYS.C
+void	more_keys1(int keycd, t_rtdata *data);
+
 #endif // RT_HEAD_H
