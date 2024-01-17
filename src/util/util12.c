@@ -51,25 +51,26 @@ int	add_item(t_list **lst, t_elem *elem)
 {
 	t_list	*new_lst_item;
 	t_v		scale;
+	t_item	*item;
 
 	if (elem->type == 's')
 		scale = v3(elem->radius, 0, 0);
-	if (elem->type == 'p')
+	else if (elem->type == 'p')
 		scale = v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]);
-	if (elem->type == 'b')
+	else if (elem->type == 'b')
 		scale = v3(elem->height, elem->height, elem->height);
 	else
 		scale = v3(elem->radius, elem->height, elem->radius);
-	t_item	*item = create_item(get_item_type(elem), tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), scale), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])),
-								  floatint(elem->specular, elem->is_checker));
+	item = create_item(get_item_type(elem), tuple(v3(elem->xyz[0],
+					elem->xyz[1], elem->xyz[2]), scale), tuple(
+				v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]),
+				v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])),
+			floatint(elem->specular, elem->is_checker));
 	if (!item)
 		return (0);
 	new_lst_item = ft_lstnew(item);
 	if (!new_lst_item)
-	{
-		free(item);
-		return (0);
-	}
+		return (free(item), 0);
 	ft_lstadd_back(lst, new_lst_item);
 	return (1);
 }

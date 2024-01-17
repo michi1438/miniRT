@@ -35,7 +35,7 @@
 # define RED 0x00FF0000
 # define GREEN 0x0000FF00
 # define BLUE 0x000000FF
-# define WHITE 0x00000000
+# define WHITE 0x11111111
 
 # ifdef __linux__
 #  define K_ENTER 65293

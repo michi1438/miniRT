@@ -17,7 +17,7 @@ t_v	get_item_color_checkerboard(t_intersection intr)
 	t_v		inverse_color;
 	t_plane	nearest_plane;
 
-	inverse_color = v3_sub(color_from_int(WHITE), intr.item->color);
+	inverse_color = v3_sub(v3(255, 255, 255), intr.item->color);
 	if (intr.item->type == Plane)
 		return (checker_pixel_for_plane(tuple(intr.pos, intr.item->pos),
 				intr.item->scale, 2, tuple(inverse_color, intr.item->color)));

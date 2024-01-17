@@ -58,7 +58,7 @@ static void	ft_delnode(void *content)
 	free(content);
 }
 
-void				free_items(t_list **lst)
+void	free_items(t_list **lst)
 {
 	ft_lstclear(lst, ft_delnode);
 }
