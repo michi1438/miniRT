@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:29:13 by mguerga           #+#    #+#             */
-/*   Updated: 2023/11/02 10:16:43 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/17 12:10:32 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,11 @@
 int	main(int ac, char **av)
 {
 	t_list	*elst;
+	t_scData		scrn;
 
 	elst = scene_parsing(ac, av);
 	if (!elst)
 		return (1);
-	//put_to_screen(&elst);
-
-
-
-	t_scData		scrn;
 
 	scrn.e_list_displayed = &elst;
 	scrn.mlx = mlx_init();
@@ -68,6 +64,16 @@ int	main(int ac, char **av)
 		else if (elem->type == 'c')
 		{
 			t_item	*item = create_item(Cylinder, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, elem->height, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
+			ft_lstadd_back(&items, ft_lstnew(item));
+		}
+		else if (elem->type == 'y')
+		{
+			t_item	*item = create_item(Pyramid, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, elem->height, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
+			ft_lstadd_back(&items, ft_lstnew(item));
+		}
+		else if (elem->type == 'b')
+		{
+			t_item	*item = create_item(Cube, tuple(v3(elem->xyz[0], elem->xyz[1], elem->xyz[2]), v3(elem->radius * 2, 0, 0)), tuple(v3(elem->norm_xyz[0], elem->norm_xyz[1], elem->norm_xyz[2]), v3(elem->rgb[0], elem->rgb[1], elem->rgb[2])));
 			ft_lstadd_back(&items, ft_lstnew(item));
 		}
 		iter = iter->next;

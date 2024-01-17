@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/16 17:47:05 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/17 11:44:54 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ typedef struct s_camera
 }	t_camera;
 
 enum	e_LightType {
-	Ambient,
+Ambient,
 	Point
 };
 
