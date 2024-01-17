@@ -1,5 +1,0 @@
-src/util/util28.c:	if (object->type == Plane)
-src/util/util28.c:	else if (object->type == Sphere)
-src/util/util28.c:	else if (object->type == Cube)
-src/util/util28.c:	else if (object->type == Pyramid)
-src/util/util28.c:	else if (object->type == Cylinder)
