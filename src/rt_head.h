@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/17 11:44:54 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 12:32:54 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 # include <stdio.h>
 # include <float.h>
 # ifdef __linux__
-# include "../minilibx-linux/mlx.h"
+#  include "../minilibx-linux/mlx.h"
 # else
-# include "../minilibx_opengl_20191021/mlx.h"
+#  include "../minilibx_opengl_20191021/mlx.h"
 # endif
 # include "../libft/src_libft.h"
 # include <math.h>
@@ -148,71 +148,6 @@ typedef struct s_scData
 	t_list	**e_list_displayed;	
 }	t_scData;
 
-// MATRICES.C
-void	rt_matrix(float *ret, t_elem *cam_specs);
-
-// SCENE.C
-void	set_scene(t_scData *scrn, t_list **e_list);
-void	first_rays(t_scData *scrn, t_list **e_list);
-void	cycle_objects(int xy[2], float pscreen[3], t_elem *cam_specs, t_scData *scrn, t_list **e_list);
-int		cycle_shadow(float n_vec[3], float orig_xyz[3], t_list **e_list, float n_len);
-
-// FETCH_ELEM.C
-t_elem	*findcam(t_list **e_list);
-t_elem	*findamb(t_list **e_list);
-t_elem	*findlight(t_list **e_list);
-
-// INTERSECTING.C
-float	intersect_sp(float *normal_dir, float orig_xyz[3], t_elem *obj);
-int		solve_discriminent(float a, float b, float c, float *intersect_dist);
-
-// VEC_MATH.C
-float	dotprod(float *vec1, float *vec2);
-void	vec_substract(float *res_vec, float *vec1, float *vec2);
-void	normalize(float *xyz);
-
-// FILL_CONTROL.c
-void	set_uvalue(t_elem *elem);
-void	init_elem(t_elem *elem, char *str);
-int		add_element(t_list	**e_list, char *str);
-
-// FILL_LIGHTSNCAMERA.c
-void	fill_err(char type);
-void	fill_ambiant(t_elem *elem, char **splited);
-void	fill_camera(t_elem *elem, char **splited);
-void	fill_light(t_elem *elem, char **splited);
-
-// FILL_SHAPES.c
-void	fill_arrays(t_elem *elem, char **xyz, char **rgb, char **norm);
-void	fill_cylinder(t_elem *elem, char **split);
-void	fill_sphere(t_elem *elem, char **split);
-void	fill_plane(t_elem *elem, char **split);
-
-// FILL_SHAPES2_& COMPL.c
-void	fill_pyramid(t_elem *elem, char **split);
-void	fill_cube(t_elem *elem, char **split);
-void	fill_compl(t_elem *elem, char **split, int split_seg);
-
-// DISPLAY.C
-int		put_to_screen(t_list **e_list);
-void	mlx_pp(t_scData *img, int x, int y, int color);
-
-// SCENE_PARSING.C
-t_list 	*scene_parsing(int ac, char **av);
-t_list 	*in_scene_parsing(int fd);
-void	musthave_elem(t_list *e_list);
-
-// UTILS.C (maybe put this in libft)
-float	ft_atof(char *str);
-int		mix_color(t_elem *objects, t_list **e_list, float pscr[3]);
-float	diffused(t_elem *objects, t_elem *light, float pscreen[3], t_list **e_list);
-
-// ERR_HANDLING.C
-int		print_err(char *str);
-
-// TESTING.C
-void	print_elem(t_elem *elem);
-
 enum	e_Direction {
 	Forward,
 	Backward,
@@ -261,7 +196,7 @@ typedef struct s_camera
 }	t_camera;
 
 enum	e_LightType {
-Ambient,
+	Ambient,
 	Point
 };
 
@@ -315,8 +250,6 @@ typedef struct s_rtdata
 
 }	t_rtdata;
 
-int		kb_mlx(int keycd,  t_rtdata *data);
-
 typedef struct s_terms
 {
 	t_v				D;
@@ -352,9 +285,9 @@ typedef struct s_terms
 	float			x_dist;
 	float			y_dist;
 	float			z_dist;
-	t_v			x;
-	t_v			y;
-	t_v			z;
+	t_v				x;
+	t_v				y;
+	t_v				z;
 	t_v				light_color;
 	t_v				specular_color;
 	t_v				diffuse_color;
@@ -368,6 +301,57 @@ typedef struct s_vecfour
 	t_v	p3;
 	t_v	p4;
 }	t_vecfour;
+
+// MATRICES.C
+void	rt_matrix(float *ret, t_elem *cam_specs);
+
+// FETCH_ELEM.C
+t_elem	*findcam(t_list **e_list);
+t_elem	*findamb(t_list **e_list);
+t_elem	*findlight(t_list **e_list);
+
+// FILL_CONTROL.c
+void	set_uvalue(t_elem *elem);
+void	init_elem(t_elem *elem, char *str);
+int		init_must_have(t_elem *elem, char **splited);
+int		add_element(t_list	**e_list, char *str);
+
+// FILL_LIGHTSNCAMERA.c
+void	fill_err(char type);
+void	fill_ambiant(t_elem *elem, char **splited);
+void	fill_camera(t_elem *elem, char **splited);
+void	fill_light(t_elem *elem, char **splited);
+void	free_elem(t_elem *elem, char **split1, char **split2, char **split3);
+
+// FILL_SHAPES.c
+void	fill_arrays(t_elem *elem, char **xyz, char **rgb, char **norm);
+void	fill_cylinder(t_elem *elem, char **split);
+void	fill_sphere(t_elem *elem, char **split);
+void	fill_plane(t_elem *elem, char **split);
+
+// FILL_SHAPES2_& COMPL.c
+void	fill_pyramid(t_elem *elem, char **split);
+void	fill_cube(t_elem *elem, char **split);
+void	fill_compl(t_elem *elem, char **split, int split_seg);
+
+// KB_AND_PP_MLX.C
+void	mlx_pp(t_scData *img, int x, int y, int color);
+int		kb_mlx(int keycd, t_rtdata *data);
+void	more_keys1(int keycd, t_rtdata *data);
+
+// SCENE_PARSING.C
+t_list	*scene_parsing(int ac, char **av);
+t_list	*in_scene_parsing(int fd);
+void	musthave_elem(t_list *e_list);
+
+// UTILS.C (maybe put this in libft)
+float	ft_atof(char *str);
+
+// ERR_HANDLING.C
+int		print_err(char *str);
+
+// TESTING.C
+void	print_elem(t_elem *elem);
 
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
@@ -571,7 +555,5 @@ t_floatint_tuple	floatint(float f, int i);
 enum e_ObjectType	get_item_type(t_elem *elem);
 void				free_items(t_list **lst);
 
-// MORE_KEYS.C
-void	more_keys1(int keycd, t_rtdata *data);
 
 #endif // RT_HEAD_H

@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 12:57:25 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/16 15:39:44 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:52:00 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	fill_pyramid(t_elem *elem, char **split)
 	char	**xyz_split;
 	char	**rgb_split;
 	char	**norm_xyz_split;
-	int		i;
 
 	if (split[1] == NULL || split[2] == NULL || split[3] == NULL
 		|| split[4] == NULL || split [5] == NULL)
@@ -29,22 +28,7 @@ void	fill_pyramid(t_elem *elem, char **split)
 	rgb_split = ft_split(split[5], ',');
 	fill_compl(elem, split, 6);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(norm_xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255 || elem->norm_xyz[i] < -1
-			|| elem->norm_xyz[i] > 1)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
-	{
-		free(norm_xyz_split);
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, rgb_split, norm_xyz_split);
 }
 
 void	fill_cube(t_elem *elem, char **split)
@@ -52,7 +36,6 @@ void	fill_cube(t_elem *elem, char **split)
 	char	**xyz_split;
 	char	**rgb_split;
 	char	**norm_xyz_split;
-	int		i;
 
 	if (split[1] == NULL || split[2] == NULL || split[3] == NULL
 		|| split[4] == NULL)
@@ -63,22 +46,7 @@ void	fill_cube(t_elem *elem, char **split)
 	rgb_split = ft_split(split[4], ',');
 	fill_compl(elem, split, 5);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(norm_xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255 || elem->norm_xyz[i] < -1
-			|| elem->norm_xyz[i] > 1)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
-	{
-		free(norm_xyz_split);
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, rgb_split, norm_xyz_split);
 }
 
 void	fill_compl(t_elem *elem, char **split, int ss)
@@ -89,10 +57,7 @@ void	fill_compl(t_elem *elem, char **split, int ss)
 		if (elem->specular < -1)
 			elem->specular = -1;
 	}
-	else
-		return ;
-	if (split[++ss])
+	if (split[ss] && split[++ss])
 		elem->is_checker = ft_atoi(split[ss]);
-	else
-		return ;
+	return ;
 }

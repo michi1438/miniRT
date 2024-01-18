@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:07:17 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/15 18:24:24 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:47:48 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,7 @@ void	fill_sphere(t_elem *elem, char **split)
 		elem->xyz[i] = ft_atof(xyz_split[i]);
 		elem->rgb[i] = ft_atoi(rgb_split[i]);
 	}
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL)
-	{
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, rgb_split, NULL);
 }	
 
 void	fill_plane(t_elem *elem, char **split)
@@ -50,7 +38,6 @@ void	fill_plane(t_elem *elem, char **split)
 	char	**xyz_split;
 	char	**rgb_split;
 	char	**norm_xyz_split;
-	int		i;
 
 	if (split[1] == NULL || split[2] == NULL || split[3] == NULL)
 		fill_err(elem->type);
@@ -59,22 +46,7 @@ void	fill_plane(t_elem *elem, char **split)
 	rgb_split = ft_split(split[3], ',');
 	fill_compl(elem, split, 4);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(norm_xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255
-			|| elem->norm_xyz[i] < -1 || elem->norm_xyz[i] > 1)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
-	{
-		free(norm_xyz_split);
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, norm_xyz_split, rgb_split);
 }
 
 void	fill_cylinder(t_elem *elem, char **split)
@@ -82,7 +54,6 @@ void	fill_cylinder(t_elem *elem, char **split)
 	char	**xyz_split;
 	char	**rgb_split;
 	char	**norm_xyz_split;
-	int		i;
 
 	if (split[1] == NULL || split[2] == NULL || split[3] == NULL
 		|| split[4] == NULL || split [5] == NULL)
@@ -94,22 +65,7 @@ void	fill_cylinder(t_elem *elem, char **split)
 	rgb_split = ft_split(split[5], ',');
 	fill_compl(elem, split, 6);
 	fill_arrays(elem, xyz_split, rgb_split, norm_xyz_split);
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(norm_xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255 || elem->norm_xyz[i] < -1
-			|| elem->norm_xyz[i] > 1)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL && norm_xyz_split != NULL)
-	{
-		free(norm_xyz_split);
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, norm_xyz_split, rgb_split);
 }
 
 void	fill_arrays(t_elem *elem, char **xyz, char **rgb, char **norm)

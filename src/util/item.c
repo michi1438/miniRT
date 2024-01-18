@@ -6,7 +6,7 @@
 /*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/17 11:51:17 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:37:06 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale,
 	if (!res)
 		return (NULL);
 	res->type = type;
-	printf("passed = %d\n", res->type);
 	res->pos = pos_scale.v1;
 	res->scale = pos_scale.v2;
 	res->color = axe_color.v2;

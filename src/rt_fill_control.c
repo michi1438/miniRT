@@ -6,7 +6,7 @@
 /*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 22:04:41 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/16 15:40:11 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:42:15 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	set_uvalue(t_elem *elem)
 	elem->status = 0;
 	while (++i < 3)
 	{
-		elem->rgb[i] = -2;
+		elem->rgb[i] = 0;
 		elem->xyz[i] = 0;
-		elem->norm_xyz[i] = -2;
+		elem->norm_xyz[i] = 0;
 	}
 }
 
@@ -42,12 +42,8 @@ void	init_elem(t_elem *elem, char *str)
 	splited = ft_split(str, ' ');
 	set_uvalue(elem);
 	elem->type = splited[0][0];
-	if (elem->type == 'A')
-		fill_ambiant(elem, splited);
-	else if (elem->type == 'C')
-		fill_camera(elem, splited);
-	else if (elem->type == 'L')
-		fill_light(elem, splited);
+	if (init_must_have(elem, splited) == 1)
+		;
 	else if (elem->type == 's')
 		fill_sphere(elem, splited);
 	else if (elem->type == 'p')
@@ -63,6 +59,19 @@ void	init_elem(t_elem *elem, char *str)
 		free(splited[i++]);
 	if (splited != NULL)
 		free(splited);
+}
+
+int	init_must_have(t_elem *elem, char **splited)
+{
+	if (elem->type == 'A')
+		fill_ambiant(elem, splited);
+	else if (elem->type == 'C')
+		fill_camera(elem, splited);
+	else if (elem->type == 'L')
+		fill_light(elem, splited);
+	else
+		return (0);
+	return (1);
 }
 
 int	add_element(t_list	**e_list, char *str)

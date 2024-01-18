@@ -6,7 +6,7 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2024/01/17 19:35:31 by mguerga          ###   ########.fr        #
+#    Updated: 2024/01/18 12:21:11 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,12 +16,11 @@ NAME = miniRT
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra -Ofast#  -fsanitize=address -g #-O0
+CFLAGS = -Werror -Wall -Wextra -fsanitize=leak -g #-O0
 
-SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
-			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c \
-			 rt_scene.c rt_vecmath.c rt_intersect.c rt_matrices.c \
-			 rt_fetch_elem.c rt_fill_control.c more_keys.c
+SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_kb_and_pp_mlx.c \
+			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c \
+			 rt_fetch_elem.c rt_fill_control.c
 
 SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
 			util8.c util9.c util10.c draw_line.c util11.c util12.c util13.c util14.c util15.c util16.c\
