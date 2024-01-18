@@ -12,14 +12,14 @@
 
 #include "../rt_head.h"
 
-t_v	get_item_color_checkerboard(t_intersection intr)
+t_v	get_item_color_checkerboard(t_intsc intr)
 {
 	t_v		inverse_color;
 	t_plane	nearest_plane;
 
 	inverse_color = v3_sub(v3(255, 255, 255), intr.item->color);
 	if (intr.item->type == Plane)
-		return (checker_pixel_for_plane(tuple(intr.pos, intr.item->pos),
+		return (chckr_pix_plan(tuple(intr.pos, intr.item->pos),
 				intr.item->scale, 2, tuple(inverse_color, intr.item->color)));
 	else if (intr.item->type == Sphere)
 		return (uv_at_chekers(intr.item->color, inverse_color,
@@ -29,8 +29,8 @@ t_v	get_item_color_checkerboard(t_intersection intr)
 				v3(32, 8, 0), cylindrical_map(intr.pos, *intr.item)));
 	else if (intr.item->type == Cube || intr.item->type == Pyramid)
 	{
-		nearest_plane = get_intersection_plane(intr);
-		return (checker_pixel_for_plane(tuple(intr.pos, nearest_plane.p2),
+		nearest_plane = get_intsc_plane(intr);
+		return (chckr_pix_plan(tuple(intr.pos, nearest_plane.p2),
 				plane_normal(nearest_plane),
 				intr.item->scale.x / 10, tuple(inverse_color,
 					intr.item->color)));
@@ -39,7 +39,7 @@ t_v	get_item_color_checkerboard(t_intersection intr)
 		return (intr.item->color);
 }
 
-t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
+t_intsc	cast_ray(t_rtdata data, t_line ray, int do_draw)
 {
 	t_terms	ts;
 	t_list	*list;
@@ -66,7 +66,7 @@ t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw)
 	return (ts.inter);
 }
 
-static int	get_rays_size(t_camera camera, double resolution)
+static int	get_rays_size(t_camra camera, double resolution)
 {
 	double	i;
 	double	j;
@@ -118,7 +118,7 @@ void	cast_ray_for_screen_coords(t_rtdata data, float x, float y)
 {
 	t_v	mapped;
 
-	mapped = map_physical_to_camera(data.camera,
+	mapped = mp_phys_cam(data.camera,
 			v3(x, y, 0), S_WIDTH, S_HEIGHT);
 	cast_ray(data, line_c(data.camera.eye, mapped), 1);
 }

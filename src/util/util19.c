@@ -14,7 +14,7 @@
 
 static void	int_ray_pyr_1(t_terms *ts, t_item pyramid, t_line ray)
 {
-	t_vecfour	base_square;
+	t_vec4	base_square;
 	t_plane		plane;
 
 	base_square = get_pyramid_base_square(pyramid);
@@ -63,7 +63,7 @@ static void	int_ray_pyr_2(t_terms *ts, t_item pyramid, t_line ray)
 	}
 }
 
-t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid)
+t_intsc	intersect_ray_pyramid(t_line ray, t_item *pyramid)
 {
 	t_terms	ts;
 
@@ -75,7 +75,7 @@ t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid)
 	return (ts.inter);
 }
 
-static void	cmpt_lt(t_rtdata data, t_light light, t_v *res, t_intersection intr)
+static void	cmpt_lt(t_rtdata data, t_light light, t_v *res, t_intsc intr)
 {
 	t_v		l;
 	t_terms	ts;
@@ -96,7 +96,7 @@ static void	cmpt_lt(t_rtdata data, t_light light, t_v *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-t_v	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights)
+t_v	compute_lighting(t_rtdata data, t_intsc intr, t_list *lights)
 {
 	t_v		res;
 	t_list	*list;

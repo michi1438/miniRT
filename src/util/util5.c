@@ -35,7 +35,7 @@ int	v3_is_null(t_v v)
 /* projects a point on the camera plane */
 /* returns v3(FT_MAX) if the line between eye and
  * point doesn't intersect plane or is behind screen */
-t_v	project_point(t_v point, t_camera camera)
+t_v	project_point(t_v point, t_camra camera)
 {
 	t_line	line_;
 	t_plane	canvas;

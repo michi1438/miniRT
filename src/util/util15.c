@@ -75,7 +75,7 @@ void	outline_item(t_rtdata data, t_item item)
 	i = 0;
 	while (i < item.vertices_len)
 	{
-		mappings[i] = map_point_to_physical(data.camera,
+		mappings[i] = mp_pto_phys(data.camera,
 				project_point(item.vertices[i], data.camera),
 				S_WIDTH, S_HEIGHT);
 		i ++;

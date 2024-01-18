@@ -15,7 +15,7 @@
 static void	test_cap1(t_terms *ts, t_item cylinder, t_line ray)
 {
 	t_plane			plane;
-	t_intersection	pint;
+	t_intsc	pint;
 
 	plane = plane_c(cylinder.vertices[cylinder.vertices_len - 1],
 			cylinder.vertices[cylinder.vertices_len - 2],
@@ -38,7 +38,7 @@ static void	test_cap1(t_terms *ts, t_item cylinder, t_line ray)
 static void	test_cap2(t_terms *ts, t_item cylinder, t_line ray)
 {
 	t_plane			plane;
-	t_intersection	pint;
+	t_intsc	pint;
 
 	plane = plane_c(cylinder.vertices[0],
 			cylinder.vertices[1], cylinder.vertices[2]);
@@ -100,7 +100,7 @@ static int	cyl2(t_terms *ts, t_item cylinder)
 	return (1);
 }
 
-t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder)
+t_intsc	intersect_ray_cylinder(t_line ray, t_item *cylinder)
 {
 	t_terms	ts;
 

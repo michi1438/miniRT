@@ -58,8 +58,8 @@ t_v	cartesian_to_sphere(t_v point, t_item sphere)
 			vect_angle(ts.z_axis, v3_sub(point, sphere.pos))));
 }
 
-t_v	checker_pixel_for_plane(t_v3_tuple pt_orig, t_v normal,
-				float step, t_v3_tuple colors)
+t_v	chckr_pix_plan(t_v3tpl pt_orig, t_v normal,
+				float step, t_v3tpl colors)
 {
 	t_v	new_pos;
 	int	parity_x;
@@ -78,7 +78,7 @@ t_v	checker_pixel_for_plane(t_v3_tuple pt_orig, t_v normal,
 		return (colors.v2);
 }
 
-static void	int_pl_py(t_plane *nearest_plane, t_intersection intr, t_terms *ts)
+static void	int_pl_py(t_plane *nearest_plane, t_intsc intr, t_terms *ts)
 {
 	t_v		tr[5][3];
 	int		i;
@@ -102,7 +102,7 @@ static void	int_pl_py(t_plane *nearest_plane, t_intersection intr, t_terms *ts)
 	}
 }
 
-t_plane	get_intersection_plane(t_intersection intr)
+t_plane	get_intsc_plane(t_intsc intr)
 {
 	t_plane	nearest_plane;
 	t_terms	ts;
@@ -120,7 +120,7 @@ t_plane	get_intersection_plane(t_intersection intr)
 			ts.dist_ = point_plane_dist(intr.pos,
 					plane_c(sq[i][0], sq[i][1], sq[i][2]));
 			if (ts.a == 0 || ts.dist_ < ts.dist)
-				get_intersection_plane2(&nearest_plane, sq, i, &ts);
+				g_intsc_pln2(&nearest_plane, sq, i, &ts);
 			i ++;
 		}
 	}

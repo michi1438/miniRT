@@ -40,9 +40,9 @@ t_line	line(t_v p1, t_v p2)
 	return (res);
 }
 
-t_matrix3d	matrix3d_c(t_v v1, t_v v2, t_v v3)
+t_mtrx	matrix3d_c(t_v v1, t_v v2, t_v v3)
 {
-	t_matrix3d	res;
+	t_mtrx	res;
 
 	res.v1 = v1;
 	res.v2 = v2;

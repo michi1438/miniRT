@@ -15,9 +15,9 @@
 //make a function that takes some params and
 // returns an intersection struct based on them
 
-t_intersection	int_create(t_v pos, t_v norm, t_line ray, t_item *item)
+t_intsc	int_create(t_v pos, t_v norm, t_line ray, t_item *item)
 {
-	t_intersection	res;
+	t_intsc	res;
 
 	res.pos = pos;
 	res.normal = norm;
@@ -26,9 +26,9 @@ t_intersection	int_create(t_v pos, t_v norm, t_line ray, t_item *item)
 	return (res);
 }
 
-t_vecfour	get_vecfour(t_v p1, t_v p2, t_v p3, t_v p4)
+t_vec4	get_vec4(t_v p1, t_v p2, t_v p3, t_v p4)
 {
-	t_vecfour	res;
+	t_vec4	res;
 
 	res.p1 = p1;
 	res.p2 = p2;
@@ -55,9 +55,9 @@ int	point_inside_triangle(t_v s1, t_v s2, t_v s3, t_v point)
 	return (1);
 }
 
-t_vecfour	get_pyramid_base_square(t_item pyramid)
+t_vec4	get_pyramid_base_square(t_item pyramid)
 {
-	return (get_vecfour(pyramid.vertices[1],
+	return (get_vec4(pyramid.vertices[1],
 			pyramid.vertices[2], pyramid.vertices[3], pyramid.vertices[4]));
 }
 

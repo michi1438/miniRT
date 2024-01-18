@@ -29,7 +29,7 @@ int	main(int ac, char **av)
 								  &scrn.line_len, &scrn.endian);
 	//set_scene(&scrn, &elst);
 	t_elem *cam = findcam(&elst);
-	t_camera	camera = camera_c(v3(cam->xyz[0], cam->xyz[1], cam->xyz[2]), 1, cam->fov);
+	t_camra	camera = camera_c(v3(cam->xyz[0], cam->xyz[1], cam->xyz[2]), 1, cam->fov);
 
 	t_list *lights;
 	lights = NULL;

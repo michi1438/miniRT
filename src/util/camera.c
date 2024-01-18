@@ -12,9 +12,9 @@
 
 #include "../rt_head.h"
 
-t_camera	camera_c(t_v pos, float eye_canv_dist, float fov)
+t_camra	camera_c(t_v pos, float eye_canv_dist, float fov)
 {
-	t_camera	res;
+	t_camra	res;
 	t_v			move_vec;
 
 	res.canvas_width = 2 * eye_canv_dist * tanf(degree_to_radian(fov / 2));
@@ -30,22 +30,22 @@ t_camera	camera_c(t_v pos, float eye_canv_dist, float fov)
 	return (res);
 }
 
-t_v	camera_get_ac(t_camera camera)
+t_v	camera_get_ac(t_camra camera)
 {
 	return (v3_sub(camera.C, camera.A));
 }
 
-t_v	camera_get_ab(t_camera camera)
+t_v	camera_get_ab(t_camra camera)
 {
 	return (v3_sub(camera.B, camera.A));
 }
 
-t_plane	camera_get_canvas_plane(t_camera camera)
+t_plane	camera_get_canvas_plane(t_camra camera)
 {
 	return (plane_c(camera.A, camera.B, camera.C));
 }
 
-t_v	camera_get_center(t_camera camera)
+t_v	camera_get_center(t_camra camera)
 {
 	return (v3_add(v3_add(camera.A, v3_scale(camera_get_ab(camera), 0.5)),
 			v3_scale(camera_get_ac(camera), 0.5)));

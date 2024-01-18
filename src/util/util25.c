@@ -31,9 +31,9 @@ void	free_pixel_cache(t_v **cache)
 	(void) cache;
 }
 
-t_v3_tuple	tuple(t_v v1, t_v v2)
+t_v3tpl	tuple(t_v v1, t_v v2)
 {
-	t_v3_tuple	res;
+	t_v3tpl	res;
 
 	res.v1 = v1;
 	res.v2 = v2;

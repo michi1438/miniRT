@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 11:36:11 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/18 12:32:54 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 16:46:31 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,8 @@
 #  define K_NUM_PLUS 69
 # endif
 
+typedef unsigned int		t_uint;
+
 typedef struct s_v3
 {
 	float	x;
@@ -106,19 +108,29 @@ typedef struct s_v3
 	float	z;
 }	t_v3;
 
-typedef t_v3	t_v;
+typedef t_v3				t_v;
+
+enum	e_ObjectType {
+	Plane,
+	Sphere,
+	Cube,
+	Pyramid,
+	Cylinder
+};
+
+typedef enum e_ObjectType	t_objty;
 
 typedef struct s_v3_tuple
 {
 	t_v	v1;
 	t_v	v2;
-}	t_v3_tuple;
+}	t_v3tpl;
 
 typedef struct s_floatint_tuple
 {
 	float	f;
 	int		i;
-}	t_floatint_tuple;
+}	t_fitpl;
 
 typedef struct s_elem
 {
@@ -157,14 +169,6 @@ enum	e_Direction {
 	Down
 };
 
-enum	e_ObjectType {
-	Plane,
-	Sphere,
-	Cube,
-	Pyramid,
-	Cylinder
-};
-
 typedef struct s_plane
 {
 	t_v	p1;
@@ -183,7 +187,7 @@ typedef struct s_matrix3d
 	t_v	v1;
 	t_v	v2;
 	t_v	v3;
-}	t_matrix3d;
+}	t_mtrx;
 
 typedef struct s_camera
 {
@@ -193,7 +197,7 @@ typedef struct s_camera
 	t_v		A;
 	t_v		B;
 	t_v		C;
-}	t_camera;
+}	t_camra;
 
 enum	e_LightType {
 	Ambient,
@@ -235,15 +239,15 @@ typedef struct s_item
 
 typedef struct s_intersection
 {
-	t_v	pos;
-	t_v	normal;
+	t_v		pos;
+	t_v		normal;
 	t_line	ray;
 	t_item	*item;
-}	t_intersection;
+}	t_intsc;
 
 typedef struct s_rtdata
 {
-	t_camera	camera;
+	t_camra	camera;
 	t_scData	*scrn;
 	t_list		*items;
 	t_list		*lights;
@@ -270,8 +274,8 @@ typedef struct s_terms
 	float			t1;
 	float			t2;
 	t_v				point;
-	t_intersection	inter;
-	t_intersection	inter2;
+	t_intsc			inter;
+	t_intsc			inter2;
 	float			dist;
 	float			dist_;
 	float			d1;
@@ -300,7 +304,7 @@ typedef struct s_vecfour
 	t_v	p2;
 	t_v	p3;
 	t_v	p4;
-}	t_vecfour;
+}	t_vec4;
 
 // MATRICES.C
 void	rt_matrix(float *ret, t_elem *cam_specs);
@@ -356,93 +360,93 @@ void	print_elem(t_elem *elem);
 // UTIL1.C
 t_v3	v3(float x, float y, float z);
 t_v		v3_add(t_v a, t_v b);
-float	clamp (float val, float min, float max);
+float	clamp(float val, float min, float max);
 t_v		add_colors(t_v c1, t_v c2);
 t_v		mult_colors(t_v c1, t_v c2);
 
 // UTIL2.C
-t_v	modify_color_intensity(t_v color, float scalar);
-t_v	intensity_to_color(float intensity);
-int	same_sign(float a, float b);
+t_v		modify_color_intensity(t_v color, float scalar);
+t_v		intensity_to_color(float intensity);
+int		same_sign(float a, float b);
 t_plane	plane_c(t_v p1, t_v p2, t_v p3);
-t_v	plane_normal(t_plane plane);
+t_v		plane_normal(t_plane plane);
 
 // UTIL3.C
-int	colinear_check(t_v v1);
+int		colinear_check(t_v v1);
 t_plane	plane_from_normal(t_v point, t_v normal);
 t_line	line_c(t_v p1, t_v p2);
-t_matrix3d	matrix3d_c(t_v v1, t_v v2, t_v v3);
-int	same_side_of_line(t_line line, t_v A, t_v B);
+t_mtrx	matrix3d_c(t_v v1, t_v v2, t_v v3);
+int		same_side_of_line(t_line line, t_v A, t_v B);
 
 // UTIL4.C
-int	same_side_of_plane(t_plane plane, t_v A, t_v B);
-t_v	rotate_point(t_v p, t_v v, t_v r);
+int		same_side_of_plane(t_plane plane, t_v A, t_v B);
+t_v		rotate_point(t_v p, t_v v, t_v r);
 float	vect_angle(t_v v1, t_v v2);
 float	degree_to_radian(float angle);
 
 // UTIL5.C
-t_v	v3_sub(t_v a, t_v b);
-t_v	v3_clone(t_v v);
-t_v	v3_null(void);
-int	v3_is_null(t_v v);
-t_v	project_point(t_v point, t_camera camera);
+t_v		v3_sub(t_v a, t_v b);
+t_v		v3_clone(t_v v);
+t_v		v3_null(void);
+int		v3_is_null(t_v v);
+t_v		project_point(t_v point, t_camra camera);
 
 // CAMERA.C
-t_camera	camera_c(t_v pos, float eye_canv_dist, float fov);
-t_v	camera_get_ac(t_camera camera);
-t_v	camera_get_ab(t_camera camera);
-t_plane	camera_get_canvas_plane(t_camera camera);
-t_v	camera_get_center(t_camera camera);
+t_camra	camera_c(t_v pos, float eye_canv_dist, float fov);
+t_v		camera_get_ac(t_camra camera);
+t_v		camera_get_ab(t_camra camera);
+t_plane	camera_get_canvas_plane(t_camra camera);
+t_v		camera_get_center(t_camra camera);
 
 // CAMERA2.C
-t_v	camera_get_norm(t_camera camera);
-void	camera_rotate(t_camera *camera, enum e_Direction direction, float amount);
-void	camera_move(t_camera *camera, enum e_Direction direction, float amount);
+t_v		camera_get_norm(t_camra camera);
+void	camera_rotate(t_camra *camera, enum e_Direction direction, float amount);
+void	camera_move(t_camra *camera, enum e_Direction direction, float amount);
 
 // CAMERA3.C
-t_v	get_point_canvas_rel(t_camera camera, t_v p);
-t_v	camera_get_d(t_camera camera);
+t_v		get_point_canvas_rel(t_camra camera, t_v p);
+t_v		camera_get_d(t_camra camera);
 
 // ITEM.C
-t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale, t_v3_tuple axe_color, t_floatint_tuple sp_ch);
-t_v	item_get_axis(t_item item);
+t_item	*create_item(enum e_ObjectType type, t_v3tpl pos_scale, t_v3tpl axe_color, t_fitpl sp_ch);
+t_v		item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
-unsigned int	item_color_hex(t_item item);
+uint	item_color_hex(t_item item);
 
 // UTIL6.C
 t_light	light(enum e_LightType type, t_v color, t_v pos);
-t_intersection	intersection(t_v pos, t_v normal, t_line ray, t_item *item);
-t_v	map_point_to_physical(t_camera camera, t_v point, float physical_width, float physical_height);
-t_v	map_physical_to_camera(t_camera camera, t_v point, float physical_width, float physical_height);
-t_v	v3_scale(t_v a, float scale);
+t_intsc	intersection(t_v pos, t_v normal, t_line ray, t_item *item);
+t_v		mp_pto_phys(t_camra camera, t_v point, float ph_wdth, float ph_hght);
+t_v		mp_phys_cam(t_camra camera, t_v point, float ph_wdth, float ph_hght);
+t_v		v3_scale(t_v a, float scale);
 
 // UTIL7.C
-t_v	v3_invert(t_v a);
-t_v	v3_abs(t_v a);
+t_v		v3_invert(t_v a);
+t_v		v3_abs(t_v a);
 float	v3_len(t_v a);
-t_v	v3_norm(t_v v);
+t_v		v3_norm(t_v v);
 float	v3_norm_squared(t_v v);
 
 // UTIL8.C
-t_v	v3_cross(t_v a, t_v b);
+t_v		v3_cross(t_v a, t_v b);
 float	v3_dot(t_v a, t_v b);
-t_v	project_point_onto_line(t_line line, t_v point);
+t_v		project_point_onto_line(t_line line, t_v point);
 float	point_plane_dist(t_v point, t_plane plane);
 float	signed_point_plane_dist(t_v point, t_plane plane);
 
 // UTIL9.C
-t_v	project_point_onto_plane(t_v point, t_plane plane);
-t_v	matrix_mult_vec(t_matrix3d matrix, t_v v);
-t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar);
-t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2);
-t_matrix3d	matrix_sub(t_matrix3d m1, t_matrix3d m2);
+t_v		project_point_onto_plane(t_v point, t_plane plane);
+t_v		matrix_mult_vec(t_mtrx matrix, t_v v);
+t_mtrx	matrix_scale(t_mtrx matrix, float scalar);
+t_mtrx	matrix_mult(t_mtrx m1, t_mtrx m2);
+t_mtrx	matrix_sub(t_mtrx m1, t_mtrx m2);
 
 // UTIL 10.C
-t_matrix3d	get_identity_matrix(void);
-t_v	get_cylinder_top(t_item cylinder);
-t_v	get_cylinder_bottom(t_item cylinder);
-t_v	intersect(t_line line, t_plane plane);
-int	equals_with_tolerance(float val1, float val2);
+t_mtrx	get_identity_matrix(void);
+t_v		get_cylinder_top(t_item cylinder);
+t_v		get_cylinder_bottom(t_item cylinder);
+t_v		intersect(t_line line, t_plane plane);
+int		equals_with_tolerance(float val1, float val2);
 
 // UTIL 11.C
 int		vec_color_to_int(t_v color);
@@ -481,62 +485,62 @@ void	rotate_item(t_item *item, t_v rot);
 void	outline_item(t_rtdata data, t_item item);
 
 // UTIL16.C
-void	draw_mappings(t_rtdata data, t_item  item, t_v mappings[34]);
-t_line	*gen_rays(t_camera camera, int size, double resolution);
-t_intersection	int_null(void );
-int	int_is_null(t_intersection intersection);
-t_intersection	intersect_ray_plane(t_line ray, t_plane plane);
+void	draw_mappings(t_rtdata data, t_item item, t_v mappings[34]);
+t_line	*gen_rays(t_camra camera, int size, double resolution);
+t_intsc	int_null(void );
+int		int_is_null(t_intsc intersection);
+t_intsc	intersect_ray_plane(t_line ray, t_plane plane);
 
 // UTIL.17.C
-t_intersection	intersect_ray_plane_item(t_line ray, t_item *plane);
-t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere);
-int	point_inside_square(t_vecfour sqr, t_v point);
+t_intsc	intersect_ray_plane_item(t_line ray, t_item *plane);
+t_intsc	intersect_ray_sphere(t_line ray, t_item *sphere);
+int		point_inside_square(t_vec4 sqr, t_v point);
 void	get_cube_squares(const t_item cube, t_v square_buffer[6][4]);
-t_intersection	intersect_ray_cube(t_line ray, t_item *cube);
+t_intsc	intersect_ray_cube(t_line ray, t_item *cube);
 
 //UTIL18.C
-t_intersection	int_create(t_v pos, t_v norm, t_line ray, t_item *item);
-t_vecfour	get_vecfour(t_v p1, t_v p2, t_v p3, t_v p4);
-int	point_inside_triangle(t_v s1, t_v s2, t_v s3, t_v point);
-t_vecfour	get_pyramid_base_square(t_item pyramid);
+t_intsc	int_create(t_v pos, t_v norm, t_line ray, t_item *item);
+t_vec4	get_vec4(t_v p1, t_v p2, t_v p3, t_v p4);
+int		point_inside_triangle(t_v s1, t_v s2, t_v s3, t_v point);
+t_vec4	get_pyramid_base_square(t_item pyramid);
 void	get_pyramid_triangles(const t_item pyramid, t_v tri_buffer[4][3]);
 
 //UTIL19.C
-t_intersection	intersect_ray_pyramid(t_line ray, t_item *pyramid);
-t_intersection	ray_intersection(t_line ray, t_item *object);
-t_v	compute_lighting(t_rtdata data, t_intersection intr, t_list *lights);
+t_intsc	intersect_ray_pyramid(t_line ray, t_item *pyramid);
+t_intsc	ray_intersection(t_line ray, t_item *object);
+t_v		compute_lighting(t_rtdata data, t_intsc intr, t_list *lights);
 
 // UTIL20.C
-t_intersection	intersect_ray_cylinder(t_line ray, t_item *cylinder);
+t_intsc	intersect_ray_cylinder(t_line ray, t_item *cylinder);
 
 // UTIL21.C
-t_v	compute_specular(t_rtdata data, t_intersection intr, t_list *lights);
-t_v	uv_at_chekers(t_v color1, t_v color2, t_v checkers_wh, t_v u_v);
-t_v	spherical_map(t_v point, t_item sphere);
-t_v	uv_at_image(t_image *rt_image, float u, float v);
+t_v		compute_specular(t_rtdata data, t_intsc intr, t_list *lights);
+t_v		uv_at_chekers(t_v color1, t_v color2, t_v checkers_wh, t_v u_v);
+t_v		spherical_map(t_v point, t_item sphere);
+t_v		uv_at_image(t_image *rt_image, float u, float v);
 
 // UTIL22.C
-t_v	cylindrical_map(t_v point, t_item cylinder);
+t_v		cylindrical_map(t_v point, t_item cylinder);
 
 // UTIL23.C
-t_v	get_item_color_image(t_intersection intr);
-t_v	get_item_color(t_intersection intr);
+t_v		get_item_color_image(t_intsc intr);
+t_v		get_item_color(t_intsc intr);
 
 // UTIL24.C
-t_v	normalize_plane_point(t_v point, t_v origin, t_v normal);
-t_v	cartesian_to_sphere(t_v point, t_item sphere);
-t_v	checker_pixel_for_plane(t_v3_tuple pt_orig, t_v normal, float step, t_v3_tuple colors);
-t_plane	get_intersection_plane(t_intersection intr);
+t_v		normalize_plane_point(t_v point, t_v origin, t_v normal);
+t_v		cartesian_to_sphere(t_v point, t_item sphere);
+t_v		chckr_pix_plan(t_v3tpl pt_orig, t_v normal, float step, t_v3tpl colors);
+t_plane	get_intsc_plane(t_intsc intr);
 
 // UTIL25.C
 float	new_image_height(t_image *img, float new_width);
-t_v	**get_pixels_from_image(t_image img, float target_width);
+t_v		**get_pixels_from_image(t_image img, float target_width);
 void	free_pixel_cache(t_v **cache);
-t_v3_tuple	tuple(t_v v1, t_v v2);
+t_v3tpl	tuple(t_v v1, t_v v2);
 
 // UTIL 26.C
-t_v	get_item_color_checkerboard(t_intersection intr);
-t_intersection	cast_ray(t_rtdata data, t_line ray, int do_draw);
+t_v		get_item_color_checkerboard(t_intsc intr);
+t_intsc	cast_ray(t_rtdata data, t_line ray, int do_draw);
 void	raytrace(t_rtdata data);
 void	cast_ray_for_screen_coords(t_rtdata data, float x, float y);
 
@@ -544,16 +548,15 @@ void	cast_ray_for_screen_coords(t_rtdata data, float x, float y);
 void	rotate_to_normal(t_item *item);
 
 // UTIL28.C
-t_line	gen_single_ray(t_camera camera, t_terms ts, double i, double j);
-void	intersect_ray_cube2(t_terms *ts, t_line ray, t_v cube_squares[6][4], int i);
-void	get_intersection_plane2(t_plane *nearest_plane, t_v sq[6][4], int i, t_terms *ts);
+t_line	gen_single_ray(t_camra camera, t_terms ts, double i, double j);
+void	intsct_cube2(t_terms *ts, t_line ray, t_v cube_squares[6][4], int i);
+void	g_intsc_pln2(t_plane *nearest_plane, t_v sq[6][4], int i, t_terms *ts);
 void	cast_ray2(t_terms ts, t_rtdata data);
 
 // UTIL29.C
 double	get_resolution(void);
-t_floatint_tuple	floatint(float f, int i);
-enum e_ObjectType	get_item_type(t_elem *elem);
-void				free_items(t_list **lst);
-
+t_fitpl	floatint(float f, int i);
+t_objty	get_item_type(t_elem *elem);
+void	free_items(t_list **lst);
 
 #endif // RT_HEAD_H

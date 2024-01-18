@@ -12,12 +12,12 @@
 
 #include "../rt_head.h"
 
-t_v	camera_get_norm(t_camera camera)
+t_v	camera_get_norm(t_camra camera)
 {
 	return (v3_norm(v3_sub(camera_get_center(camera), camera.eye)));
 }
 
-static void	camera_rotate_(t_camera *camera,
+static void	camera_rotate_(t_camra *camera,
 					enum e_Direction direction, float amount)
 {
 	t_v	rot_vect;
@@ -38,7 +38,7 @@ static void	camera_rotate_(t_camera *camera,
 	}
 }
 
-void	camera_rotate(t_camera *camera,
+void	camera_rotate(t_camra *camera,
 					enum e_Direction direction, float amount)
 {
 	t_v	rot_vect;
@@ -63,7 +63,7 @@ void	camera_rotate(t_camera *camera,
 	}
 }
 
-static t_v	camera_move_(t_camera camera,
+static t_v	camera_move_(t_camra camera,
 					enum e_Direction direction, float amount)
 {
 	if (direction == Right)
@@ -76,7 +76,7 @@ static t_v	camera_move_(t_camera camera,
 		return (v3_scale(v3(0, 1, 0), -amount));
 }
 
-void	camera_move(t_camera *camera, enum e_Direction direction, float amount)
+void	camera_move(t_camra *camera, enum e_Direction direction, float amount)
 {
 	t_v	move_vect;
 	t_v	vct;

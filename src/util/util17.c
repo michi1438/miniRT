@@ -13,16 +13,16 @@
 #include "../rt_head.h"
 
 /* For plane ITEM */
-t_intersection	intersect_ray_plane_item(t_line ray, t_item *plane)
+t_intsc	intersect_ray_plane_item(t_line ray, t_item *plane)
 {
-	t_intersection	res;
+	t_intsc	res;
 
 	res = intersect_ray_plane(ray, plane_from_normal(plane->pos, plane->scale));
 	res.item = plane;
 	return (res);
 }
 
-t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
+t_intsc	intersect_ray_sphere(t_line ray, t_item *sphere)
 {
 	t_terms	terms;
 
@@ -51,7 +51,7 @@ t_intersection	intersect_ray_sphere(t_line ray, t_item *sphere)
 	return (int_null());
 }
 
-int	point_inside_square(t_vecfour sqr, t_v point)
+int	point_inside_square(t_vec4 sqr, t_v point)
 {
 	t_plane	plane;
 	t_v		norm;
@@ -99,7 +99,7 @@ void	get_cube_squares(const t_item cube, t_v square_buffer[6][4])
 	square_buffer[5][3] = cube.vertices[4];
 }
 
-t_intersection	intersect_ray_cube(t_line ray, t_item *cube)
+t_intsc	intersect_ray_cube(t_line ray, t_item *cube)
 {
 	t_terms	ts;
 	t_v		cube_squares[6][4];
@@ -117,7 +117,7 @@ t_intersection	intersect_ray_cube(t_line ray, t_item *cube)
 		ts.inter2 = intersect_ray_plane(ray, plane);
 		if (!int_is_null(ts.inter2))
 		{
-			intersect_ray_cube2(&ts, ray, cube_squares, i);
+			intsct_cube2(&ts, ray, cube_squares, i);
 		}
 		i ++;
 	}

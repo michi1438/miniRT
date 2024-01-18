@@ -24,7 +24,7 @@ void	draw_mappings(t_rtdata data, t_item item, t_v mappings[34])
 		draw_cylinder_mappings(data.scrn, mappings, item);
 }
 
-t_line	*gen_rays(t_camera camera, int size, double resolution)
+t_line	*gen_rays(t_camra camera, int size, double resolution)
 {
 	t_terms	ts;
 	double	i;
@@ -53,20 +53,20 @@ t_line	*gen_rays(t_camera camera, int size, double resolution)
 	return (res);
 }
 
-t_intersection	int_null(void)
+t_intsc	int_null(void)
 {
-	t_intersection	t;
+	t_intsc	t;
 
 	t.pos = v3_null();
 	return (t);
 }
 
-int	int_is_null(t_intersection intersection)
+int	int_is_null(t_intsc intersection)
 {
 	return (v3_is_null(intersection.pos));
 }
 
-t_intersection	intersect_ray_plane(t_line ray, t_plane plane)
+t_intsc	intersect_ray_plane(t_line ray, t_plane plane)
 {
 	t_terms	terms;
 

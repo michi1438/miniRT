@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-static t_v	img_clr_plane(t_intersection intr)
+static t_v	img_clr_plane(t_intsc intr)
 {
 	t_v		new_pos;
 	float	angle;
@@ -41,7 +41,7 @@ static t_v	img_clr_plane(t_intersection intr)
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 
-static t_v	img_clr_sphere(t_intersection intr)
+static t_v	img_clr_sphere(t_intsc intr)
 {
 	t_v	coords;
 	t_v	**new_pixels;
@@ -65,7 +65,7 @@ static t_v	img_clr_sphere(t_intersection intr)
 	return (v3(new_pixels[y][x].x, new_pixels[y][x].y, new_pixels[y][x].z));
 }
 
-static t_v	img_clr_cb_pyr(t_intersection intr)
+static t_v	img_clr_cb_pyr(t_intsc intr)
 {
 	t_plane	plane;
 	t_terms	ts;
@@ -73,7 +73,7 @@ static t_v	img_clr_cb_pyr(t_intersection intr)
 	t_v		x_proj;
 	t_v		y_proj;
 
-	plane = get_intersection_plane(intr);
+	plane = get_intsc_plane(intr);
 	ts.x_axis = v3_norm(v3_sub(plane.p2, plane.p1));
 	ts.y_axis = v3_norm(v3_sub(plane.p3, plane.p1));
 	x_proj = project_point_onto_line(line_c(plane.p1, plane.p2), intr.pos);
@@ -88,7 +88,7 @@ static t_v	img_clr_cb_pyr(t_intersection intr)
 	return (v3(pixel.x, pixel.y, pixel.z));
 }
 
-t_v	get_item_color_image(t_intersection intr)
+t_v	get_item_color_image(t_intsc intr)
 {
 	t_v	u_v;
 	t_v	img_color;
@@ -108,7 +108,7 @@ t_v	get_item_color_image(t_intersection intr)
 	return (v3(0, 0, 0));
 }
 
-t_v	get_item_color(t_intersection intr)
+t_v	get_item_color(t_intsc intr)
 {
 	if (intr.item->image != NULL)
 	{

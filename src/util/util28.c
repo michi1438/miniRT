@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-t_intersection	ray_intersection(t_line ray, t_item *object)
+t_intsc	ray_intersection(t_line ray, t_item *object)
 {
 	if (object->type == Plane)
 		return (intersect_ray_plane_item(ray, object));
@@ -27,17 +27,17 @@ t_intersection	ray_intersection(t_line ray, t_item *object)
 	return (int_null());
 }
 
-t_line	gen_single_ray(t_camera camera, t_terms ts, double i, double j)
+t_line	gen_single_ray(t_camra camera, t_terms ts, double i, double j)
 {
 	return (line_c(camera.eye, v3_add(v3_add(camera.A,
 					v3_scale(ts.x_axis, (float)i)),
 				v3_scale(ts.y_axis, (float)j))));
 }
 
-void	intersect_ray_cube2(t_terms *ts, t_line ray,
+void	intsct_cube2(t_terms *ts, t_line ray,
 				t_v cube_squares[6][4], int i)
 {
-	if (point_inside_square(get_vecfour(cube_squares[i][0], cube_squares[i][1],
+	if (point_inside_square(get_vec4(cube_squares[i][0], cube_squares[i][1],
 		cube_squares[i][2], cube_squares[i][3]), ts->inter2.pos))
 	{
 		ts->dist_ = v3_len(v3_sub(ts->inter2.pos, ray.p1));
@@ -49,7 +49,7 @@ void	intersect_ray_cube2(t_terms *ts, t_line ray,
 	}
 }
 
-void	get_intersection_plane2(t_plane *nearest_plane,
+void	g_intsc_pln2(t_plane *nearest_plane,
 				t_v sq[6][4], int i, t_terms *ts)
 {
 	*nearest_plane = plane_c(sq[i][0], sq[i][1], sq[i][2]);
@@ -59,7 +59,7 @@ void	get_intersection_plane2(t_plane *nearest_plane,
 
 void	cast_ray2(t_terms ts, t_rtdata data)
 {
-	ts.point = map_point_to_physical(data.camera,
+	ts.point = mp_pto_phys(data.camera,
 			ts.inter.ray.p2, S_WIDTH, S_HEIGHT);
 	ts.light_color = compute_lighting(data, ts.inter, data.lights);
 	ts.specular_color = modify_color_intensity(compute_specular(data,

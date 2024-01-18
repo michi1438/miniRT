@@ -34,11 +34,11 @@ void	fill_screen(t_scData *scrn, t_v color)
 
 void	draw_segment(t_rtdata data, t_v p1, t_v p2, t_v color)
 {
-	p1 = map_point_to_physical(data.camera,
+	p1 = mp_pto_phys(data.camera,
 			project_point(p1, data.camera), S_WIDTH, S_HEIGHT);
 	if (v3_is_null(p1))
 		return ;
-	p2 = map_point_to_physical(data.camera, project_point(p2, data.camera),
+	p2 = mp_pto_phys(data.camera, project_point(p2, data.camera),
 			S_WIDTH, S_HEIGHT);
 	if (v3_is_null(p2))
 		return ;

@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intersection intr)
+static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intsc intr)
 {
 	t_v		l;
 	t_terms	ts;
@@ -37,7 +37,7 @@ static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intersection intr)
 }
 
 /* From book 'Computer Graphics from Scratch' by Gabriel Gambetta */
-t_v	compute_specular(t_rtdata data, t_intersection intr, t_list *lights)
+t_v	compute_specular(t_rtdata data, t_intsc intr, t_list *lights)
 {
 	t_v		res;
 	t_list	*list;

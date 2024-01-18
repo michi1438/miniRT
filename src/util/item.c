@@ -35,8 +35,8 @@ static void	set_vertices(t_item *item)
 	rotate_to_normal(item);
 }
 
-t_item	*create_item(enum e_ObjectType type, t_v3_tuple pos_scale,
-		t_v3_tuple axe_color, t_floatint_tuple sp_ch)
+t_item	*create_item(enum e_ObjectType type, t_v3tpl pos_scale,
+		t_v3tpl axe_color, t_fitpl sp_ch)
 {
 	t_item	*res;
 
