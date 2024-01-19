@@ -14,7 +14,7 @@
 
 void	fill_err(char type)
 {
-	ft_printf("ERR: \"%c\" line can't be parsed, check your .rt file.\n", type);
+	printf("ERR: \"%c\" line can't be parsed, check your .rt file.\n", type);
 	exit (1);
 }
 

@@ -70,7 +70,8 @@ void	musthave_elem(t_list *e_list)
 	}
 	if (c != 3)
 	{
-		print_err("The .rt file must contain 1 of each \"Capital element\" !\n");
+		print_err(
+			"The .rt file must contain 1 of each \"Capital element\" !\n");
 		exit (1);
 	}
 }

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "rt_head.h"
-#include <float.h>
 
 static size_t	mantislen(char *str, int neg)
 {

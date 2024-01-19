@@ -34,7 +34,7 @@ SOURCES = $(addprefix ft_main/, $(SRC_MAIN)) \
 
 OBJS = $(SOURCES:c=o)
 	
-CC = gcc
+CC = clang
 
 AR = ar rc
 

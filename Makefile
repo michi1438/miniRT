@@ -14,9 +14,9 @@ OS := $(shell uname)
 
 NAME = miniRT
 
-CC = gcc
+CC = clang
 
-CFLAGS = -Werror -Wall -Wextra -fsanitize=leak -g #-O0
+CFLAGS = -Werror -Wall -Wextra -g -O0
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_kb_and_pp_mlx.c \
 			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c \
@@ -57,11 +57,12 @@ $(NAME): $(OBJS) $(INCLUDES)
 	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
-	rm -f $(OBJS) 
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
-	rm -f libft/libft.a
+	make fclean -C libft/
+	make clean -C $(MLX_FOLDER)
 
 re: fclean all
 

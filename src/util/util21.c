@@ -28,11 +28,11 @@ static void	cmpt_sp(t_rtdata data, t_light light, t_v *res, t_intsc intr)
 	}
 	l = v3_sub(light.pos, intr.pos);
 	r = v3_sub(v3_scale(intr.normal, 2 * v3_dot(intr.normal, l)), l);
-	ts.V = v3_invert(v3_norm(v3_sub(intr.ray.p2, intr.ray.p1)));
-	r_dot_v = v3_dot(r, ts.V);
+	ts.v = v3_invert(v3_norm(v3_sub(intr.ray.p2, intr.ray.p1)));
+	r_dot_v = v3_dot(r, ts.v);
 	if (r_dot_v > 0)
 		*res = add_colors(*res, modify_color_intensity(light.color,
-					powf(r_dot_v / (v3_len(r) * v3_len(ts.V)),
+					powf(r_dot_v / (v3_len(r) * v3_len(ts.v)),
 						intr.item->specular)));
 }
 

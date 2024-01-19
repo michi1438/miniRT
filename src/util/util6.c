@@ -12,13 +12,16 @@
 
 #include "../rt_head.h"
 
-t_light	light(enum e_LightType type, t_v color, t_v pos)
+t_light	*light(enum e_LightType type, t_v color, t_v pos)
 {
-	t_light	res;
+	t_light	*res;
 
-	res.type = type;
-	res.color = color;
-	res.pos = pos;
+	res = malloc(sizeof(*res));
+	if (!res)
+		return (NULL);
+	res->type = type;
+	res->color = color;
+	res->pos = pos;
 	return (res);
 }
 
@@ -62,11 +65,11 @@ t_v	mp_phys_cam(t_camra camera, t_v point,
 	y_ratio = camera.canvas_height / ph_hght;
 	point.x *= x_ratio;
 	point.y *= y_ratio;
-	new_x = v3_add(camera.A,
+	new_x = v3_add(camera.a,
 			v3_scale(v3_norm(camera_get_ab(camera)), point.x)).x;
-	new_y = v3_add(camera.A,
+	new_y = v3_add(camera.a,
 			v3_scale(v3_norm(camera_get_ac(camera)), point.y)).y;
-	return (v3(new_x, new_y, camera.A.z));
+	return (v3(new_x, new_y, camera.a.z));
 }
 
 t_v	v3_scale(t_v a, float scale)

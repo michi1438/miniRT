@@ -13,11 +13,11 @@
 #ifndef RT_HEAD_H
 # define RT_HEAD_H
 
-# define S_WIDTH (1000)
-# define S_HEIGHT (1000)
+# define S_WIDTH 1000
+# define S_HEIGHT 1000
 
 # include <stdio.h>
-# include <float.h>
+# include "float.h"
 # ifdef __linux__
 #  include "../minilibx-linux/mlx.h"
 # else
@@ -110,7 +110,8 @@ typedef struct s_v3
 
 typedef t_v3				t_v;
 
-enum	e_ObjectType {
+enum	e_ObjectType
+{
 	Plane,
 	Sphere,
 	Cube,
@@ -160,7 +161,8 @@ typedef struct s_scData
 	t_list	**e_list_displayed;	
 }	t_scData;
 
-enum	e_Direction {
+enum	e_Direction
+{
 	Forward,
 	Backward,
 	Left,
@@ -194,12 +196,13 @@ typedef struct s_camera
 	float	canvas_width;
 	float	canvas_height;
 	t_v		eye;
-	t_v		A;
-	t_v		B;
-	t_v		C;
+	t_v		a;
+	t_v		b;
+	t_v		c;
 }	t_camra;
 
-enum	e_LightType {
+enum	e_LightType
+{
 	Ambient,
 	Point
 };
@@ -247,7 +250,7 @@ typedef struct s_intersection
 
 typedef struct s_rtdata
 {
-	t_camra	camera;
+	t_camra		camera;
 	t_scData	*scrn;
 	t_list		*items;
 	t_list		*lights;
@@ -256,11 +259,11 @@ typedef struct s_rtdata
 
 typedef struct s_terms
 {
-	t_v				D;
-	t_v				V;
-	t_v				C;
-	t_v				X;
-	t_v				N;
+	t_v				d;
+	t_v				v;
+	t_v				c_;
+	t_v				x_;
+	t_v				n;
 	float			d_v;
 	float			x_v;
 	float			t;
@@ -400,7 +403,8 @@ t_v		camera_get_center(t_camra camera);
 
 // CAMERA2.C
 t_v		camera_get_norm(t_camra camera);
-void	camera_rotate(t_camra *camera, enum e_Direction direction, float amount);
+void	camera_rotate(t_camra *camera,
+			enum e_Direction direction, float amount);
 void	camera_move(t_camra *camera, enum e_Direction direction, float amount);
 
 // CAMERA3.C
@@ -408,13 +412,14 @@ t_v		get_point_canvas_rel(t_camra camera, t_v p);
 t_v		camera_get_d(t_camra camera);
 
 // ITEM.C
-t_item	*create_item(enum e_ObjectType type, t_v3tpl pos_scale, t_v3tpl axe_color, t_fitpl sp_ch);
+t_item	*create_item(enum e_ObjectType type,
+			t_v3tpl pos_scale, t_v3tpl axe_color, t_fitpl sp_ch);
 t_v		item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
 uint	item_color_hex(t_item item);
 
 // UTIL6.C
-t_light	light(enum e_LightType type, t_v color, t_v pos);
+t_light	*light(enum e_LightType type, t_v color, t_v pos);
 t_intsc	intersection(t_v pos, t_v normal, t_line ray, t_item *item);
 t_v		mp_pto_phys(t_camra camera, t_v point, float ph_wdth, float ph_hght);
 t_v		mp_phys_cam(t_camra camera, t_v point, float ph_wdth, float ph_hght);

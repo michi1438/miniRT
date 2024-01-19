@@ -25,16 +25,16 @@ static void	camera_rotate_(t_camra *camera,
 	if (direction == Up)
 	{
 		rot_vect = v3_scale(v3_norm(camera_get_ab(*camera)), amount);
-		camera->A = rotate_point(camera->A, rot_vect, camera->eye);
-		camera->B = rotate_point(camera->B, rot_vect, camera->eye);
-		camera->C = rotate_point(camera->C, rot_vect, camera->eye);
+		camera->a = rotate_point(camera->a, rot_vect, camera->eye);
+		camera->b = rotate_point(camera->b, rot_vect, camera->eye);
+		camera->c = rotate_point(camera->c, rot_vect, camera->eye);
 	}
 	else
 	{
 		rot_vect = v3_scale(v3_norm(camera_get_ab(*camera)), -amount);
-		camera->A = rotate_point(camera->A, rot_vect, camera->eye);
-		camera->B = rotate_point(camera->B, rot_vect, camera->eye);
-		camera->C = rotate_point(camera->C, rot_vect, camera->eye);
+		camera->a = rotate_point(camera->a, rot_vect, camera->eye);
+		camera->b = rotate_point(camera->b, rot_vect, camera->eye);
+		camera->c = rotate_point(camera->c, rot_vect, camera->eye);
 	}
 }
 
@@ -46,16 +46,16 @@ void	camera_rotate(t_camra *camera,
 	if (direction == Right)
 	{
 		rot_vect = v3_scale(v3(0, 1, 0), -amount);
-		camera->A = rotate_point(camera->A, rot_vect, camera->eye);
-		camera->B = rotate_point(camera->B, rot_vect, camera->eye);
-		camera->C = rotate_point(camera->C, rot_vect, camera->eye);
+		camera->a = rotate_point(camera->a, rot_vect, camera->eye);
+		camera->b = rotate_point(camera->b, rot_vect, camera->eye);
+		camera->c = rotate_point(camera->c, rot_vect, camera->eye);
 	}
 	else if (direction == Left)
 	{
 		rot_vect = v3_scale(v3(0, 1, 0), amount);
-		camera->A = rotate_point(camera->A, rot_vect, camera->eye);
-		camera->B = rotate_point(camera->B, rot_vect, camera->eye);
-		camera->C = rotate_point(camera->C, rot_vect, camera->eye);
+		camera->a = rotate_point(camera->a, rot_vect, camera->eye);
+		camera->b = rotate_point(camera->b, rot_vect, camera->eye);
+		camera->c = rotate_point(camera->c, rot_vect, camera->eye);
 	}
 	else
 	{
@@ -97,7 +97,7 @@ void	camera_move(t_camra *camera, enum e_Direction direction, float amount)
 	else
 		move_vect = camera_move_(*camera, direction, amount);
 	camera->eye = v3_add(move_vect, camera->eye);
-	camera->A = v3_add(move_vect, camera->A);
-	camera->B = v3_add(move_vect, camera->B);
-	camera->C = v3_add(move_vect, camera->C);
+	camera->a = v3_add(move_vect, camera->a);
+	camera->b = v3_add(move_vect, camera->b);
+	camera->c = v3_add(move_vect, camera->c);
 }

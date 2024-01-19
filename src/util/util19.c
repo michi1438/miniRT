@@ -14,7 +14,7 @@
 
 static void	int_ray_pyr_1(t_terms *ts, t_item pyramid, t_line ray)
 {
-	t_vec4	base_square;
+	t_vec4		base_square;
 	t_plane		plane;
 
 	base_square = get_pyramid_base_square(pyramid);

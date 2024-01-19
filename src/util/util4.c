@@ -41,8 +41,8 @@ static t_mtrx	get_rot_matrix(t_v v)
 t_v	rotate_point(t_v p, t_v v, t_v r)
 {
 	t_mtrx	rot_matrix;
-	t_v			p_translate;
-	t_v			p_rotated1;
+	t_v		p_translate;
+	t_v		p_rotated1;
 
 	rot_matrix = get_rot_matrix(v);
 	p_translate = v3_sub(p, r);

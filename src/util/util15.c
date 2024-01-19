@@ -68,6 +68,7 @@ void	outline_item(t_rtdata data, t_item item)
 	t_v	mappings[34];
 	int	i;
 
+	memset(mappings, 0, sizeof(mappings));
 	if (item.type == Plane)
 	{
 		return ;

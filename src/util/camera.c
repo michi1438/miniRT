@@ -14,39 +14,39 @@
 
 t_camra	camera_c(t_v pos, float eye_canv_dist, float fov)
 {
-	t_camra	res;
+	t_camra		res;
 	t_v			move_vec;
 
 	res.canvas_width = 2 * eye_canv_dist * tanf(degree_to_radian(fov / 2));
 	res.canvas_height = S_HEIGHT / (S_WIDTH / res.canvas_width);
 	res.eye = pos;
 	move_vec = v3_sub(pos, v3(0, 0, 0));
-	res.A = v3_add(move_vec, v3(-res.canvas_width
+	res.a = v3_add(move_vec, v3(-res.canvas_width
 				/ 2, res.canvas_height / 2, -eye_canv_dist));
-	res.B = v3_add(move_vec, v3(res.canvas_width
+	res.b = v3_add(move_vec, v3(res.canvas_width
 				/ 2, res.canvas_height / 2, -eye_canv_dist));
-	res.C = v3_add(move_vec, v3(-res.canvas_width
+	res.c = v3_add(move_vec, v3(-res.canvas_width
 				/ 2, -res.canvas_height / 2, -eye_canv_dist));
 	return (res);
 }
 
 t_v	camera_get_ac(t_camra camera)
 {
-	return (v3_sub(camera.C, camera.A));
+	return (v3_sub(camera.c, camera.a));
 }
 
 t_v	camera_get_ab(t_camra camera)
 {
-	return (v3_sub(camera.B, camera.A));
+	return (v3_sub(camera.b, camera.a));
 }
 
 t_plane	camera_get_canvas_plane(t_camra camera)
 {
-	return (plane_c(camera.A, camera.B, camera.C));
+	return (plane_c(camera.a, camera.b, camera.c));
 }
 
 t_v	camera_get_center(t_camra camera)
 {
-	return (v3_add(v3_add(camera.A, v3_scale(camera_get_ab(camera), 0.5)),
+	return (v3_add(v3_add(camera.a, v3_scale(camera_get_ab(camera), 0.5)),
 			v3_scale(camera_get_ac(camera), 0.5)));
 }

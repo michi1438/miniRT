@@ -35,7 +35,7 @@ int	ft_atoi(const char *nptr)
 		i++;
 	i--;
 	return (calc(i, nptr) * neg[0]);
-}	
+}
 
 int	calc(int i, const char *nptr)
 {

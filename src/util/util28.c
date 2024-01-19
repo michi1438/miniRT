@@ -29,7 +29,7 @@ t_intsc	ray_intersection(t_line ray, t_item *object)
 
 t_line	gen_single_ray(t_camra camera, t_terms ts, double i, double j)
 {
-	return (line_c(camera.eye, v3_add(v3_add(camera.A,
+	return (line_c(camera.eye, v3_add(v3_add(camera.a,
 					v3_scale(ts.x_axis, (float)i)),
 				v3_scale(ts.y_axis, (float)j))));
 }

@@ -40,7 +40,7 @@ t_item	*create_item(enum e_ObjectType type, t_v3tpl pos_scale,
 {
 	t_item	*res;
 
-	res = malloc(sizeof(*res));
+	res = calloc(1, sizeof(*res));
 	if (!res)
 		return (NULL);
 	res->type = type;

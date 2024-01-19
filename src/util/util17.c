@@ -26,12 +26,12 @@ t_intsc	intersect_ray_sphere(t_line ray, t_item *sphere)
 {
 	t_terms	terms;
 
-	terms.D = v3_norm(v3_sub(ray.p2, ray.p1));
-	terms.X = v3_sub(ray.p1, sphere->pos);
-	terms.a = v3_dot(terms.D, terms.D);
-	terms.b = 2 * v3_dot(terms.D, terms.X);
+	terms.d = v3_norm(v3_sub(ray.p2, ray.p1));
+	terms.x_ = v3_sub(ray.p1, sphere->pos);
+	terms.a = v3_dot(terms.d, terms.d);
+	terms.b = 2 * v3_dot(terms.d, terms.x_);
 	terms.r = sphere->scale.x / 2;
-	terms.c = v3_dot(terms.X, terms.X) - terms.r * terms.r;
+	terms.c = v3_dot(terms.x_, terms.x_) - terms.r * terms.r;
 	terms.discriminant = terms.b * terms.b - 4 * terms.a * terms.c;
 	if (terms.discriminant < TOLERANCE)
 		return (int_null());
@@ -41,9 +41,9 @@ t_intsc	intersect_ray_sphere(t_line ray, t_item *sphere)
 		terms.t2 = (-terms.b - sqrt(terms.discriminant)) / (2 * terms.a);
 		terms.point = v3_null();
 		if (terms.t1 >= 0 && terms.t1 < terms.t2)
-			terms.point = v3_add(ray.p1, v3_scale(terms.D, terms.t1));
+			terms.point = v3_add(ray.p1, v3_scale(terms.d, terms.t1));
 		else if (terms.t2 >= 0)
-			terms.point = v3_add(ray.p1, v3_scale(terms.D, terms.t2));
+			terms.point = v3_add(ray.p1, v3_scale(terms.d, terms.t2));
 		if (!v3_is_null(terms.point))
 			return (int_create(terms.point,
 					v3_norm(v3_sub(terms.point, sphere->pos)), ray, sphere));

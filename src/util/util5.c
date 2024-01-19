@@ -41,17 +41,17 @@ t_v	project_point(t_v point, t_camra camera)
 	t_plane	canvas;
 	t_v		intersection_;
 
-	if (!same_side_of_plane(plane_c(camera.eye, camera.A, camera.C),
-			camera.B, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.a, camera.c),
+			camera.b, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.B,
-				camera_get_d(camera)), camera.A, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.b,
+				camera_get_d(camera)), camera.a, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.C,
-				camera_get_d(camera)), camera.A, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.c,
+				camera_get_d(camera)), camera.a, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.A, camera.B),
-			camera.C, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.a, camera.b),
+			camera.c, point))
 		return (v3_null());
 	line_ = line_c(camera.eye, point);
 	canvas = camera_get_canvas_plane(camera);

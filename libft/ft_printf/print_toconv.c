@@ -108,7 +108,7 @@ void	argintprt(t_toggler *flg, t_conv *cvut, int toconv)
 		ft_putchar_fd('-', 1);
 		if (flg->zero == 1)
 			appwidspe(numlenneg(toconv, cvut), cvut->wid, flg, cvut);
-	}		
+	}
 	else if (flg->space == 0 && flg->plus == 0)
 		dealwithpoints(flg, toconv, cvut);
 	if (flg->space == 1 || flg->plus == 1)

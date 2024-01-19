@@ -31,7 +31,7 @@ void	fill_sphere(t_elem *elem, char **split)
 		elem->rgb[i] = ft_atoi(rgb_split[i]);
 	}
 	free_elem(elem, xyz_split, rgb_split, NULL);
-}	
+}
 
 void	fill_plane(t_elem *elem, char **split)
 {

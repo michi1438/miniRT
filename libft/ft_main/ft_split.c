@@ -17,87 +17,98 @@ void	*implfing(char const *s, char c, char **ptrptr, int *i);
 char	**ft_split(char const *s, char c);
 int		clear_fing(char **ptrptr, int j);
 
-char	**ft_split(char const *s, char c)
-{
-	char	**ptrptr;
-	int		j;
-	int		i[1];
-
-	i[0] = 0;
-	ptrptr = malloc(((counter(s, c) + 1) * sizeof(ptrptr)));
-	if (ptrptr == NULL)
-		return (NULL);
-	j = 0;
-	while (j < (counter(s, c)))
-	{
-		if (implfing(s, c, &(ptrptr[j]), i) == NULL)
-			if (clear_fing(ptrptr, j) == 0)
-				return (NULL);
-		j++;
-	}
-	ptrptr[j] = NULL;
-	return (ptrptr);
-}
-
-int	clear_fing(char **ptrptr, int j)
+int	count_words(char const *str, char sep)
 {
 	int	i;
+	int	same_word;
 
 	i = 0;
-	while (i < j)
+	same_word = 0;
+	while (*str)
 	{
-		free (ptrptr[i]);
-		i++;
-	}
-	free(ptrptr);
-	return (0);
-}
-
-void	*implfing(char const *s, char c, char **ptrptr, int *i)
-{
-	int	e;
-	int	buf;
-
-	buf = 0;
-	while (s[i[0]] == c)
-		i[0]++;
-	while (s[i[0]] != c && s[i[0]] != '\0')
-	{
-		buf++;
-		i[0]++;
-	}
-	*ptrptr = malloc((buf + 1) * sizeof(char));
-	if (*ptrptr == NULL)
-		return (NULL);
-	i[0] -= buf;
-	e = 0;
-	while (s[i[0]] != c && s[i[0]] != '\0')
-	{
-		(*ptrptr)[e++] = s[i[0]++];
-	}
-	(*ptrptr)[e] = '\0';
-	return (*ptrptr);
-}
-
-int	counter(char const *s, char c)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (s[i] != '\0')
-	{
-		while (s[i] == c && s[i] != '\0')
-			i++;
-		while (s[i] != c && s[i] != '\0')
-			i++;
-		if (s[i - 1] != c)
+		if (*str == sep)
+			same_word = 0;
+		else
 		{
-			count++;
-			if (s[i] != '\0')
-				i++;
+			if (!same_word)
+			{
+				same_word = 1;
+				i ++;
+			}
 		}
+		str ++;
 	}
-	return (count);
+	return (i);
+}
+
+static size_t	next_wordlen(char const *str, char sep)
+{
+	int	i;
+
+	i = 0;
+	while (*str)
+	{
+		if (*str == sep)
+			return (i);
+		else
+			i ++;
+		str ++;
+	}
+	return (i);
+}
+
+static int	free_split(char ***res, int index)
+{
+	int	i;
+
+	if ((*res)[index])
+		return (0);
+	i = 0;
+	while (i < index)
+	{
+		free((*res)[i]);
+		i ++;
+	}
+	free(res);
+	return (1);
+}
+
+static char	**handle_empty(void)
+{
+	char	**res;
+
+	res = malloc(sizeof(*res));
+	if (!res)
+		return (0);
+	res[0] = 0;
+	return (res);
+}
+
+char	**ft_split(char const *str, char sep)
+{
+	char	**res;
+	int		i;
+
+	if (!count_words(str, sep))
+		return (handle_empty());
+	res = malloc(sizeof(*res) * (count_words(str, sep) + 1));
+	if (!res)
+		return (0);
+	i = 0;
+	while (*str)
+	{
+		if (*str != sep)
+		{
+			res[i] = malloc(next_wordlen(str, sep) + 1);
+			if (free_split(&res, i))
+				return (0);
+			ft_strlcpy(res[i], str, next_wordlen(str, sep) + 1);
+			i ++;
+			str += next_wordlen(str, sep);
+		}
+		else
+			str ++;
+	}
+	res[i] = 0;
+	return (res);
 }
