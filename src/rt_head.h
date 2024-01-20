@@ -416,7 +416,7 @@ t_item	*create_item(enum e_ObjectType type,
 			t_v3tpl pos_scale, t_v3tpl axe_color, t_fitpl sp_ch);
 t_v		item_get_axis(t_item item);
 void	item_draw_axes(t_rtdata data, t_item item);
-uint	item_color_hex(t_item item);
+t_uint	item_color_hex(t_item item);
 
 // UTIL6.C
 t_light	*light(enum e_LightType type, t_v color, t_v pos);

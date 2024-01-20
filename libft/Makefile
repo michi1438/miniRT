@@ -38,7 +38,15 @@ CC = clang
 
 AR = ar rc
 
-CFLAGS = -Werror -Wall -Wextra -ggdb -O0
+CFLAGS = -Werror -Wall -Wextra
+
+ifdef fast
+	CFLAGS			:= $(CFLAGS) -Ofast
+else ifdef debug
+	CFLAGS			:= $(CFLAGS) -O0 -g3
+else
+	CFLAGS			:= $(CFLAGS) -O3
+endif
 
 all: $(NAME) 
 

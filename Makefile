@@ -16,7 +16,15 @@ NAME = miniRT
 
 CC = clang
 
-CFLAGS = -Werror -Wall -Wextra -g -O0
+CFLAGS = -Werror -Wall -Wextra #-Ofast #-g -O0
+
+ifdef fast
+	CFLAGS			:= $(CFLAGS) -Ofast
+else ifdef debug
+	CFLAGS			:= $(CFLAGS) -O0 -g3
+else
+	CFLAGS			:= $(CFLAGS) -O3
+endif
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_kb_and_pp_mlx.c \
 			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c \
