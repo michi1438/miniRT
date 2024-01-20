@@ -107,7 +107,7 @@ int	printargcha(int toconv, t_conv *cvut)
 }
 
 int	printargptr(unsigned long toconv, t_conv *cvut)
-{	
+{
 	t_toggler	*flg;
 
 	flg = NULL;

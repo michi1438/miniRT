@@ -24,7 +24,7 @@ void	draw_mappings(t_rtdata data, t_item item, t_v mappings[34])
 		draw_cylinder_mappings(data.scrn, mappings, item);
 }
 
-t_line	*gen_rays(t_camera camera, int size, double resolution)
+t_line	*gen_rays(t_camra camera, int size, double resolution)
 {
 	t_terms	ts;
 	double	i;
@@ -53,38 +53,38 @@ t_line	*gen_rays(t_camera camera, int size, double resolution)
 	return (res);
 }
 
-t_intersection	int_null(void)
+t_intsc	int_null(void)
 {
-	t_intersection	t;
+	t_intsc	t;
 
 	t.pos = v3_null();
 	return (t);
 }
 
-int	int_is_null(t_intersection intersection)
+int	int_is_null(t_intsc intersection)
 {
 	return (v3_is_null(intersection.pos));
 }
 
-t_intersection	intersect_ray_plane(t_line ray, t_plane plane)
+t_intsc	intersect_ray_plane(t_line ray, t_plane plane)
 {
 	t_terms	terms;
 
-	terms.D = v3_norm(v3_sub(ray.p2, ray.p1));
-	terms.X = v3_sub(ray.p1, plane.p1);
-	terms.N = plane_normal(plane);
-	terms.d_v = v3_dot(terms.D, terms.N);
-	terms.x_v = v3_dot(terms.X, terms.N);
+	terms.d = v3_norm(v3_sub(ray.p2, ray.p1));
+	terms.x_ = v3_sub(ray.p1, plane.p1);
+	terms.n = plane_normal(plane);
+	terms.d_v = v3_dot(terms.d, terms.n);
+	terms.x_v = v3_dot(terms.x_, terms.n);
 	if (terms.d_v == (float)TOLERANCE
 		|| ((terms.x_v < TOLERANCE) == (terms.d_v < TOLERANCE)))
 	{
 		return (int_null());
 	}
 	terms.t = -terms.x_v / terms.d_v;
-	terms.intr = v3_add(ray.p1, v3_scale(terms.D, terms.t));
+	terms.intr = v3_add(ray.p1, v3_scale(terms.d, terms.t));
 	if (terms.d_v <= TOLERANCE)
-		terms.normal = terms.N;
+		terms.normal = terms.n;
 	else
-		terms.normal = v3_invert(terms.N);
+		terms.normal = v3_invert(terms.n);
 	return (int_create(terms.intr, terms.normal, ray, NULL));
 }

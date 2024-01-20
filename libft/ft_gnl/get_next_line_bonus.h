@@ -22,7 +22,8 @@
 # include <fcntl.h>
 # include <stdlib.h>
 
-typedef struct sct1 {
+typedef struct sct1
+{
 	char	*buf;
 	char	*line;
 }	t_strs;
@@ -38,5 +39,19 @@ char	*ifbufhasreturn(t_strs *strings, char **statline, int i, int *red);
 char	*mainwhile(int fd, t_strs *strings, char **statline, int *red);
 char	*ifstatret(t_strs *strings, char **statline, int i);
 char	*stat_after_read(char **statline, t_strs *strings, int red, int i);
+
+typedef struct s_bufobj
+{
+	char	*buf;
+	ssize_t	buf_size;
+	int		eof;
+	int		buf_allocated;
+	ssize_t	index_of_nl;
+	ssize_t	new_buf_size;
+	char	*tmp;
+}	t_bufobj;
+
+int		gnl_realloc(t_bufobj *bufobj, ssize_t new_len);
+void	*gnl_memcpy(void *dest, const void *src, size_t n);
 
 #endif

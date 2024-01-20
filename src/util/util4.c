@@ -22,11 +22,11 @@ int	same_side_of_plane(t_plane plane, t_v A, t_v B)
 	return (same_sign(dot1, dot2));
 }
 
-static t_matrix3d	get_rot_matrix(t_v v)
+static t_mtrx	get_rot_matrix(t_v v)
 {
-	t_matrix3d	rot_matrix_x;
-	t_matrix3d	rot_matrix_y;
-	t_matrix3d	rot_matrix_z;
+	t_mtrx	rot_matrix_x;
+	t_mtrx	rot_matrix_y;
+	t_mtrx	rot_matrix_z;
 
 	rot_matrix_x = matrix3d_c(v3(1, 0, 0), v3(0, cos(v.x), sin(v.x)),
 			v3(0, -sin(v.x), cos(v.x)));
@@ -40,9 +40,9 @@ static t_matrix3d	get_rot_matrix(t_v v)
 /* rotate point p, by a vector v, around a point r */
 t_v	rotate_point(t_v p, t_v v, t_v r)
 {
-	t_matrix3d	rot_matrix;
-	t_v			p_translate;
-	t_v			p_rotated1;
+	t_mtrx	rot_matrix;
+	t_v		p_translate;
+	t_v		p_rotated1;
 
 	rot_matrix = get_rot_matrix(v);
 	p_translate = v3_sub(p, r);

@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/18 13:54:04 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/17 10:46:54 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:29:42 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	musthave_elem(t_list *e_list)
 	while (e_list->content != NULL)
 	{
 		elem = e_list->content;
-		print_elem(elem);	
 		if (elem->type == 'C')
 			c++;
 		if (elem->type == 'L')
@@ -71,7 +70,8 @@ void	musthave_elem(t_list *e_list)
 	}
 	if (c != 3)
 	{
-		print_err("The .rt file must contain 1 of each \"Capital element\" !\n");
+		print_err(
+			"The .rt file must contain 1 of each \"Capital element\" !\n");
 		exit (1);
 	}
 }

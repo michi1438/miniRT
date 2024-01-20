@@ -35,23 +35,23 @@ int	v3_is_null(t_v v)
 /* projects a point on the camera plane */
 /* returns v3(FT_MAX) if the line between eye and
  * point doesn't intersect plane or is behind screen */
-t_v	project_point(t_v point, t_camera camera)
+t_v	project_point(t_v point, t_camra camera)
 {
 	t_line	line_;
 	t_plane	canvas;
 	t_v		intersection_;
 
-	if (!same_side_of_plane(plane_c(camera.eye, camera.A, camera.C),
-			camera.B, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.a, camera.c),
+			camera.b, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.B,
-				camera_get_d(camera)), camera.A, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.b,
+				camera_get_d(camera)), camera.a, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.C,
-				camera_get_d(camera)), camera.A, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.c,
+				camera_get_d(camera)), camera.a, point))
 		return (v3_null());
-	if (!same_side_of_plane(plane_c(camera.eye, camera.A, camera.B),
-			camera.C, point))
+	if (!same_side_of_plane(plane_c(camera.eye, camera.a, camera.b),
+			camera.c, point))
 		return (v3_null());
 	line_ = line_c(camera.eye, point);
 	canvas = camera_get_canvas_plane(camera);

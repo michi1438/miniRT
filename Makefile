@@ -6,7 +6,7 @@
 #    By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/18 10:21:23 by mguerga           #+#    #+#              #
-#    Updated: 2024/01/17 19:35:31 by mguerga          ###   ########.fr        #
+#    Updated: 2024/01/18 12:21:11 by mguerga          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,14 +14,21 @@ OS := $(shell uname)
 
 NAME = miniRT
 
-CC = gcc
+CC = clang
 
-CFLAGS = -Werror -Wall -Wextra -Ofast#  -fsanitize=address -g #-O0
+CFLAGS = -Werror -Wall -Wextra #-Ofast #-g -O0
 
-SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_display.c \
-			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c rt_testin.c \
-			 rt_scene.c rt_vecmath.c rt_intersect.c rt_matrices.c \
-			 rt_fetch_elem.c rt_fill_control.c more_keys.c
+ifdef fast
+	CFLAGS			:= $(CFLAGS) -Ofast
+else ifdef debug
+	CFLAGS			:= $(CFLAGS) -O0 -g3
+else
+	CFLAGS			:= $(CFLAGS) -O3
+endif
+
+SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_kb_and_pp_mlx.c \
+			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c \
+			 rt_fetch_elem.c rt_fill_control.c
 
 SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
 			util8.c util9.c util10.c draw_line.c util11.c util12.c util13.c util14.c util15.c util16.c\
@@ -58,11 +65,12 @@ $(NAME): $(OBJS) $(INCLUDES)
 	$(CC) -I$(INCLUDES) $(CFLAGS) $(OBJS) $(MINILIBX) $(OTHERLIBS) -o $(NAME)
 
 clean:
-	rm -f $(OBJS) 
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
-	rm -f libft/libft.a
+	make fclean -C libft/
+	make clean -C $(MLX_FOLDER)
 
 re: fclean all
 

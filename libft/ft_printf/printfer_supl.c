@@ -42,4 +42,4 @@ void	*create_cvut(const char *str, int i, t_conv *cvut)
 	cvut->prx_len = proxylengthcnt(str, i);
 	cvut->len = 0;
 	return (cvut);
-}		
+}

@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-t_matrix3d	get_identity_matrix(void)
+t_mtrx	get_identity_matrix(void)
 {
 	return (matrix3d_c(v3(1, 0, 0), v3(0, 1, 0), v3(0, 0, 1)));
 }

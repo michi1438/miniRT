@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include	"printf.h"
+#include "printf.h"
 
 char	*flag_parser(const char *str, int i)
 {
@@ -87,7 +87,7 @@ int	width_counter(const char *str, int i)
 			if (retval < 0)
 				retval *= -1;
 			return (retval);
-		}	
+		}
 		i++;
 	}
 	return (0);

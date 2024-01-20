@@ -1,16 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   more_keys.c                                        :+:      :+:    :+:   */
+/*   rt_kb_and_pp_mlx.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwikiera <jwikiera@42lausanne.ch>          +#+  +:+       +#+        */
+/*   By: mguerga <mguerga@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/16 18:53:56 by mguerga           #+#    #+#             */
-/*   Updated: 2023/12/06 16:19:32 by mguerga          ###   ########.fr       */
+/*   Created: 2024/01/18 12:15:26 by mguerga           #+#    #+#             */
+/*   Updated: 2024/01/18 12:15:30 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt_head.h"
+
+void	mlx_pp(t_scData *scrn, int x, int y, int color)
+{
+	int	offset;
+
+	if (x < 0 || x >= S_WIDTH || y < 0 || y >= S_HEIGHT)
+		return ;
+	offset = y * scrn->line_len + x * scrn->bits_pp / 8;
+	*(unsigned int *)(scrn->addr + (offset)) = color;
+}
+
+int	kb_mlx(int keycd, t_rtdata *data)
+{
+	more_keys1(keycd, data);
+	return (0);
+}
 
 static void	more_keys3(int keycd, t_rtdata *data)
 {
@@ -83,4 +99,3 @@ void	more_keys1(int keycd, t_rtdata *data)
 	}
 	more_keys2(keycd, data);
 }
-

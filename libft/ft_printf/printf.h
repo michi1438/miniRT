@@ -20,7 +20,8 @@
 # include <stdio.h>
 # include "../ft_gnl/get_next_line_bonus.h"
 
-typedef struct sct {
+typedef struct sct
+{
 	char	type;
 	char	*conv_flags;
 	int		wid;
@@ -29,7 +30,8 @@ typedef struct sct {
 	int		len;
 }	t_conv;
 
-typedef struct sctone {
+typedef struct sctone
+{
 	int	hash;
 	int	zero;
 	int	neg;

@@ -26,21 +26,21 @@ t_v	project_point_onto_plane(t_v point, t_plane plane)
 }
 
 /* Multiplying a 3D matrix with a 3D vector (M x V) */
-t_v	matrix_mult_vec(t_matrix3d matrix, t_v v)
+t_v	matrix_mult_vec(t_mtrx matrix, t_v v)
 {
 	return (v3_add(v3_scale(matrix.v1, v.x), v3_add(v3_scale(matrix.v2, v.y),
 				v3_scale(matrix.v3, v.z))));
 }
 
 /* Multiplying each term of a 3D matrix by a scalar */
-t_matrix3d	matrix_scale(t_matrix3d matrix, float scalar)
+t_mtrx	matrix_scale(t_mtrx matrix, float scalar)
 {
 	return (matrix3d_c(v3_scale(matrix.v1, scalar), v3_scale(matrix.v2, scalar),
 			v3_scale(matrix.v3, scalar)));
 }
 
 /* Multiplying two 3D matrices */
-t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2)
+t_mtrx	matrix_mult(t_mtrx m1, t_mtrx m2)
 {
 	t_v	v1;
 	t_v	v2;
@@ -61,7 +61,7 @@ t_matrix3d	matrix_mult(t_matrix3d m1, t_matrix3d m2)
 	return (matrix3d_c(v1, v2, v3_));
 }
 
-t_matrix3d	matrix_sub(t_matrix3d m1, t_matrix3d m2)
+t_mtrx	matrix_sub(t_mtrx m1, t_mtrx m2)
 {
 	t_v	v1;
 	t_v	v2;

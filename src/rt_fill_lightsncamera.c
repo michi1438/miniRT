@@ -6,7 +6,7 @@
 /*   By: mguerga <marvin@42lausanne.ch>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 10:04:36 by mguerga           #+#    #+#             */
-/*   Updated: 2024/01/16 16:26:59 by mguerga          ###   ########.fr       */
+/*   Updated: 2024/01/18 11:40:03 by mguerga          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	fill_err(char type)
 {
-	ft_printf("ERR: \"%c\" line can't be parsed, check your .rt file.\n", type);
+	printf("ERR: \"%c\" line can't be parsed, check your .rt file.\n", type);
 	exit (1);
 }
 
@@ -53,27 +53,39 @@ void	fill_camera(t_elem *elem, char **splited)
 		fill_err(elem->type);
 	xyz_split = ft_split(splited[1], ',');
 	norm_xyz_split = ft_split(splited[2], ',');
-	elem->fov = ft_atof(splited[3]);//tan(ft_atof(splited[3]) / 2 * M_PI / 180);
+	elem->fov = ft_atof(splited[3]);
 	i = -1;
 	while (++i < 3 && xyz_split[i] != NULL && norm_xyz_split[i] != NULL)
 	{
 		elem->xyz[i] = ft_atof(xyz_split[i]);
 		elem->norm_xyz[i] = ft_atof(norm_xyz_split[i]) * M_PI;
 	}
+	free_elem(elem, xyz_split, norm_xyz_split, NULL);
+}
+
+void	free_elem(t_elem *elem, char **split1, char **split2, char **split3)
+{
+	int	i;
+
 	i = -1;
 	while (++i < 3)
 	{
-		free(xyz_split[i]);
-		free(norm_xyz_split[i]);
-//		printf("elem->norm_xyz[i] = %f\n", elem->norm_xyz[i]);
-//		printf("M_PI = %f\n", M_PI + 0.001); // XXX this is cheating there is probably a better way...
+		free(split1[i]);
+		free(split2[i]);
+		if (split3 && split3[i])
+			free(split3[i]);
 		if (fabs(elem->norm_xyz[i]) > M_PI + 0.001)
 			fill_err(elem->type);
+		if (elem->rgb[i] < 0 || elem->rgb[i] > 255
+			|| elem->norm_xyz[i] < -1 || elem->norm_xyz[i] > 1)
+			fill_err(elem->type);
 	}
-	if (xyz_split != NULL && norm_xyz_split != NULL)
+	if (split2 != NULL && split2 != NULL)
 	{
-		free(xyz_split);
-		free(norm_xyz_split);
+		free(split1);
+		free(split2);
+		if (split3)
+			free(split3);
 	}
 }
 
@@ -96,17 +108,5 @@ void	fill_light(t_elem *elem, char **splited)
 		elem->xyz[i] = ft_atof(xyz_split[i]);
 		elem->rgb[i] = ft_atoi(rgb_split[i]);
 	}
-	i = -1;
-	while (++i < 3)
-	{
-		free(xyz_split[i]);
-		free(rgb_split[i]);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
-			fill_err(elem->type);
-	}
-	if (xyz_split != NULL && rgb_split != NULL)
-	{
-		free(xyz_split);
-		free(rgb_split);
-	}
+	free_elem(elem, xyz_split, rgb_split, NULL);
 }

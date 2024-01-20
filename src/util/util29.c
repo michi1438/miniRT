@@ -29,9 +29,9 @@ double	get_resolution(void)
 	return (resolution);
 }
 
-t_floatint_tuple	floatint(float f, int i)
+t_fitpl	floatint(float f, int i)
 {
-	t_floatint_tuple	res;
+	t_fitpl	res;
 
 	res.f = f;
 	res.i = i;
