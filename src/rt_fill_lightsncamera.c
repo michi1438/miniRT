@@ -76,8 +76,7 @@ void	free_elem(t_elem *elem, char **split1, char **split2, char **split3)
 			free(split3[i]);
 		if (fabs(elem->norm_xyz[i]) > M_PI + 0.001)
 			fill_err(elem->type);
-		if (elem->rgb[i] < 0 || elem->rgb[i] > 255
-			|| elem->norm_xyz[i] < -1 || elem->norm_xyz[i] > 1)
+		if (elem->rgb[i] < 0 || elem->rgb[i] > 255)
 			fill_err(elem->type);
 	}
 	if (split2 != NULL && split2 != NULL)

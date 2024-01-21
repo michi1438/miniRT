@@ -397,7 +397,7 @@ int		v3_is_null(t_v v);
 t_v		project_point(t_v point, t_camra camera);
 
 // CAMERA.C
-t_camra	camera_c(t_v pos, float eye_canv_dist, float fov);
+t_camra	camera_c(t_v pos, float eye_canv_dist, float fov, t_elem el);
 t_v		camera_get_ac(t_camra camera);
 t_v		camera_get_ab(t_camra camera);
 t_plane	camera_get_canvas_plane(t_camra camera);

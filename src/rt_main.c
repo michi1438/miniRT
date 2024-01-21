@@ -79,7 +79,7 @@ int	main(int ac, char **av)
 	rtdata.scrn = &scrn;
 	rtdata.camera = camera_c(v3(findcam(&elst)->xyz[0],
 				findcam(&elst)->xyz[1], findcam(&elst)->xyz[2]),
-			1, findcam(&elst)->fov);
+			1, findcam(&elst)->fov, *findcam(&elst));
 	add_lights(&elst, &rtdata);
 	rtdata.items = add_items(&elst);
 	draw(rtdata);

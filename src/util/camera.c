@@ -12,7 +12,7 @@
 
 #include "../rt_head.h"
 
-t_camra	camera_c(t_v pos, float eye_canv_dist, float fov)
+t_camra	camera_c(t_v pos, float eye_canv_dist, float fov, t_elem el)
 {
 	t_camra		res;
 	t_v			move_vec;
@@ -27,6 +27,8 @@ t_camra	camera_c(t_v pos, float eye_canv_dist, float fov)
 				/ 2, res.canvas_height / 2, -eye_canv_dist));
 	res.c = v3_add(move_vec, v3(-res.canvas_width
 				/ 2, -res.canvas_height / 2, -eye_canv_dist));
+	camera_rotate(&res, Up, el.norm_xyz[0]);
+	camera_rotate(&res, Right, el.norm_xyz[1]);
 	return (res);
 }
 
