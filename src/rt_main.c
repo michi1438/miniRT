@@ -84,6 +84,7 @@ int	main(int ac, char **av)
 	rtdata.items = add_items(&elst);
 	draw(rtdata);
 	mlx_hook(scrn.win, 2, 1L << 0, kb_mlx, &rtdata);
+	mlx_hook(scrn.win, ON_DESTROY, 0, destroy, &rtdata);
 	mlx_loop(scrn.mlx);
 	return (0);
 }

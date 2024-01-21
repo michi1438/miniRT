@@ -27,6 +27,8 @@
 # include <math.h>
 # include <unistd.h>
 
+# define ON_DESTROY 17
+
 # define RESOLUTION 0.006
 # define SPECULAR 0.7
 # define TOLERANCE 0.000001
@@ -563,5 +565,8 @@ double	get_resolution(void);
 t_fitpl	floatint(float f, int i);
 t_objty	get_item_type(t_elem *elem);
 void	free_items(t_list **lst);
+
+// DESTROY.C
+int		destroy(t_rtdata *data);
 
 #endif // RT_HEAD_H

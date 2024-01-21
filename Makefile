@@ -28,7 +28,7 @@ endif
 
 SRC_MINIRT = rt_main.c rt_err_handling.c rt_scene_parsing.c rt_kb_and_pp_mlx.c \
 			 rt_fill_shapes2.c rt_fill_shapes.c rt_fill_lightsncamera.c rt_utils.c \
-			 rt_fetch_elem.c rt_fill_control.c
+			 rt_fetch_elem.c rt_fill_control.c destroy.c
 
 SRC_UTIL = util1.c util2.c util3.c util4.c util5.c camera.c camera2.c camera3.c util6.c item.c util7.c\
 			util8.c util9.c util10.c draw_line.c util11.c util12.c util13.c util14.c util15.c util16.c\
