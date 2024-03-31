@@ -324,17 +324,17 @@
 
 		/* FRUSTUM CULLING */
 		/* check for y axis */		
-		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.c), camera.B, point)) {
+		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.C), camera.B, point)) {
 			return (null);
 		}
 		if (!same_side_of_plane(new Plane(camera.eye, camera.B, camera.getD()), camera.A, point)) {
 			return (null);
 		}
 		/* check for x axis */
-		if (!same_side_of_plane(new Plane(camera.eye, camera.c, camera.getD()), camera.A, point)) {
+		if (!same_side_of_plane(new Plane(camera.eye, camera.C, camera.getD()), camera.A, point)) {
 			return (null);
 		}
-		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.B), camera.c, point)) {
+		if (!same_side_of_plane(new Plane(camera.eye, camera.A, camera.B), camera.C, point)) {
 			return (null);
 		}
 
@@ -355,11 +355,11 @@
 		return (angle * Math.PI / 180);
 	}
 
-	function expressPointInBasis(A, B, c, point) {
+	function expressPointInBasis(A, B, C, point) {
 		// Calculate coefficients
-		const denominator = (B.x - A.x) * (c.y - A.y) - (c.x - A.x) * (B.y - A.y);
+		const denominator = (B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y);
 
-		const x = ((point.x - A.x) * (c.y - A.y) - (c.x - A.x) * (point.y - A.y)) / denominator;
+		const x = ((point.x - A.x) * (C.y - A.y) - (C.x - A.x) * (point.y - A.y)) / denominator;
 		const y = ((B.x - A.x) * (point.y - A.y) - (point.x - A.x) * (B.y - A.y)) / denominator;
 
 		return { x, y };
@@ -382,11 +382,11 @@
 			this.eye = v3();
 			this.A = v3(-screen_width / 2, screen_height / 2, -eye_canv_dist);
 			this.B = v3(screen_width / 2, screen_height / 2, -eye_canv_dist);
-			this.c = v3(-screen_width / 2, -screen_height / 2, -eye_canv_dist);
+			this.C = v3(-screen_width / 2, -screen_height / 2, -eye_canv_dist);
 		}
 
 		getAC() {
-			return (v3_sub(this.c, this.A));
+			return (v3_sub(this.C, this.A));
 		}
 
 		getAB() {
@@ -399,7 +399,7 @@
 		}
 
 		getCanvasPlane() {
-			return (new Plane(this.A, this.B, this.c));
+			return (new Plane(this.A, this.B, this.C));
 		}
 
 		getCenter() {
@@ -423,25 +423,25 @@
 					rot_vect = v3_scale(v3(0, 1), -amount); //v3_scale(v3_norm(this.getAC()), amount);
 					this.A = rotate_point(this.A, rot_vect, this.eye);
 					this.B = rotate_point(this.B, rot_vect, this.eye);
-					this.c = rotate_point(this.c, rot_vect, this.eye);
+					this.C = rotate_point(this.C, rot_vect, this.eye);
 					break;
 				case Direction.Left:
 					rot_vect = v3_scale(v3(0, 1), amount); //v3_scale(v3_norm(this.getAC()), -amount);
 					this.A = rotate_point(this.A, rot_vect, this.eye);
 					this.B = rotate_point(this.B, rot_vect, this.eye);
-					this.c = rotate_point(this.c, rot_vect, this.eye);
+					this.C = rotate_point(this.C, rot_vect, this.eye);
 					break;
 				case Direction.Up:
 					rot_vect = v3_scale(v3_norm(this.getAB()), amount);
 					this.A = rotate_point(this.A, rot_vect, this.eye);
 					this.B = rotate_point(this.B, rot_vect, this.eye);
-					this.c = rotate_point(this.c, rot_vect, this.eye);
+					this.C = rotate_point(this.C, rot_vect, this.eye);
 					break;
 				case Direction.Down:
 					rot_vect = v3_scale(v3_norm(this.getAB()), -amount);
 					this.A = rotate_point(this.A, rot_vect, this.eye);
 					this.B = rotate_point(this.B, rot_vect, this.eye);
-					this.c = rotate_point(this.c, rot_vect, this.eye);
+					this.C = rotate_point(this.C, rot_vect, this.eye);
 					break;
 				default:
 					console.log(`Invalid direction: ${dir}.`);
@@ -484,22 +484,22 @@
 			this.eye = v3_add(move_vect, this.eye);
 			this.A = v3_add(move_vect, this.A);
 			this.B = v3_add(move_vect, this.B);
-			this.c = v3_add(move_vect, this.c);
+			this.C = v3_add(move_vect, this.C);
 		}
 
 		/* expresses a 3d point relatively to point A */
 		/* x: 2.52 ; y: 0.99 */
 		get_point_canvas_rel(p) {
 			let AB_proj = project_point_onto_line(new Line(this.A, this.B), p);
-			let AC_proj = project_point_onto_line(new Line(this.A, this.c), p);
+			let AC_proj = project_point_onto_line(new Line(this.A, this.C), p);
 			let A_AB_proj = v3_sub(AB_proj, this.A);
 			let A_AC_proj = v3_sub(AC_proj, this.A);
 			let x_mult = 1;
 			let y_mult = 1;
-			if (!same_side_of_line(new Line(this.A, this.B), this.c, p)) {
+			if (!same_side_of_line(new Line(this.A, this.B), this.C, p)) {
 				y_mult = -1;
 			}
-			if (!same_side_of_line(new Line(this.A, this.c), this.B, p)) {
+			if (!same_side_of_line(new Line(this.A, this.C), this.B, p)) {
 				x_mult = -1;
 			}
 			return (v3(v3_len(A_AB_proj) * x_mult, v3_len(A_AC_proj) * y_mult));
@@ -624,10 +624,10 @@
 	function project_point_onto_line(line, point) {
 		let A = line.p1;
 		let B = line.p2;
-		let c = point;
+		let C = point;
 		let x1 = A.x, y1 = A.y, z1 = A.z;
 		let x2 = B.x, y2 = B.y, z2 = B.z;
-		let x3 = c.x, y3 = c.y, z3 = c.z;
+		let x3 = C.x, y3 = C.y, z3 = C.z;
 		let px = x2 - x1, py = y2 - y1, pz = z2 - z1;
 		let dAB = px * px + py * py + pz * pz;
 		let u = ((x3 - x1) * px + (y3 - y1) * py + (z3 - z1) * pz) / dAB;
@@ -753,15 +753,15 @@
 	}
 
 	function get_cylinder_top(cylinder) {
-		let v = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+		let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
 		let cylinder_length = cylinder.scale.y;
-		return (v3_add(cylinder.pos, v3_scale(v, -cylinder_length / 2)));
+		return (v3_add(cylinder.pos, v3_scale(V, -cylinder_length / 2)));
 	}
 
 	function get_cylinder_bottom(cylinder) {
-		let v = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
+		let V = v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2]));
 		let cylinder_length = cylinder.scale.y;
-		return(v3_add(cylinder.pos, v3_scale(v, cylinder_length / 2)));
+		return(v3_add(cylinder.pos, v3_scale(V, cylinder_length / 2)));
 	}
 
 	function intersect(line, plane) {
@@ -973,7 +973,7 @@
 			
 			let a = v3_scale(v3_add(translate_vec(camera.A), v3(10, 10)), 20);
 			let b = v3_scale(v3_add(translate_vec(camera.B), v3(10, 10)), 20);
-			let c = v3_scale(v3_add(translate_vec(camera.c), v3(10, 10)), 20);
+			let c = v3_scale(v3_add(translate_vec(camera.C), v3(10, 10)), 20);
 			let d = v3_scale(v3_add(translate_vec(camera.getD()), v3(10, 10)), 20);
 			let eye = v3_scale(v3_add(translate_vec(camera.eye), v3(10, 10)), 20);
 			draw_vect(a, 'blue');
@@ -1459,7 +1459,7 @@
 		} else if (event.key == 'ArrowDown') {
 			camera.rotate(Direction.Down, 0.1);
 			draw();
-		} else if (event.key == 'd') {
+		} else if (event.key == 'D') {
 			debug_toggle = !debug_toggle;
 			draw();
 		} else {
@@ -1669,12 +1669,12 @@
 	/* Plane as constructed by 3 points, NOT the plane Item */
 	function intersect_ray_plane(ray, plane) {
 		/* ray direction */
-		let d = v3_norm(v3_sub(ray.p2, ray.p1));
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
 		/* O - C (o = ray origin, c = point on the plane) */
 		let X = v3_sub(ray.p1, plane.p1);
-		let n = plane.getNormal();
-		let d_v = v3_dot(d, n);
-		let x_v = v3_dot(X, n);
+		let N = plane.getNormal();
+		let d_v = v3_dot(D, N);
+		let x_v = v3_dot(X, N);
 		/*if (Math.abs(d_v) <= TOLERANCE) {
 			return (null);
 		}
@@ -1695,12 +1695,12 @@
 			return (null);
 		}
 		let t = - x_v / d_v;
-		let int = v3_add(ray.p1, v3_scale(d, t));
+		let int = v3_add(ray.p1, v3_scale(D, t));
 		let normal;
 		if (d_v <= TOLERANCE) {
-			normal = n;
+			normal = N;
 		} else {
-			normal = v3_invert(n);
+			normal = v3_invert(N);
 		}
 
 		return (new RtIntersection(int, normal, ray, plane));
@@ -1716,10 +1716,10 @@
 	}
 	
 	function intersect_ray_sphere(ray, sphere) {
-		let d = v3_norm(v3_sub(ray.p2, ray.p1));
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
 		let X = v3_sub(ray.p1, sphere.pos);
-		let a = v3_dot(d, d);
-		let b = 2 * v3_dot(d, X);
+		let a = v3_dot(D, D);
+		let b = 2 * v3_dot(D, X);
 		let r = sphere.scale.x / 2;
 		let c = v3_dot(X, X) - r*r;
 		let discriminant = b * b - 4 * a * c;
@@ -1730,9 +1730,9 @@
 			let t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
 			let point;
 			if (t1 >= 0 && t1 < t2) {
-				point = v3_add(ray.p1, v3_scale(d, t1));
+				point = v3_add(ray.p1, v3_scale(D, t1));
 			} else if (t2 >= 0) {
-				point = v3_add(ray.p1, v3_scale(d, t2));
+				point = v3_add(ray.p1, v3_scale(D, t2));
 			}
 			if (point) {
 				return (new RtIntersection(point, v3_norm(v3_sub(point, sphere.pos)), ray, sphere));
@@ -1867,18 +1867,18 @@
 
 		let cylinder_length = cylinder.scale.y;
 		let radius = cylinder.scale.x / 2;
-		let d = v3_norm(v3_sub(ray.p2, ray.p1));
-		let v = (v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])));
-		let c = get_cylinder_top(cylinder);
+		let D = v3_norm(v3_sub(ray.p2, ray.p1));
+		let V = (v3_norm(v3_sub(cylinder.vertices[0], cylinder.vertices[cylinder.vertices.length/2])));
+		let C = get_cylinder_top(cylinder);
 		let bottom = get_cylinder_bottom(cylinder);
 
-		let X = v3_sub(ray.p1, c);
+		let X = v3_sub(ray.p1, C);
 
 		/* Testing cylinder caps */
 		let plane_top = new Plane(cylinder.vertices[cylinder.vertices.length - 1], cylinder.vertices[cylinder.vertices.length - 2], cylinder.vertices[cylinder.vertices.length - 3]);
 		let plane_top_int = intersect_ray_plane(ray, plane_top);
 		if (plane_top_int != null) { 
-			if (v3_len(v3_sub(c, plane_top_int.pos)) <= radius) {
+			if (v3_len(v3_sub(C, plane_top_int.pos)) <= radius) {
 				let dist_ = v3_len(v3_sub(plane_top_int.pos, ray.p1));
 				if (res == null || dist_ < dist) {
 					res = plane_top_int;
@@ -1900,9 +1900,9 @@
 		}
 
 		let t = null;
-		let a = v3_dot(d, d) - Math.pow(v3_dot(d, v), 2);
-		let b = 2 * (v3_dot(d, X) - v3_dot(d, v) * v3_dot(X, v));
-		let c = v3_dot(X, X) - Math.pow(v3_dot(X, v), 2) - radius * radius;
+		let a = v3_dot(D, D) - Math.pow(v3_dot(D, V), 2);
+		let b = 2 * (v3_dot(D, X) - v3_dot(D, V) * v3_dot(X, V));
+		let c = v3_dot(X, X) - Math.pow(v3_dot(X, V), 2) - radius * radius;
 		let discriminant = b * b - 4 * a * c;
 		if (discriminant < 0)
 		{
@@ -1910,8 +1910,8 @@
 		}
 		let d1 = (-b + Math.sqrt(discriminant)) / (2 * a);
 		let d2 = (-b - Math.sqrt(discriminant)) / (2 *a);
-		let m1 = v3_dot(d, v) * d1 + v3_dot(X, v);
-		let m2 = v3_dot(d, v) * d2 + v3_dot(X, v);
+		let m1 = v3_dot(D, V) * d1 + v3_dot(X, V);
+		let m2 = v3_dot(D, V) * d2 + v3_dot(X, V);
 		let	tmp;
 		if (d2 > d1)
 		{
@@ -1930,9 +1930,9 @@
 			t = d2;
 		}
 
-		if (t != null && t >= 0 && (res == null || v3_len(v3_scale(d, t)) < dist)) { //TODO: check whether it's actually v3_scale
-			let pos = v3_add(ray.p1, v3_scale(d, t));
-			let normal = v3_norm(v3_sub(v3_sub(pos, c), v3_scale(v, m2)));
+		if (t != null && t >= 0 && (res == null || v3_len(v3_scale(D, t)) < dist)) { //TODO: check whether it's actually v3_scale
+			let pos = v3_add(ray.p1, v3_scale(D, t));
+			let normal = v3_norm(v3_sub(v3_sub(pos, C), v3_scale(V, m2)));
 			res = new RtIntersection(pos, normal, ray, cylinder);
 		}
 		if (res != null) {
@@ -1960,7 +1960,7 @@
 	function set_cam_pos() {
 		camera.A = v3(-1.000, 1.000, -3.600);
 		camera.B = v3(1.000, 1.000, -3.600);
-		camera.c = v3(-1.000, -1.000, -3.600);
+		camera.C = v3(-1.000, -1.000, -3.600);
 		camera.eye = v3(0.000, 0.000, -2.600);
 		draw();
 	}
@@ -2070,10 +2070,10 @@
 			}
 			let n_dot_l = v3_dot(normal, L);
 			let R = v3_sub(v3_scale(normal, 2 * v3_dot(normal, L)), L);
-			let v = v3_invert(v3_norm(v3_sub(intersection.ray.p2, intersection.ray.p1))); // Vector from the point towards the camera
-			let r_dot_v = v3_dot(R, v);
+			let V = v3_invert(v3_norm(v3_sub(intersection.ray.p2, intersection.ray.p1))); // Vector from the point towards the camera
+			let r_dot_v = v3_dot(R, V);
 			if (r_dot_v > 0) {
-				let new_col = modify_color_intensity(lights[i].color, Math.pow(r_dot_v / (v3_len(R) * v3_len(v)), item.specular));
+				let new_col = modify_color_intensity(lights[i].color, Math.pow(r_dot_v / (v3_len(R) * v3_len(V)), item.specular));
 				res = add_colors(res, new_col);
 			}
 		}
